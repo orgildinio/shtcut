@@ -10,12 +10,13 @@ import {
     NavigationMenuContent,
     NavigationMenuLink,
     navigationMenuTriggerStyle,
+    useToast
 } from '@shtcut-ui/react';
 import Link from 'next/link';
 import { ListItem } from '@shtcut/components/_shared/ListItem';
 
 import { IoQrCodeOutline } from 'react-icons/io5';
-import { PiUserListLight,PiChartLineUp, PiUsersThreeLight } from 'react-icons/pi';
+import { PiUserListLight, PiChartLineUp, PiUsersThreeLight } from 'react-icons/pi';
 import { GoLink } from 'react-icons/go';
 import { BiTask } from 'react-icons/bi';
 import { MdEmail } from 'react-icons/md';
@@ -31,7 +32,6 @@ type IProps = {
 };
 
 const FeatureMenu = ({ onMouseEnter, onMouseLeave }: IProps) => {
-
     const { width } = useWindowSize();
     const mobile = width !== undefined && width <= 768;
     const { toast } = useToast();

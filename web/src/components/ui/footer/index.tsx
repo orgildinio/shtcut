@@ -2,20 +2,16 @@
 
 import Link from 'next/link';
 import { Logo } from '../logo';
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaYoutube,FaGithub } from 'react-icons/fa';
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaYoutube, FaGithub } from 'react-icons/fa';
 import { AiFillInstagram } from 'react-icons/ai';
 import { Mail, MapPin, Phone } from 'lucide-react';
-
+import { Dict } from '@shtcut-ui/react';
 
 type FooterProps = {
     navs?: Dict[];
 };
 
 export const Footer = (props: FooterProps) => {
-
-
-
-
     const iconLink = [
         {
             name: 'Facebook',
