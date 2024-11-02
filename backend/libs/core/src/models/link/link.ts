@@ -140,6 +140,11 @@ export class Link {
   };
 
   @Prop({
+    type: Object,
+  })
+  metadata: Dict;
+
+  @Prop({
     type: MGSchema.Types.Mixed,
   })
   geo: Dict;
@@ -213,6 +218,7 @@ LinkSchema.statics.config = () => {
       'target',
       'user',
       'title',
+      'metadata',
       'labels',
       'workspace',
       'domain',
@@ -232,6 +238,7 @@ LinkSchema.statics.config = () => {
       'target',
       'labels',
       'title',
+      'metadata',
       'description',
       'expiryDate',
       'password',
