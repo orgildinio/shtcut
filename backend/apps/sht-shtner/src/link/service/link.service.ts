@@ -147,6 +147,14 @@ export class LinkService extends MongoBaseService {
       const domain = await this.domainModel.findOne({ ...Utils.conditionWithDelete({ _id: obj.domain }) });
       this.ensureDomainExists(domain);
 
+      if (!obj.metadata) {
+        const urlMetadata = (await this.urlMetadata(obj.target)) as any;
+        if (urlMetadata) {
+          const { meta, og, images } = urlMetadata || {};
+          obj.metadata = { ...meta, ...og, images };
+        }
+      }
+
       // Check if the domain is verified
       // this.checkDomainVerification(domain);
 

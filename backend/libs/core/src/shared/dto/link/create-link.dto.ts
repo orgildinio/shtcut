@@ -1,6 +1,7 @@
 import { IsBoolean, IsMongoId, IsNotEmpty, IsOptional, IsString } from '@nestjs/class-validator';
 import { Type } from 'class-transformer';
 import { CreateQrCodeDto } from '../qrcode';
+import { Dict } from '../../types';
 
 export class CreateLinkDto {
   @IsString()
@@ -42,4 +43,8 @@ export class CreateLinkDto {
   @IsBoolean()
   @IsOptional()
   public readonly enableTracking: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  public metadata: any;
 }
