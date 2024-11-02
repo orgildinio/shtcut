@@ -65,7 +65,7 @@ const LinkListedComponent = ({
                         <div className="flex items-center gap-x-2 mt-2">
                             <Clock3 size={16} />
                             <span className="text-[#726C6C] text-xs font-medium">
-                                {formatDate(data?.createdAt ?? '')}
+                                {data?.createdAt && formatDate(data?.createdAt ?? '')}
                             </span>
                             <div className="flex items-center space-x-1 w-[60px] h-6  rounded justify-center border bg-[#ECFFFC] border-[#0B7B69]">
                                 <Tag size={14} color="#0B7B69" />
