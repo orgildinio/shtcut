@@ -120,3 +120,6 @@ export const isValidURL = (url: string) => {
         return false;
     }
 };
+
+export const truncate = (input: string, length = 0) =>
+    input.length > length ? `${input.substring(0, length)}` : input;

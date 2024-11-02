@@ -11,7 +11,6 @@ const SocialDashboardComponent = () => {
     const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
     const handleChannelSelect = (channel: string, title: string) => {
         setSelectedChannel(channel);
-        console.log({ channel, title });
     };
 
     return (

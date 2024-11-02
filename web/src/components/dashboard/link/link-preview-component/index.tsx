@@ -1,5 +1,5 @@
 'use client';
-import { Button, Card } from '@shtcut-ui/react';
+import { Button, Card, Dict } from '@shtcut-ui/react';
 import { SearchInput } from '@shtcut/components/dashboard/nav-component';
 import React, { createElement, useState } from 'react';
 import { PiSortDescendingBold } from 'react-icons/pi';
@@ -11,8 +11,9 @@ import ReferralComponent from '../../../referrals';
 import CountriesComponent from '../../../countries';
 import { LineChartComponent } from '@shtcut/components/_shared/Analytics/LineChart';
 import SelectMonths from '../../../select-months';
+import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 
-const SingleLinkPreviewComponent = () => {
+const SingleLinkPreviewComponent = ({ getLinkResponse }: { getLinkResponse: LinkNameSpace.Link }) => {
     const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
 
     const handleSelect = (value: string) => {
@@ -22,7 +23,7 @@ const SingleLinkPreviewComponent = () => {
         {
             id: '1',
             text: 'Click Counts',
-            totalNumber: '40,689',
+            totalNumber: getLinkResponse?.clicks,
             icon: HiUsers
         },
         {
@@ -50,7 +51,7 @@ const SingleLinkPreviewComponent = () => {
                 </div>
             </div>
             <div className="mt-8">
-                <LinkListedComponent edit={true} />
+                <LinkListedComponent data={getLinkResponse} edit={true} />
             </div>
 
             <div className="mt-[22px] flex items-center w-full gap-6 ">

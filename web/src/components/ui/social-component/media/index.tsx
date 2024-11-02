@@ -49,7 +49,6 @@ const MediaComponent = () => {
             setIsFetching(false);
         });
     };
-    console.log('Selecde', photos);
 
     const handleSelectImage = (id: string) => {
         setSelectedPhotos((prevSelected) =>

@@ -1,5 +1,5 @@
-import { Button, Form, Modal, Separator } from '@shtcut-ui/react';
-import React, { useState } from 'react';
+import { Button, Dict, Form, Modal, Separator } from '@shtcut-ui/react';
+import React, { useEffect, useState } from 'react';
 import LinkListedComponent from '../link-listed-component';
 import SearchFilterActions from '../search-filter-actions';
 import { usePathname, useRouter } from 'next/navigation';
@@ -16,7 +16,28 @@ import {
     UTMbuilder
 } from '../component';
 
-const LinkComponent = () => {
+import StarLoader from '@shtcut/components/loader/star-loader';
+import { LinkComponentType, LinkNameSpace } from '@shtcut/_shared/namespace/link';
+import DeleteComponent from './delete-modal';
+import DuplicateComponent from './duplicate-modal';
+
+type ModalType = 'deleteModal' | 'duplicateModal' | null;
+
+const LinkComponent = ({
+    findAllLinksResponse,
+    deleteLink,
+    isLoading,
+    deleteLinkResponse,
+    setLoadingState,
+    isLoadingState,
+    createLink,
+    createLinkResponse,
+    search,
+    onSearchChange
+}: LinkComponentType) => {
+    const [modalType, setModalType] = useState<ModalType>(null);
+    const [showSections, setShowSections] = useState(false);
+    const [singleLink, setSingleLink] = useState<LinkNameSpace.Link | null>(null);
     const [showModal, setShowModal] = useState(false);
     const pathName = usePathname();
     const route = useRouter();
@@ -41,9 +62,24 @@ const LinkComponent = () => {
     const handleInputChangeDesc = (event) => {
         setDescription(event.target.value);
     };
-    const handleNavigateEdit = () => {
-        route.push(`${pathName}/1234`);
+    const handleNavigate = (id: string) => {
+        route.push(`${pathName}/${id}`);
     };
+    const handleDeleteLink = (id: string) => {
+        if (id) {
+            deleteLink({ payload: { id } });
+            setLoadingState('deleting', true);
+        }
+    };
+
+    const toggleSection = (type?: ModalType, val?: LinkNameSpace.Link) => {
+        if ((val && type === 'deleteModal') || (val && type === 'duplicateModal')) {
+            setSingleLink(val);
+        }
+        setModalType(type || null);
+        setShowSections(type !== null);
+    };
+
     const form = useForm({
         defaultValues: {
             title: '',
@@ -68,8 +104,24 @@ const LinkComponent = () => {
             inputsGeo,
             selectedDate
         };
-        console.log('Form Data:', payload);
     };
+
+    const handleDuplicate = async () => {
+        setLoadingState('duplicating', true);
+    };
+
+    useEffect(() => {
+        if (deleteLinkResponse?.data?.meta?.success === true) {
+            toggleSection();
+            setLoadingState('deleting', false);
+            setShowSections(false);
+        }
+        if (createLinkResponse?.data?.meta?.success === true) {
+            toggleSection();
+            setLoadingState('duplicating', false);
+        }
+    }, [deleteLinkResponse, createLinkResponse]);
+
     return (
         <section className=" ">
             <div className="flex justify-between  items-center">
@@ -79,14 +131,29 @@ const LinkComponent = () => {
                     Create Link
                 </Button>
             </div>
-            <SearchFilterActions />
-            <div className="flex flex-col gap-y-[14px] mt-8">
-                {[1, 2, 3, 4, 5].map((data, index) => (
-                    <div key={index}>
-                        <LinkListedComponent data={data} onClickNavigate={handleNavigateEdit} />
-                    </div>
-                ))}
-            </div>
+            <SearchFilterActions search={search} onSearchChange={onSearchChange} />
+            {isLoading ? (
+                <div className="flex flex-1 h-[70vh] justify-center items-center">
+                    <StarLoader />
+                </div>
+            ) : findAllLinksResponse && findAllLinksResponse.length > 0 ? (
+                <div className="flex flex-col gap-y-[14px] mt-8">
+                    {findAllLinksResponse.map((data, index) => (
+                        <div key={index}>
+                            <LinkListedComponent
+                                data={data}
+                                onClickNavigate={() => handleNavigate(data._id)}
+                                onDeleteClick={() => toggleSection('deleteModal', data)}
+                                onDuplicateClick={() => toggleSection('duplicateModal', data)}
+                            />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="flex h-[60vh] justify-center items-center text-gray-500">
+                    No data available for {search}
+                </div>
+            )}
             <Modal
                 showModel={showModal}
                 className="h-[80%] max-w-screen-lg"
@@ -139,6 +206,22 @@ const LinkComponent = () => {
                         </div>
                     </form>
                 </Form>
+            </Modal>
+            <Modal onClose={() => setShowSections(false)} showModel={showSections} setShowModal={setShowSections}>
+                {modalType === 'deleteModal' && singleLink && (
+                    <DeleteComponent
+                        isLoadingState={isLoadingState}
+                        handleDelete={() => handleDeleteLink(singleLink._id)}
+                        handleClose={() => setShowSections(false)}
+                    />
+                )}
+                {modalType === 'duplicateModal' && singleLink && (
+                    <DuplicateComponent
+                        isLoadingState={isLoadingState}
+                        handleClose={() => setShowSections(false)}
+                        handleDuplicate={handleDuplicate}
+                    />
+                )}
             </Modal>
         </section>
     );

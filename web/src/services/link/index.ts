@@ -44,13 +44,11 @@ export const linkApi = api.injectEndpoints({
             },
             invalidatesTags: [linkTag]
         }),
-        deleteLink: builder.mutation<Dict, LinkNameSpace.LinkRequest>({
-            query: ({ payload }) => {
-                return {
-                    url: `${SHTNER.links}/${payload?.id}`,
-                    method: DELETE
-                };
-            },
+        deleteLink: builder.mutation<Dict, { payload: { id: string } }>({
+            query: ({ payload }) => ({
+                url: `${SHTNER.links}/${payload.id}`,
+                method: 'DELETE'
+            }),
             invalidatesTags: [linkTag]
         })
     })
