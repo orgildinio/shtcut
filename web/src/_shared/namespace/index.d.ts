@@ -3,8 +3,8 @@ export interface AppObject {
     __v: number;
     id: string;
     publicId: string;
-    createAt?: string | Date;
-    updateAt?: string | Date;
+    createdAt?: string | Date;
+    updatedAt?: string | Date;
     active?: boolean;
 }
 

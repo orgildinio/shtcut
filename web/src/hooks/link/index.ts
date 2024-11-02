@@ -3,7 +3,7 @@ import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
 import { Dict } from '@shtcut-ui/react';
 import { Pagination } from '@shtcut/_shared/namespace';
 import { usePagination } from '../usePagination';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector } from '@shtcut/redux/store';
 import {
     useCreateLinkMutation,
@@ -14,6 +14,7 @@ import {
 } from '@shtcut/services/link';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import { selectFindAllLinkData } from '@shtcut/redux/selectors/link';
+import { debounce } from 'lodash';
 
 interface UseLinkProps {
     id?: string;
@@ -29,13 +30,16 @@ interface UseLinkReturnsType {
     updateLink: MutationTrigger<any>;
     findAllLinks: any;
     isLoading: boolean;
-
+    handleDeleteLink: (id: string) => void;
     findAllLinksResponse: LinkNameSpace.Link[] | undefined;
     createLinkResponse: Dict;
     getLinkResponse: Dict;
     updateLinkResponse: Dict;
     deleteLinkResponse: Dict;
     pagination: Pagination;
+    isLoadingState: boolean;
+    setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'fetching', value: boolean) => void;
+    handleSearchChange: any;
 }
 
 export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
@@ -47,6 +51,21 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     const [deleteLink, deleteLinkResponse] = useDeleteLinkMutation();
     const [findAllLinks, { isLoading }] = useLazyFindAllLinksQuery();
     const [getLink, getLinkResponse] = useLazyGetLinkQuery();
+    const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+    const [loading, setLoading] = useState({
+        duplicating: false,
+        updating: false,
+        deleting: false,
+        finding: false,
+        fetching: false
+    });
+
+    // Unified loading state
+    const isLoadingState = Object.values(loading).some((state) => state);
+    const setLoadingState = (key: keyof typeof loading, value: boolean) => {
+        setLoading((prev) => ({ ...prev, [key]: value }));
+    };
 
     const params = {
         ...paginate,
@@ -55,19 +74,21 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
             { path: 'domain', select: ['slug', 'name'] },
             { path: 'qrCode' }
         ]),
-        search,
+        search: debouncedSearch,
         ...filter
     };
 
     const findAllLinksResponse = useAppSelector((state) => selectFindAllLinkData(state, params));
-
+    const handleSearchChange = debounce((newSearch) => {
+        setDebouncedSearch(newSearch);
+    }, 500);
     useEffect(() => {
         if (callLinks) {
             findAllLinks({
                 ...params
             });
         }
-    }, [callLinks]);
+    }, [callLinks, debouncedSearch, filter]);
 
     useEffect(() => {
         if (id) {
@@ -77,6 +98,9 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
             });
         }
     }, [id]);
+    const handleDeleteLink = (id: string) => {
+        deleteLink({ payload: { id } });
+    };
 
     return {
         isLoading,
@@ -89,6 +113,10 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         getLinkResponse,
         updateLinkResponse,
         deleteLinkResponse,
-        pagination
+        pagination,
+        handleDeleteLink,
+        isLoadingState,
+        setLoadingState,
+        handleSearchChange
     };
 };
