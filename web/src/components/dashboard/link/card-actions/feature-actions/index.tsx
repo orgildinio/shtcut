@@ -9,7 +9,15 @@ import { FiShare2 } from 'react-icons/fi';
 
 import { RiLineChartLine } from 'react-icons/ri';
 
-const FeatureActions = ({ onClickNavigation }: { onClickNavigation: () => void }) => {
+const FeatureActions = ({
+    onClickNavigation,
+    onDeleteClick,
+    onDuplicateClick
+}: {
+    onClickNavigation: () => void;
+    onDeleteClick: (() => void) | null | undefined;
+    onDuplicateClick: (() => void) | null | undefined;
+}) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -30,7 +38,10 @@ const FeatureActions = ({ onClickNavigation }: { onClickNavigation: () => void }
                 >
                     <RiLineChartLine size={16} /> Analytics
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2 cursor-pointer">
+                <DropdownMenuCheckboxItem
+                    onClick={onDuplicateClick ?? undefined}
+                    className="p-2 flex text-xs items-center gap-x-2 cursor-pointer"
+                >
                     <PiFolders size={16} /> Duplicate
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2 cursor-pointer">
@@ -39,7 +50,10 @@ const FeatureActions = ({ onClickNavigation }: { onClickNavigation: () => void }
                 <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2 cursor-pointer">
                     <FiShare2 size={16} /> Share
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2 cursor-pointer">
+                <DropdownMenuCheckboxItem
+                    onClick={onDeleteClick ?? undefined}
+                    className="p-2 flex text-xs items-center gap-x-2 cursor-pointer"
+                >
                     <Trash2 size={16} /> Delete
                 </DropdownMenuCheckboxItem>
             </DropdownMenuContent>

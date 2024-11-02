@@ -20,8 +20,8 @@ export namespace LinkNameSpace {
         target: string;
         user?: string | UserNamespace.LoggedInUser;
         workspace: string;
-        domain: { slug: string };
-        enableTracking?: string;
+        domain: { slug: string; name: string; _id: string };
+        enableTracking?: boolean;
         title?: string;
         label?: [];
         geo?: Dict;
@@ -30,10 +30,11 @@ export namespace LinkNameSpace {
         clicks: number;
         archived?: boolean;
         qrCode?: string | Dict;
+        expiryDate?: string;
     }
 
     export interface LinkRequest extends ApiRequest {
-        params?: QueryArgs,
+        params?: QueryArgs;
         payload?: {
             _id?: string;
             id?: string;
@@ -58,4 +59,22 @@ export namespace LinkNameSpace {
             };
         };
     }
+}
+
+export interface LinkComponentType {
+    findAllLinksResponse: LinkNameSpace.Link[] | undefined;
+    deleteLink: MutationTrigger<any>;
+    createLink: MutationTrigger<any>;
+    isLoading: boolean;
+    deleteLinkResponse: Dict;
+    setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'fetching', value: boolean) => void;
+    isLoadingState: boolean;
+    createLinkResponse: Dict;
+    search: string;
+    onSearchChange: (value: string) => void;
+}
+
+export interface SearchType {
+    search: string;
+    onSearchChange: (value: string) => void;
 }
