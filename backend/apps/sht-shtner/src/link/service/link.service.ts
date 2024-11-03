@@ -187,6 +187,38 @@ export class LinkService extends MongoBaseService {
     }
   }
 
+  /**
+   * The `duplicateObject` function duplicates an object in a TypeScript application.
+   * @param {string} id - The `id` parameter is a string that represents the unique identifier of the
+   * object that you want to duplicate.
+   * @param {ClientSession} [session] - The `session` parameter in the `duplicateObject` function is an
+   * optional parameter of type `ClientSession`. It allows you to pass a MongoDB client session to the
+   * function if needed for database operations within a transaction. If a session is provided, the
+   * function will use it for the database operations; otherwise
+   * @returns The `duplicateObject` function returns a Promise that resolves to the result of creating
+   * a new object based on the object retrieved by the provided `id`. If the object with the given `id`
+   * is not found, it returns an AppException with a message "Link not found".
+   */
+  public async duplicateObject(id: string, session?: ClientSession): Promise<any> {
+    try {
+      const link = await this.model.findById(id);
+      if (!link) {
+        return AppException.NOT_FOUND('Link not found');
+      }
+      const obj = { ..._.omit(link.toJSON(), ['_id', 'id', 'publicId', 'slug', 'createdAt', 'updatedAt', 'alias']) };
+      return await this.createNewObject(obj as any, session);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  /**
+   * This TypeScript function retrieves metadata from a given URL asynchronously.
+   * @param {string} url - The `url` parameter is a string that represents the URL for which you want
+   * to retrieve metadata.
+   * @returns The function `urlMetadata` is returning the metadata fetched from the provided URL using
+   * the `htmlMetaService.getMetadata` method.
+   */
   public async urlMetadata(url: string) {
     try {
       if (!url) {
