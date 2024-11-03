@@ -103,4 +103,26 @@ export class LinkController extends AppController {
   ) {
     return super.patch(id, payload, req, res, next);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/:id/duplicate')
+  @HttpCode(OK)
+  async duplicateService(
+    @Param('id') id: string,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
+    try {
+      const value = await this.service.duplicateObject(id);
+      const response = await this.service.getResponse({
+        code: OK,
+        message: this.lang.created,
+        value,
+      });
+      return res.status(OK).json(response);
+    } catch (e) {
+      return next(e);
+    }
+  }
 }
