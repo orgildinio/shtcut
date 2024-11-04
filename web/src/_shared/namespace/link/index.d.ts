@@ -31,6 +31,16 @@ export namespace LinkNameSpace {
         archived?: boolean;
         qrCode?: string | Dict;
         expiryDate?: string;
+        metadata: {
+            title: string;
+            url: string;
+            description: string;
+            image: string;
+            site_name: string;
+            images: {
+                src: string;
+            }[];
+        };
     }
 
     export interface LinkRequest extends ApiRequest {
@@ -62,9 +72,10 @@ export namespace LinkNameSpace {
 }
 
 export interface LinkComponentType {
-    findAllLinksResponse: LinkNameSpace.Link[] | undefined;
+    findAllLinksResponse: LinkNameSpace.Link[];
     deleteLink: MutationTrigger<any>;
     createLink: MutationTrigger<any>;
+    duplicate: any;
     isLoading: boolean;
     deleteLinkResponse: Dict;
     setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'fetching', value: boolean) => void;
@@ -72,6 +83,8 @@ export interface LinkComponentType {
     createLinkResponse: Dict;
     search: string;
     onSearchChange: (value: string) => void;
+    duplicateLinkResponse: Dict;
+    findAllLinks: any;
 }
 
 export interface SearchType {

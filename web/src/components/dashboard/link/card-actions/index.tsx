@@ -10,13 +10,15 @@ const CardsActions = ({
     numberOfClicks,
     onDeleteClick,
     onDuplicateClick,
-    handleCopy
+    handleCopy,
+    onQrCodeClick
 }: {
     edit: boolean | undefined;
     onClickNavigation: () => void;
     numberOfClicks: number;
     onDeleteClick: (() => void) | null | undefined;
     onDuplicateClick: (() => void) | null | undefined;
+    onQrCodeClick: (() => void) | null | undefined;
     handleCopy: () => void;
 }) => {
     const route = useRouter();
@@ -60,6 +62,7 @@ const CardsActions = ({
                     onClickNavigation={onClickNavigation}
                     onDeleteClick={onDeleteClick}
                     onDuplicateClick={onDuplicateClick}
+                    onQrCodeClick={onQrCodeClick}
                 />
             )}
         </div>

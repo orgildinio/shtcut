@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
 import { Dict } from '@shtcut-ui/react';
@@ -8,6 +10,7 @@ import { useAppSelector } from '@shtcut/redux/store';
 import {
     useCreateLinkMutation,
     useDeleteLinkMutation,
+    useLazyDuplicateLinkQuery,
     useLazyFindAllLinksQuery,
     useLazyGetLinkQuery,
     useUpdateLinkMutation
@@ -38,18 +41,20 @@ interface UseLinkReturnsType {
     deleteLinkResponse: Dict;
     pagination: Pagination;
     isLoadingState: boolean;
+    duplicate: any;
+    duplicateLinkResponse: Dict;
     setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'fetching', value: boolean) => void;
     handleSearchChange: any;
 }
 
 export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     const { callLinks = false, search, filter, id } = props;
-
     const { paginate, pagination } = usePagination({ key: 'findAllLinks' });
     const [createLink, createLinkResponse] = useCreateLinkMutation();
     const [updateLink, updateLinkResponse] = useUpdateLinkMutation();
     const [deleteLink, deleteLinkResponse] = useDeleteLinkMutation();
     const [findAllLinks, { isLoading }] = useLazyFindAllLinksQuery();
+    const [duplicate, duplicateLinkResponse] = useLazyDuplicateLinkQuery();
     const [getLink, getLinkResponse] = useLazyGetLinkQuery();
     const [debouncedSearch, setDebouncedSearch] = useState(search);
 
@@ -108,10 +113,12 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         updateLink,
         deleteLink,
         findAllLinks,
+        duplicate,
         findAllLinksResponse,
         createLinkResponse,
         getLinkResponse,
         updateLinkResponse,
+        duplicateLinkResponse,
         deleteLinkResponse,
         pagination,
         handleDeleteLink,

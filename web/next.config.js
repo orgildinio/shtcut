@@ -10,8 +10,16 @@ module.exports = {
         });
         return config;
     },
+    // images: {
+    //     domains: ['img.youtube.com', 'images.unsplash.com']
+    // },
     images: {
-        domains: ['img.youtube.com', 'images.unsplash.com']
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: '**'
+            }
+        ]
     },
     redirects: async () => {
         return [

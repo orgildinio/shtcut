@@ -4,23 +4,28 @@ import React from 'react';
 import { Clock3, Tag } from 'lucide-react';
 import CardsActions from '../card-actions';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
-import { truncate } from '@shtcut/_shared/helpers';
+import { getApexDomain, truncate } from '@shtcut/_shared/helpers';
 import { formatDate } from '@shtcut/_shared';
+import { CiImageOff } from 'react-icons/ci';
+import { GOOGLE_FAVICON_URL } from '@shtcut/_shared/constant';
 
 const LinkListedComponent = ({
     edit,
     onClickNavigate,
     data,
     onDeleteClick,
-    onDuplicateClick
+    onDuplicateClick,
+    onQrCodeClick
 }: {
     edit?: boolean;
     data?: LinkNameSpace.Link;
     onClickNavigate?: (() => void) | null | undefined;
     onDeleteClick?: (() => void) | null | undefined;
     onDuplicateClick?: (() => void) | null | undefined;
+    onQrCodeClick?: (() => void) | null | undefined;
 }) => {
     const { toast } = useToast();
+    const apexDomain = getApexDomain(data?.target ?? '');
     const handleCopy = () => {
         const textToCopy = `${data?.domain?.name}/${data?.alias}`;
         if (textToCopy) {
@@ -49,8 +54,19 @@ const LinkListedComponent = ({
                             <Checkbox id="terms" className="p-0 m-0 border shadow-none border-[#D2D5DA] " />
                         </div>
                     )}
-                    <div className="shadow border border-gray-50 w-[50px] h-[50px] rounded-[10px] flex justify-center items-center">
-                        <Image src={'/images/figma.png'} width={18} height={18} alt="figma" />
+                    <div className=" border  w-[50px] h-[50px] rounded-full flex justify-center items-center">
+                        {apexDomain ? (
+                            <Image
+                                src={`${GOOGLE_FAVICON_URL}${apexDomain}`}
+                                width={18}
+                                height={18}
+                                alt={apexDomain}
+                                unoptimized
+                                priority
+                            />
+                        ) : (
+                            <CiImageOff size={24} />
+                        )}
                     </div>
                     <div className="">
                         <div>
@@ -81,6 +97,7 @@ const LinkListedComponent = ({
                         handleCopy={handleCopy}
                         onDeleteClick={onDeleteClick}
                         onDuplicateClick={onDuplicateClick}
+                        onQrCodeClick={onQrCodeClick}
                         onClickNavigation={() => {
                             if (!edit && onClickNavigate) {
                                 onClickNavigate();

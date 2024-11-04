@@ -12,11 +12,13 @@ import { RiLineChartLine } from 'react-icons/ri';
 const FeatureActions = ({
     onClickNavigation,
     onDeleteClick,
-    onDuplicateClick
+    onDuplicateClick,
+    onQrCodeClick
 }: {
     onClickNavigation: () => void;
     onDeleteClick: (() => void) | null | undefined;
     onDuplicateClick: (() => void) | null | undefined;
+    onQrCodeClick: (() => void) | null | undefined;
 }) => {
     return (
         <DropdownMenu>
@@ -29,7 +31,10 @@ const FeatureActions = ({
                 <DropdownMenuCheckboxItem className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2 cursor-pointer">
                     <PencilLine size={16} /> Edit Link
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2 cursor-pointer">
+                <DropdownMenuCheckboxItem
+                    className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2 cursor-pointer"
+                    onClick={onQrCodeClick ?? undefined}
+                >
                     <PiQrCodeBold size={16} /> QR Code
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
