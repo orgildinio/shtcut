@@ -1,0 +1,51 @@
+import { Button } from '@shtcut-ui/react';
+import { getApexDomain } from '@shtcut/_shared';
+import { GOOGLE_FAVICON_URL } from '@shtcut/_shared/constant';
+import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
+import DownloadBtn from '@shtcut/components/download-btn';
+import Image from 'next/image';
+import React from 'react';
+import { CiImageOff } from 'react-icons/ci';
+import { QRCode } from 'react-qrcode-logo';
+const QrCodeModal = ({ singleLink, qrCodeRef }: { singleLink: LinkNameSpace.Link; qrCodeRef: any }) => {
+    const apexDomain = getApexDomain(singleLink?.target);
+
+    return (
+        <div>
+            <div className="flex flex-col p-4 items-center gap-2 ">
+                <div className=" border  w-[50px] h-[50px] rounded-full flex justify-center items-center">
+                    {apexDomain ? (
+                        <Image
+                            src={`${GOOGLE_FAVICON_URL}${apexDomain}`}
+                            width={18}
+                            height={18}
+                            alt={apexDomain}
+                            unoptimized
+                            priority
+                        />
+                    ) : (
+                        <CiImageOff size={24} />
+                    )}
+                </div>
+
+                <h1 className="font-semibold">Download QR Code</h1>
+                <div className="border p-2  rounded-md border-[##E3E3E3]" ref={qrCodeRef}>
+                    <QRCode
+                        id={singleLink?._id}
+                        value={`https://${singleLink?.domain?.slug}/${singleLink?.alias}`}
+                        size={90}
+                        qrStyle={'squares'}
+                    />
+                </div>
+                <div className="flex mt-10 items-center w-full gap-4">
+                    <Button variant={'outline'} className="w-full h-8 text-xs" onClick={() => {}}>
+                        Copy
+                    </Button>
+                    <DownloadBtn qrCodeRef={qrCodeRef} />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default QrCodeModal;

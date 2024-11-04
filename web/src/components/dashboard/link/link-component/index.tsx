@@ -1,5 +1,5 @@
-import { Button, Dict, Form, Modal, Separator } from '@shtcut-ui/react';
-import React, { useEffect, useState } from 'react';
+import { Button, Form, Modal, Separator, toast } from '@shtcut-ui/react';
+import React, { useEffect, useRef, useState } from 'react';
 import LinkListedComponent from '../link-listed-component';
 import SearchFilterActions from '../search-filter-actions';
 import { usePathname, useRouter } from 'next/navigation';
@@ -20,8 +20,9 @@ import StarLoader from '@shtcut/components/loader/star-loader';
 import { LinkComponentType, LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import DeleteComponent from './delete-modal';
 import DuplicateComponent from './duplicate-modal';
+import QrCodeModal from './qrcode-modal';
 
-type ModalType = 'deleteModal' | 'duplicateModal' | null;
+type ModalType = 'deleteModal' | 'duplicateModal' | 'qrCodeModal' | null;
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -30,11 +31,13 @@ const LinkComponent = ({
     deleteLinkResponse,
     setLoadingState,
     isLoadingState,
-    createLink,
-    createLinkResponse,
     search,
-    onSearchChange
+    onSearchChange,
+    duplicate,
+    duplicateLinkResponse,
+    findAllLinks
 }: LinkComponentType) => {
+    const qrCodeRef = useRef(null);
     const [modalType, setModalType] = useState<ModalType>(null);
     const [showSections, setShowSections] = useState(false);
     const [singleLink, setSingleLink] = useState<LinkNameSpace.Link | null>(null);
@@ -66,14 +69,20 @@ const LinkComponent = ({
         route.push(`${pathName}/${id}`);
     };
     const handleDeleteLink = (id: string) => {
-        if (id) {
-            deleteLink({ payload: { id } });
-            setLoadingState('deleting', true);
-        }
+        setLoadingState('deleting', true);
+        deleteLink({
+            payload: { id },
+            options: {
+                successMessage: 'Link deleted successfully',
+                onSuccess: () => {
+                    findAllLinks();
+                }
+            }
+        });
     };
 
     const toggleSection = (type?: ModalType, val?: LinkNameSpace.Link) => {
-        if ((val && type === 'deleteModal') || (val && type === 'duplicateModal')) {
+        if ((val && type === 'deleteModal') || (val && type === 'duplicateModal') || (val && type === 'qrCodeModal')) {
             setSingleLink(val);
         }
         setModalType(type || null);
@@ -106,21 +115,32 @@ const LinkComponent = ({
         };
     };
 
-    const handleDuplicate = async () => {
+    const handleDuplicateLink = async (linkId: string) => {
         setLoadingState('duplicating', true);
+        duplicate({
+            payload: { id: linkId },
+            options: {
+                successMessage: 'Link duplicated successfully',
+                onSuccess: () => {
+                    findAllLinks();
+                }
+            }
+        });
     };
 
+    const { isSuccess } = deleteLinkResponse;
+    const { isSuccess: duplicateIsSuccess } = duplicateLinkResponse;
+
     useEffect(() => {
-        if (deleteLinkResponse?.data?.meta?.success === true) {
-            toggleSection();
+        if (isSuccess) {
             setLoadingState('deleting', false);
             setShowSections(false);
         }
-        if (createLinkResponse?.data?.meta?.success === true) {
-            toggleSection();
+        if (duplicateIsSuccess) {
             setLoadingState('duplicating', false);
+            setShowSections(false);
         }
-    }, [deleteLinkResponse, createLinkResponse]);
+    }, [isSuccess, duplicateIsSuccess]);
 
     return (
         <section className=" ">
@@ -145,6 +165,7 @@ const LinkComponent = ({
                                 onClickNavigate={() => handleNavigate(data._id)}
                                 onDeleteClick={() => toggleSection('deleteModal', data)}
                                 onDuplicateClick={() => toggleSection('duplicateModal', data)}
+                                onQrCodeClick={() => toggleSection('qrCodeModal', data)}
                             />
                         </div>
                     ))}
@@ -219,8 +240,11 @@ const LinkComponent = ({
                     <DuplicateComponent
                         isLoadingState={isLoadingState}
                         handleClose={() => setShowSections(false)}
-                        handleDuplicate={handleDuplicate}
+                        handleDuplicate={() => handleDuplicateLink(singleLink?._id)}
                     />
+                )}
+                {modalType === 'qrCodeModal' && singleLink && (
+                    <QrCodeModal singleLink={singleLink} qrCodeRef={qrCodeRef} />
                 )}
             </Modal>
         </section>

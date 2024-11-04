@@ -19,11 +19,15 @@ const LinkContainer = () => {
         setLoadingState,
         createLink,
         createLinkResponse,
-        handleSearchChange
+        handleSearchChange,
+        duplicate,
+        duplicateLinkResponse,
+        findAllLinks
     } = useLink({
         callLinks: true,
         search
     });
+
     const onSearchChange = (value: string) => {
         setSearch(value);
         handleSearchChange(value);
@@ -39,7 +43,7 @@ const LinkContainer = () => {
     }, [getParams]);
     return (
         <LinkComponent
-            findAllLinksResponse={findAllLinksResponse}
+            findAllLinksResponse={findAllLinksResponse ?? []}
             deleteLink={deleteLink}
             isLoading={isLoading}
             deleteLinkResponse={deleteLinkResponse}
@@ -49,6 +53,9 @@ const LinkContainer = () => {
             createLinkResponse={createLinkResponse}
             onSearchChange={onSearchChange}
             search={search}
+            duplicate={duplicate}
+            duplicateLinkResponse={duplicateLinkResponse}
+            findAllLinks={findAllLinks}
         />
     );
 };

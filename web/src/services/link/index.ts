@@ -1,6 +1,6 @@
 import { FetchArgs } from '@reduxjs/toolkit/query';
 import { api } from '@shtcut/_shared/api/app.api';
-import { DELETE, POST, PUT, SHTNER } from '@shtcut/_shared/constant';
+import { GET, POST, PUT, SHTNER } from '@shtcut/_shared/constant';
 import { linkTag } from '../tags';
 import { Dict } from '@shtcut-ui/react';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
@@ -50,6 +50,13 @@ export const linkApi = api.injectEndpoints({
                 method: 'DELETE'
             }),
             invalidatesTags: [linkTag]
+        }),
+        duplicateLink: builder.query<Dict, { payload: { id: string } }>({
+            query: ({ payload }) => ({
+                url: `${SHTNER.links}/${payload.id}/duplicate`,
+                method: GET
+            }),
+            providesTags: [linkTag]
         })
     })
 });
@@ -60,5 +67,6 @@ export const {
     useLazyGetLinkQuery,
     useUpdateLinkMutation,
     useDeleteLinkMutation,
-    endpoints: { createLink, findAllLinks, getLink, updateLink, deleteLink }
+    useLazyDuplicateLinkQuery,
+    endpoints: { createLink, findAllLinks, getLink, updateLink, deleteLink, duplicateLink }
 } = linkApi;
