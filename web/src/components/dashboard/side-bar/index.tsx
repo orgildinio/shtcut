@@ -92,39 +92,38 @@ export default function SideBar({ isOpen, isTab, setIsOpen, workSpaceTitle }: Pr
             className="bg-white flex  flex-col justify-between border-l border-r h-full z-40 w-60 top-[63px] fixed"
         >
             <div className={`${isOpen ? 'p-4' : 'py-4 px-2 items-center'} flex flex-col  `}>
-                {workSpaceTitle === 'Url Shortener' ||
-                    ('Social Media' && (
-                        <>
-                            {isOpen ? (
-                                <div className="w-full">
-                                    {workSpaceTitle === 'Social Media' ? (
-                                        <Link href={'/social/social-media/create-post'}>
-                                            <p className="bg-primary-0 text-xs rounded h-8 flex items-center justify-center text-white font-medium">
-                                                Create Posts
-                                            </p>
-                                        </Link>
-                                    ) : (
-                                        <Button className="bg-primary-0 text-xs rounded h-8">Create New</Button>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="bg-primary-0 cursor-pointer w-6 h-6 rounded-full flex justify-center items-center text-white">
-                                    <TooltipProvider delayDuration={0}>
-                                        <Tooltip>
-                                            <TooltipTrigger onClick={handleCreateRoute}>
-                                                <Plus size={16} />
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <Label className="font-light text-xs">
-                                                    {workSpaceTitle === 'Social Media' ? 'Create Posts' : 'Create New'}
-                                                </Label>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </div>
-                            )}
-                        </>
-                    ))}
+                {(workSpaceTitle === 'Url Shortener' || workSpaceTitle === 'Social Media') && (
+                    <>
+                        {isOpen ? (
+                            <div className="w-full">
+                                {workSpaceTitle === 'Social Media' ? (
+                                    <Link href={'/social/social-media/create-post'}>
+                                        <p className="bg-primary-0 text-xs rounded h-8 flex items-center justify-center text-white font-medium">
+                                            Create Posts
+                                        </p>
+                                    </Link>
+                                ) : (
+                                    <Button className="bg-primary-0 text-xs rounded h-8">Create New</Button>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="bg-primary-0 cursor-pointer w-6 h-6 rounded-full flex justify-center items-center text-white">
+                                <TooltipProvider delayDuration={0}>
+                                    <Tooltip>
+                                        <TooltipTrigger onClick={handleCreateRoute}>
+                                            <Plus size={16} />
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <Label className="font-light text-xs">
+                                                {workSpaceTitle === 'Social Media' ? 'Create Posts' : 'Create New'}
+                                            </Label>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
+                        )}
+                    </>
+                )}
 
                 <ul className={`flex flex-col  ${isOpen ? '' : ''} mt-[14px] gap-1 w-full `}>
                     {navigationOptions?.map((data) => (
