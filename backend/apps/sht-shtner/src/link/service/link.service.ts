@@ -236,7 +236,8 @@ export class LinkService extends MongoBaseService {
       const slug = Utils.slugifyText(domainName);
       const domain = await this.domainModel.findOne({ ...Utils.conditionWithDelete({ slug }) });
       this.ensureDomainExists(domain);
-      this.checkDomainVerification(domain);
+
+      // todo check if the domain is verified
 
       // Find link by alias and domain
       const link = await this.model.findOne({ alias, domain: domain._id }).populate(['domain']);
@@ -245,6 +246,8 @@ export class LinkService extends MongoBaseService {
       }
 
       const ipAddressInfo = await this.ipService.getClientIpInfo(req);
+
+      console.log('ipAddressInfo:::', ipAddressInfo);
 
       // If tracking is enabled, update hit information
       if (link.enableTracking) {
