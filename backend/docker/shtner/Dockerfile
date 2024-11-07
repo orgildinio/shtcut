@@ -14,9 +14,9 @@ COPY backend/tsconfig.json backend/tsconfig.build.json backend/nest-cli.json ./
 RUN yarn install --frozen-lockfile --dev --verbose
 
 # Copy sources
-COPY backend//apps/sht-shtner ./apps/sht-shtner
-COPY backend//config ./config
-COPY backend//libs ./libs
+COPY backend/apps/sht-shtner ./apps/sht-shtner
+COPY backend/config ./config
+COPY backend/libs ./libs
 
 # Buld app
 RUN yarn run build:shtner
