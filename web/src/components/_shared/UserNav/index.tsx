@@ -25,12 +25,12 @@ export const UserNav = () => {
     const { toggleSidebar } = useSidebar();
     const [isOpen, setIsOpen] = useState(false);
     const params = useParams();
-    console.log('params::', params);
+
     const handleToggle = () => setIsOpen(!isOpen);
     return (
         <DropdownMenu onOpenChange={handleToggle}>
             <DropdownMenuTrigger asChild>
-                <div className="flex items-center w-[135px] p-0 bg-[#F7F7F7] space-x-1 h-[31px] cursor-pointer   rounded-full pr-2">
+                <div className="flex items-center w-fit p-0 bg-[#F7F7F7] space-x-1 h-[31px] cursor-pointer   rounded-full pr-2">
                     <div className="relative">
                         <div className="relative h-8 w-8 select-none rounded-full bg-primary/10">
                             <Avatar className="h-8 w-8">
@@ -44,7 +44,7 @@ export const UserNav = () => {
                             </span>
                         </div>
                     </div>
-                    <p className="text-xs font-medium text-[#433E3F]">Uziel Renta</p>
+                    <p className="text-xs font-medium text-[#433E3F]">{user?.firstName + ' ' + user?.lastName}</p>
                     {isOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                 </div>
             </DropdownMenuTrigger>

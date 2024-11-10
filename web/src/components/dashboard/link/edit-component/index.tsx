@@ -1,12 +1,12 @@
 'use client';
 import { Button, Input, Label } from '@shtcut-ui/react';
 import React, { useState } from 'react';
-import { Link,Tag } from 'lucide-react';
+import { Link, Tag } from 'lucide-react';
 import { PiCopyFill } from 'react-icons/pi';
 import MultiTagsInput from '@shtcut/components/form/multi-tag-input';
 import BreadCrumb from '@shtcut/components/bread-crumb';
 
-const EditComponent = ({  }: { form: any }) => {
+const EditComponent = ({}: { form: any }) => {
     const [tags, setTags] = useState<string[]>([]);
 
     const handleTagsChange = (newTags: string[]) => {
@@ -51,6 +51,7 @@ const EditComponent = ({  }: { form: any }) => {
                             onTagsChange={handleTagsChange}
                             placeholder=" Select tags...."
                             className="mt-1"
+                            watchLink=""
                         />
                     </div>
                 </section>

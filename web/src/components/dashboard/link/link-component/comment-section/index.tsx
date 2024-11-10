@@ -3,7 +3,7 @@ import { Switch, Textarea } from '@shtcut-ui/react';
 import Image from 'next/image';
 import EmojiPicker from 'emoji-picker-react';
 
-const CommentSection = () => {
+const CommentSection = ({ watchLink }: { watchLink: string }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [comment, setComment] = useState('');
@@ -11,7 +11,6 @@ const CommentSection = () => {
     const handleSwitchChange = (checked: boolean) => {
         setIsSwitchOn(checked);
     };
-
 
     return (
         <div>
@@ -21,7 +20,7 @@ const CommentSection = () => {
                     <p className="text-xs mt-1 text-[#4d4d4d]">Allow comments on your link</p>
                 </div>
                 <div>
-                    <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} />
+                    <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} disabled={!watchLink} />
                 </div>
             </div>
             {isSwitchOn && (

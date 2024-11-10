@@ -3,7 +3,7 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Switch } from '@shtcut-ui/react';
 import React, { useState } from 'react';
 
-const PasswordProtection = ({ form }: { form: any }) => {
+const PasswordProtection = ({ form, watchLink }: { form: any; watchLink: string }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const handleSwitchChange = (checked: boolean) => {
         setIsSwitchOn(checked);
@@ -16,10 +16,10 @@ const PasswordProtection = ({ form }: { form: any }) => {
                     <h2 className="text-sm font-medium">Password Protection</h2>
                     <p className="text-xs mt-1 text-[#4d4d4d]">Set a password for your link</p>
                 </div>
-                <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} />
+                <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} disabled={!watchLink} />
             </div>
             {isSwitchOn && (
-                <div className='mt-2'>
+                <div className="mt-2">
                     <FormField
                         control={form.control}
                         name="password"

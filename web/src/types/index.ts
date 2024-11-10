@@ -5,12 +5,12 @@ type MaybePromise<T> = T | Promise<T>;
 
 export type UrlParams = Dict<string | string[] | undefined>;
 
-export interface QrCodeType  {
+export interface QrCodeType {
     enableQrCode: boolean;
     removeLogo: boolean;
     enableBrandLogo: boolean;
 }
-export interface LinkType  {
+export interface LinkType {
     isUTMBuilder?: boolean;
     isExpirationDate?: boolean;
     isPasswordProtection?: boolean;
@@ -32,5 +32,3 @@ export type NextMiddlewareWithParams<T> = (
     res: NextResponse,
     evt: NextFetchEvent
 ) => ReturnType<NextMiddleware>;
-
-// export type PathMatcher = Path;

@@ -3,7 +3,7 @@ import { api } from '@shtcut/_shared/api/app.api';
 import { GET, POST, PUT, SHTNER } from '@shtcut/_shared/constant';
 import { linkTag } from '../tags';
 import { Dict } from '@shtcut-ui/react';
-import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
+import { LinkNameSpace, MetadataResponse } from '@shtcut/_shared/namespace/link';
 import { ApiResponse, QueryArgs } from '@shtcut/_shared/namespace';
 
 export const linkApi = api.injectEndpoints({
@@ -34,16 +34,20 @@ export const linkApi = api.injectEndpoints({
             },
             invalidatesTags: [linkTag]
         }),
-        updateLink: builder.mutation<ApiResponse<LinkNameSpace.Link>, LinkNameSpace.LinkRequest>({
-            query: ({ payload }) => {
+        updateLink: builder.mutation<
+            ApiResponse<LinkNameSpace.Link>,
+            { payload: LinkNameSpace.LinkRequest; id: string }
+        >({
+            query: ({ payload, id }) => {
                 return {
-                    url: `${SHTNER.links}/${payload?.id}`,
-                    method: PUT,
+                    url: `${SHTNER.links}/${id}`,
+                    method: 'PUT',
                     body: payload
                 };
             },
             invalidatesTags: [linkTag]
         }),
+
         deleteLink: builder.mutation<Dict, { payload: { id: string } }>({
             query: ({ payload }) => ({
                 url: `${SHTNER.links}/${payload.id}`,
@@ -54,6 +58,24 @@ export const linkApi = api.injectEndpoints({
         duplicateLink: builder.query<Dict, { payload: { id: string } }>({
             query: ({ payload }) => ({
                 url: `${SHTNER.links}/${payload.id}/duplicate`,
+                method: GET
+            }),
+            providesTags: [linkTag]
+        }),
+        fetchMetadata: builder.query<MetadataResponse, { url: string }>({
+            query: ({ url }) => ({
+                url: `${SHTNER.links}/metadata`,
+                method: GET,
+                params: {
+                    url,
+                    apiKey: SHTNER.metaKey
+                }
+            }),
+            providesTags: [linkTag]
+        }),
+        visitLink: builder.query<Dict, { domain: string; alias: string }>({
+            query: ({ domain, alias }) => ({
+                url: `${SHTNER.links}/visit/${domain}/${alias}`,
                 method: GET
             }),
             providesTags: [linkTag]
@@ -68,5 +90,7 @@ export const {
     useUpdateLinkMutation,
     useDeleteLinkMutation,
     useLazyDuplicateLinkQuery,
-    endpoints: { createLink, findAllLinks, getLink, updateLink, deleteLink, duplicateLink }
+    useLazyFetchMetadataQuery,
+    useGetLinkQuery,
+    endpoints: { createLink, findAllLinks, getLink, updateLink, deleteLink, duplicateLink, fetchMetadata, visitLink }
 } = linkApi;

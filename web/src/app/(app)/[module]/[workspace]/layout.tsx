@@ -28,8 +28,6 @@ const WorkspaceLayout = ({ children }: any) => {
     const [, setActiveTab] = useState<string | null>(null);
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
-    console.log('module', module);
-    console.log('workspace', workspace);
     const sideNav = [
         {
             id: '1',

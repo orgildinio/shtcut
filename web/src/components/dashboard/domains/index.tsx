@@ -19,7 +19,8 @@ const DomainsComponent = ({
     cnModal,
     setCnModal,
     handleTabClick,
-    selectedTabIndex
+    selectedTabIndex,
+    findAllDomainsResponse
 }: DomainsTypes) => {
     const pathName = usePathname();
 
@@ -44,10 +45,11 @@ const DomainsComponent = ({
                 </Button>
             </div>
             <div className=" mt-6 flex flex-col gap-3">
-                {dummyData.length > 0 ? (
-                    dummyData.map((id) => (
-                        <div key={id} className="">
-                            <DomainsCard handleModalCn={handleModalCn} />
+                {findAllDomainsResponse && findAllDomainsResponse?.length > 0 ? (
+                    findAllDomainsResponse &&
+                    findAllDomainsResponse.map((data) => (
+                        <div key={data?._id} className="">
+                            <DomainsCard handleModalCn={handleModalCn} domainsData={data} />
                         </div>
                     ))
                 ) : (

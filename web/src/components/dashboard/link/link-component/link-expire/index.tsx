@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 
 const LinkExpire = ({
     selectedDate,
-    handleDateChange
+    handleDateChange,
+    watchLink
 }: {
     handleDateChange?: (date: Date | undefined) => void;
     selectedDate?: Date | undefined;
+    watchLink: string;
 }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const handleSwitchChange = (checked: boolean) => {
@@ -20,7 +22,7 @@ const LinkExpire = ({
                     <h2 className="text-sm font-medium">Link Expiration</h2>
                     <p className="text-xs mt-1 text-[#4d4d4d]">Set an expiration date for your link</p>
                 </div>
-                <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} />
+                <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} disabled={!watchLink} />
             </div>
             {isSwitchOn && (
                 <div>

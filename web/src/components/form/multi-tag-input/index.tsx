@@ -8,6 +8,7 @@ interface MultiTagsInputProps {
     className?: string;
     label?: string;
     selectOptions?: string[];
+    watchLink: string;
 }
 
 const colors = [
@@ -31,7 +32,8 @@ const MultiTagsInput = ({
     placeholder = 'Type and press enter',
     className = '',
     label,
-    selectOptions
+    selectOptions,
+    watchLink
 }: MultiTagsInputProps) => {
     const [tags, setTags] = useState<{ text: string; color: string }[]>(
         initialTags.map((tag) => ({ text: tag, color: getRandomColor() }))
@@ -110,15 +112,16 @@ const MultiTagsInput = ({
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
                         placeholder={placeholder}
+                        disabled={!watchLink}
                     />
                     {selectOptions && selectOptions.length > 0 && (
                         <Select onValueChange={handleSelectChange}>
-                            <SelectTrigger className="border-none  rounded-none h-10 w-1/3">
+                            <SelectTrigger disabled={!watchLink} className="border-none  rounded-none h-10 w-1/3">
                                 {/* <SelectValue placeholder="Select a tag" /> */}
                             </SelectTrigger>
                             <SelectContent className="border-none">
                                 {selectOptions.map((option, index) => (
-                                    <SelectItem key={index} value={option}>
+                                    <SelectItem disabled={!watchLink} key={index} value={option}>
                                         {option}
                                     </SelectItem>
                                 ))}

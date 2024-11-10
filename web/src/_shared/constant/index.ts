@@ -332,7 +332,8 @@ export const ACL = {
 
 export const SHTNER = {
     links: 'shtner/links',
-    domains: 'shtner/domains'
+    domains: 'shtner/domains',
+    metaKey: 'ShtcutAppKey'
 };
 
 export const AUTH_TOKEN_KEY = process.env.NEXT_PUBLIC_STORAGE_KEY as string;

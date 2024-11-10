@@ -2,11 +2,10 @@ import { Button, Form, Modal, Separator, toast } from '@shtcut-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import LinkListedComponent from '../link-listed-component';
 import SearchFilterActions from '../search-filter-actions';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import {
     AndroidTarget,
-    CommentSection,
     CreateLinkForm,
     CustomSocialMedia,
     GeoTargeting,
@@ -21,8 +20,11 @@ import { LinkComponentType, LinkNameSpace } from '@shtcut/_shared/namespace/link
 import DeleteComponent from './delete-modal';
 import DuplicateComponent from './duplicate-modal';
 import QrCodeModal from './qrcode-modal';
+import { useUser } from '@shtcut/hooks/user';
+import { LoadingButton } from '@shtcut/components/_shared/loading-button';
+import ArchiveModal from './archive-component';
 
-type ModalType = 'deleteModal' | 'duplicateModal' | 'qrCodeModal' | null;
+type ModalType = 'deleteModal' | 'duplicateModal' | 'qrCodeModal' | 'archiveModal' | null;
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -35,38 +37,46 @@ const LinkComponent = ({
     onSearchChange,
     duplicate,
     duplicateLinkResponse,
-    findAllLinks
+    findAllLinks,
+    fetchMetaDataResponse,
+    fetchMetadata,
+    fetchMetaLoading,
+    setUrl,
+    findAllDomainsResponse,
+    createLink,
+    createLinkResponse,
+    updateLink,
+    updateLinkResponse
 }: LinkComponentType) => {
     const qrCodeRef = useRef(null);
+    const { loggedInUserData } = useUser({ callLoggedInUser: true });
+    const { data } = loggedInUserData;
+    const { data: user } = data || {};
+    const params = useParams();
+    const { workspace } = params;
     const [modalType, setModalType] = useState<ModalType>(null);
     const [showSections, setShowSections] = useState(false);
     const [singleLink, setSingleLink] = useState<LinkNameSpace.Link | null>(null);
     const [showModal, setShowModal] = useState(false);
     const pathName = usePathname();
     const route = useRouter();
-    const [, setShortLink] = useState<string>('');
+    const [domain, setDomain] = useState<string | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [inputsGeo, setInputsGeo] = useState(['']);
+    const [countriesData, setCountriesData] = useState<{ countryCode: string; url: string }[]>([]);
     const [tags, setTags] = useState<string[]>([]);
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(undefined);
+    const workspaceId = user?.workspace?.find((ws) => ws.slug === workspace)?._id;
 
     const handleDateChange = (date: Date | undefined) => {
         setSelectedDate(date);
     };
 
     const handleSelect = (value: string) => {
-        setShortLink(value);
+        setDomain(value);
     };
-    const handleInputChangeTitle = (event) => {
-        setTitle(event.target.value);
-    };
-    const handleInputChangeDesc = (event) => {
-        setDescription(event.target.value);
-    };
-    const handleNavigate = (id: string) => {
-        route.push(`${pathName}/${id}`);
+
+    const handleNavigate = (alias: string) => {
+        route.push(`${pathName}/analytics/${alias}`);
     };
     const handleDeleteLink = (id: string) => {
         setLoadingState('deleting', true);
@@ -82,7 +92,12 @@ const LinkComponent = ({
     };
 
     const toggleSection = (type?: ModalType, val?: LinkNameSpace.Link) => {
-        if ((val && type === 'deleteModal') || (val && type === 'duplicateModal') || (val && type === 'qrCodeModal')) {
+        if (
+            (val && type === 'deleteModal') ||
+            (val && type === 'duplicateModal') ||
+            (val && type === 'qrCodeModal') ||
+            (val && type === 'archiveModal')
+        ) {
             setSingleLink(val);
         }
         setModalType(type || null);
@@ -93,38 +108,172 @@ const LinkComponent = ({
         defaultValues: {
             title: '',
             description: '',
-            file1: '',
-            link: '',
+            image: '',
+            target: '',
             shortLink: '',
             roleName: '',
-            utmSource: '',
-            utmMedium: '',
             password: '',
             expirationDate: '',
-            iosURL: '',
-            androidURL: ''
+            ios: '',
+            android: '',
+            source: '',
+            medium: '',
+            campaign: '',
+            term: '',
+            content: '',
+            alias: ''
         }
     });
-    const handleSubmit = (data: any) => {
+    const { watch, setValue } = form;
+    const watchLink = watch('target');
+    const watchTitle = watch('title');
+    const watchDescription = watch('description');
+
+    useEffect(() => {
+        if (fetchMetaDataResponse?.data?.meta) {
+            const { title, description } = fetchMetaDataResponse.data.meta;
+            const { image } = fetchMetaDataResponse.data.og;
+            setValue('title', title);
+            setValue('description', description);
+            setPreview(image);
+        }
+    }, [fetchMetaDataResponse, setValue]);
+
+    useEffect(() => {
+        if (watchLink) {
+            setUrl(watchLink);
+        }
+    }, [watchLink, setUrl]);
+
+    const handleCloseModal = () => {
+        setShowSections(false);
+    };
+
+    const onSubmit = async (data: any) => {
+        setLoadingState('creating', true);
+        const geoObject = countriesData.reduce((acc, { countryCode, url }) => {
+            acc[countryCode] = url;
+            return acc;
+        }, {});
         const payload = {
-            ...data,
-            tags,
-            preview,
-            inputsGeo,
-            selectedDate
+            title: data?.title,
+            target: data?.target,
+            workspace: workspaceId,
+            domain: domain,
+            password: data?.password,
+            enableTracking: true,
+            expiryDate: selectedDate,
+            devices: {
+                android: data?.android,
+                ios: data?.ios
+            },
+            geo: geoObject,
+            utmParams: {
+                source: data?.source,
+                medium: data?.medium,
+                campaign: data?.campaign,
+                term: data?.term,
+                content: data?.content
+            }
         };
+        try {
+            await createLink({ payload });
+            form.reset();
+            setLoadingState('creating', false);
+            setShowModal(false);
+            const successMessage = createLinkResponse?.data?.meta?.message;
+            toast({
+                variant: 'default',
+                title: 'Link Created',
+                description: successMessage
+            });
+            setPreview(null);
+        } catch (err) {
+            const errorMessage = (err as any)?.data?.message || 'Failed . Please try again.';
+            setLoadingState('creating', false);
+            toast({
+                variant: 'destructive',
+                title: 'Error!',
+                description: errorMessage
+            });
+        }
+    };
+
+    const onSubmitUpdate = async (data: any) => {
+        setLoadingState('updating', true);
+        const payload = {
+            title: data?.title || singleLink?.title,
+            target: data?.target || singleLink?.title,
+            devices: {
+                android: data?.android || singleLink?.devices?.android,
+                ios: data?.ios || singleLink?.devices?.ios
+            }
+        };
+
+        console.log('payload::::', payload);
+
+        try {
+            await updateLink({ payload, id: singleLink?._id });
+            form.reset();
+            setLoadingState('updating', false);
+            setShowModal(false);
+            const successMessage = updateLinkResponse?.data?.meta?.message;
+
+            console.log('successMessage', successMessage);
+            toast({
+                variant: 'default',
+                title: 'Link Updated',
+                description: successMessage || 'links successfully updated'
+            });
+            setPreview(null);
+        } catch (err) {
+            const errorMessage = (err as any)?.data?.message || 'Failed . Please try again.';
+            setLoadingState('updating', false);
+            toast({
+                variant: 'destructive',
+                title: 'Error!',
+                description: errorMessage
+            });
+        }
+    };
+
+    const handleArchive = async () => {
+        setLoadingState('updating', true);
+        const payload = {
+            title: singleLink?.title,
+            target: singleLink?.target,
+            devices: {
+                android: singleLink?.devices?.android,
+                ios: singleLink?.devices?.ios
+            },
+            archived: true
+        };
+        try {
+            await updateLink({ payload, id: singleLink?._id });
+            form.reset();
+            setLoadingState('updating', false);
+            handleCloseModal();
+            const successMessage = updateLinkResponse?.data?.meta?.message;
+            toast({
+                variant: 'default',
+                title: 'Link Updated',
+                description: successMessage || 'links successfully Archived'
+            });
+        } catch (err) {
+            const errorMessage = (err as any)?.data?.message || 'Failed . Please try again.';
+            setLoadingState('updating', false);
+            toast({
+                variant: 'destructive',
+                title: 'Error!',
+                description: errorMessage
+            });
+        }
     };
 
     const handleDuplicateLink = async (linkId: string) => {
         setLoadingState('duplicating', true);
         duplicate({
-            payload: { id: linkId },
-            options: {
-                successMessage: 'Link duplicated successfully',
-                onSuccess: () => {
-                    findAllLinks();
-                }
-            }
+            payload: { id: linkId }
         });
     };
 
@@ -135,19 +284,60 @@ const LinkComponent = ({
         if (isSuccess) {
             setLoadingState('deleting', false);
             setShowSections(false);
+            toast({
+                variant: 'default',
+                title: 'Link Delete',
+                description: 'Link Deleted successfully'
+            });
         }
         if (duplicateIsSuccess) {
             setLoadingState('duplicating', false);
             setShowSections(false);
+            toast({
+                variant: 'default',
+                title: 'Link Duplicated',
+                description: 'Link Duplicated successfully'
+            });
         }
     }, [isSuccess, duplicateIsSuccess]);
+
+    const handleUpdateLink = (data: LinkNameSpace.Link) => {
+        setShowModal(true);
+        setSingleLink(data);
+        if (data) {
+            setValue('target', data?.target);
+            setValue('title', data?.title);
+            setDomain(data?.domain?.slug);
+            setPreview(data?.metadata?.image);
+        }
+    };
+
+    // useEffect(() => {
+    //     if (singleLink) {
+    //         setValue('target', singleLink?.target);
+    //         setDomain(singleLink?.domain?.slug);
+    //     }
+    // }, [singleLink]);
+
+    const onCloseModal = () => {
+        setShowModal(false);
+        setSingleLink(null);
+        setValue('target', '');
+        setPreview(null);
+    };
 
     return (
         <section className=" ">
             <div className="flex justify-between  items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">Link Shortener</h1>
 
-                <Button className="bg-primary-0 text-xs h-8 rounded " onClick={() => setShowModal(true)}>
+                <Button
+                    className="bg-primary-0 text-xs h-8 rounded "
+                    onClick={() => {
+                        setShowModal(true);
+                        setSingleLink(null);
+                    }}
+                >
                     Create Link
                 </Button>
             </div>
@@ -162,10 +352,12 @@ const LinkComponent = ({
                         <div key={index}>
                             <LinkListedComponent
                                 data={data}
-                                onClickNavigate={() => handleNavigate(data._id)}
+                                onClickNavigate={() => handleNavigate(data.alias)}
                                 onDeleteClick={() => toggleSection('deleteModal', data)}
                                 onDuplicateClick={() => toggleSection('duplicateModal', data)}
                                 onQrCodeClick={() => toggleSection('qrCodeModal', data)}
+                                handleUpdateLink={() => handleUpdateLink(data)}
+                                onClickAchive={() => toggleSection('archiveModal', data)}
                             />
                         </div>
                     ))}
@@ -179,11 +371,21 @@ const LinkComponent = ({
                 showModel={showModal}
                 className="h-[80%] max-w-screen-lg"
                 setShowModal={setShowModal}
-                onClose={() => setShowModal(false)}
+                onClose={onCloseModal}
                 showCloseIcon
             >
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleSubmit)} className=" h-screen">
+                    <form
+                        onSubmit={form.handleSubmit(singleLink ? onSubmitUpdate : onSubmit)}
+                        className=" h-screen relative"
+                    >
+                        {fetchMetaLoading && (
+                            <div className="absolute left-0 right-0 bg-opacity-75 bg-white flex justify-center items-center h-full z-10">
+                                <div className="relative bottom-20">
+                                    <StarLoader />
+                                </div>
+                            </div>
+                        )}
                         <div className="flex h-full">
                             <div className="  h-full w-full ">
                                 <h1 className="font-semibold px-14 py-6   border-b ">Create a new link</h1>
@@ -193,14 +395,24 @@ const LinkComponent = ({
                                             handleSelect={handleSelect}
                                             form={form}
                                             preview={preview}
-                                            title={title}
-                                            description={description}
+                                            title={watchTitle}
+                                            description={watchDescription}
                                             setTags={setTags}
                                             tags={tags}
+                                            watchLink={watchLink}
+                                            findAllDomainsResponse={findAllDomainsResponse}
+                                            singleLink={singleLink ?? undefined}
                                         />
                                     </div>
                                     <div className="px-14  border-t py-7">
-                                        <Button className="text-xs h-8 bg-primary-0 rounded w-full">Create Link</Button>
+                                        <LoadingButton
+                                            type="submit"
+                                            className="text-xs h-8 bg-primary-0 rounded w-full"
+                                            loading={isLoadingState}
+                                            disabled={!watchLink || !domain}
+                                        >
+                                            {singleLink ? 'Update Link' : '    Create Link'}
+                                        </LoadingButton>
                                     </div>
                                 </div>
                             </div>
@@ -212,16 +424,22 @@ const LinkComponent = ({
                                         preview={preview}
                                         setPreview={setPreview}
                                         form={form}
-                                        handleInputChangeTitle={handleInputChangeTitle}
-                                        handleInputChangeDesc={handleInputChangeDesc}
+                                        watchLink={watchLink}
                                     />
-                                    <UTMbuilder />
-                                    <PasswordProtection form={form} />
-                                    <LinkExpire handleDateChange={handleDateChange} selectedDate={selectedDate} />
-                                    <IosTarget />
-                                    <AndroidTarget />
-                                    <GeoTargeting setInputsGeo={setInputsGeo} inputsGeo={inputsGeo} />
-                                    <CommentSection />
+                                    <UTMbuilder watchLink={watchLink} form={form} />
+                                    <PasswordProtection form={form} watchLink={watchLink} />
+                                    <LinkExpire
+                                        handleDateChange={handleDateChange}
+                                        selectedDate={selectedDate}
+                                        watchLink={watchLink}
+                                    />
+                                    <IosTarget form={form} watchLink={watchLink} />
+                                    <AndroidTarget form={form} watchLink={watchLink} />
+                                    <GeoTargeting
+                                        setCountriesData={setCountriesData}
+                                        countriesData={countriesData}
+                                        watchLink={watchLink}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -233,18 +451,24 @@ const LinkComponent = ({
                     <DeleteComponent
                         isLoadingState={isLoadingState}
                         handleDelete={() => handleDeleteLink(singleLink._id)}
-                        handleClose={() => setShowSections(false)}
+                        handleClose={handleCloseModal}
                     />
                 )}
                 {modalType === 'duplicateModal' && singleLink && (
                     <DuplicateComponent
                         isLoadingState={isLoadingState}
-                        handleClose={() => setShowSections(false)}
+                        handleClose={handleCloseModal}
                         handleDuplicate={() => handleDuplicateLink(singleLink?._id)}
                     />
                 )}
-                {modalType === 'qrCodeModal' && singleLink && (
-                    <QrCodeModal singleLink={singleLink} qrCodeRef={qrCodeRef} />
+                {modalType === 'qrCodeModal' && singleLink && <QrCodeModal data={singleLink} qrCodeRef={qrCodeRef} />}
+                {modalType === 'archiveModal' && singleLink && (
+                    <ArchiveModal
+                        data={singleLink}
+                        handleArchive={handleArchive}
+                        isLoadingState={isLoadingState}
+                        handleClose={handleCloseModal}
+                    />
                 )}
             </Modal>
         </section>

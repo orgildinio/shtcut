@@ -1,11 +1,13 @@
 'use client';
 
 import LinkComponent from '@shtcut/components/dashboard/link/link-component';
+import { useDomain } from '@shtcut/hooks/domain';
 import { useLink } from '@shtcut/hooks/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const LinkContainer = () => {
+    const [url, setUrl] = useState('');
     const [search, setSearch] = useState('');
     const router = useRouter();
     const getParams = useSearchParams();
@@ -22,11 +24,18 @@ const LinkContainer = () => {
         handleSearchChange,
         duplicate,
         duplicateLinkResponse,
-        findAllLinks
+        findAllLinks,
+        fetchMetadata,
+        fetchMetaDataResponse,
+        fetchMetaLoading,
+        updateLink,
+        updateLinkResponse
     } = useLink({
         callLinks: true,
-        search
+        search,
+        url
     });
+    const { findAllDomainsResponse } = useDomain({ callDomain: true });
 
     const onSearchChange = (value: string) => {
         setSearch(value);
@@ -41,10 +50,14 @@ const LinkContainer = () => {
             handleSearchChange(state as string);
         }
     }, [getParams]);
+
     return (
         <LinkComponent
             findAllLinksResponse={findAllLinksResponse ?? []}
+            findAllDomainsResponse={findAllDomainsResponse ?? []}
             deleteLink={deleteLink}
+            updateLink={updateLink}
+            updateLinkResponse={updateLinkResponse}
             isLoading={isLoading}
             deleteLinkResponse={deleteLinkResponse}
             isLoadingState={isLoadingState}
@@ -56,6 +69,10 @@ const LinkContainer = () => {
             duplicate={duplicate}
             duplicateLinkResponse={duplicateLinkResponse}
             findAllLinks={findAllLinks}
+            fetchMetadata={fetchMetadata}
+            fetchMetaDataResponse={fetchMetaDataResponse}
+            fetchMetaLoading={fetchMetaLoading}
+            setUrl={setUrl}
         />
     );
 };
