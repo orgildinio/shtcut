@@ -81,7 +81,6 @@ export const useDomain = (props: UseDomainProps): UseDomainReturnsType => {
         updateDomain,
         deleteDomain,
         findAllDomains,
-
         findAllDomainsResponse,
         createDomainResponse,
         getDomainResponse,

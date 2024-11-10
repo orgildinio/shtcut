@@ -4,13 +4,14 @@ import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import QrCodeCard from './qr-code-component';
 import Image from 'next/image';
+import { LinkTypeResponse } from '@shtcut/_shared/namespace/link';
 
-const QrCodeComponent = () => {
+const QrCodeComponent = ({ findAllLinksResponse }: any) => {
     const pathName = usePathname();
     const [selectedQRCodes, setSelectedQRCodes] = useState<number[]>([]);
     const data = [1, 2, 3, 4, 5];
 
-    const handleCheckboxChange = (id: number, isChecked: boolean) => {
+    const handleCheckboxChange = (id: any, isChecked: boolean) => {
         if (isChecked) {
             setSelectedQRCodes((prevSelected) => [...prevSelected, id]);
         } else {
@@ -22,7 +23,6 @@ const QrCodeComponent = () => {
     };
     return (
         <div className="">
-            
             <div className="flex justify-between  items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">QR Codes</h1>
                 <Link href={`${pathName}/create`}>
@@ -38,10 +38,11 @@ const QrCodeComponent = () => {
                     </Button>
                 </div>
             )}
-            {data.length > 0 ? (
-                data.map((id) => (
-                    <div key={id} className="mt-[22px]">
-                        <QrCodeCard id={id} handleCheckboxChange={handleCheckboxChange} />
+            {findAllLinksResponse && findAllLinksResponse?.length > 0 ? (
+                findAllLinksResponse &&
+                findAllLinksResponse?.map((qr) => (
+                    <div key={qr._id} className="mt-[22px]">
+                        <QrCodeCard data={qr} handleCheckboxChange={handleCheckboxChange} />
                     </div>
                 ))
             ) : (

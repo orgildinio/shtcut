@@ -15,14 +15,18 @@ const LinkListedComponent = ({
     data,
     onDeleteClick,
     onDuplicateClick,
-    onQrCodeClick
+    onQrCodeClick,
+    handleUpdateLink,
+    onClickAchive
 }: {
     edit?: boolean;
     data?: LinkNameSpace.Link;
-    onClickNavigate?: (() => void) | null | undefined;
-    onDeleteClick?: (() => void) | null | undefined;
-    onDuplicateClick?: (() => void) | null | undefined;
-    onQrCodeClick?: (() => void) | null | undefined;
+    onClickNavigate?: (() => void) | undefined;
+    onDeleteClick?: (() => void) | undefined;
+    onDuplicateClick?: (() => void) | undefined;
+    onQrCodeClick?: (() => void) | undefined;
+    onClickAchive?: (() => void) | undefined;
+    handleUpdateLink?: (() => void) | undefined;
 }) => {
     const { toast } = useToast();
     const apexDomain = getApexDomain(data?.target ?? '');
@@ -98,6 +102,8 @@ const LinkListedComponent = ({
                         onDeleteClick={onDeleteClick}
                         onDuplicateClick={onDuplicateClick}
                         onQrCodeClick={onQrCodeClick}
+                        onClickAchive={onClickAchive}
+                        handleUpdateLink={handleUpdateLink}
                         onClickNavigation={() => {
                             if (!edit && onClickNavigate) {
                                 onClickNavigate();

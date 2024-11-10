@@ -11,11 +11,12 @@ import {
     useCreateLinkMutation,
     useDeleteLinkMutation,
     useLazyDuplicateLinkQuery,
+    useLazyFetchMetadataQuery,
     useLazyFindAllLinksQuery,
     useLazyGetLinkQuery,
     useUpdateLinkMutation
 } from '@shtcut/services/link';
-import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
+import { LinkNameSpace, MetadataResponse } from '@shtcut/_shared/namespace/link';
 import { selectFindAllLinkData } from '@shtcut/redux/selectors/link';
 import { debounce } from 'lodash';
 
@@ -25,30 +26,36 @@ interface UseLinkProps {
     callLinks?: boolean;
     search?: string;
     filter?: Dict;
+    url?: string;
+    all?: boolean;
 }
 
 interface UseLinkReturnsType {
     createLink: MutationTrigger<any>;
     deleteLink: MutationTrigger<any>;
     updateLink: MutationTrigger<any>;
+    fetchMetadata: Dict;
     findAllLinks: any;
     isLoading: boolean;
     handleDeleteLink: (id: string) => void;
     findAllLinksResponse: LinkNameSpace.Link[] | undefined;
+    fetchMetaDataResponse: MetadataResponse | undefined;
+    fetchMetaLoading: boolean;
     createLinkResponse: Dict;
     getLinkResponse: Dict;
     updateLinkResponse: Dict;
+    duplicateLinkResponse: Dict;
+    duplicate: any;
     deleteLinkResponse: Dict;
     pagination: Pagination;
     isLoadingState: boolean;
-    duplicate: any;
-    duplicateLinkResponse: Dict;
-    setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'fetching', value: boolean) => void;
+
+    setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'creating', value: boolean) => void;
     handleSearchChange: any;
 }
 
 export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
-    const { callLinks = false, search, filter, id } = props;
+    const { callLinks = false, search, filter, id, url, all } = props;
     const { paginate, pagination } = usePagination({ key: 'findAllLinks' });
     const [createLink, createLinkResponse] = useCreateLinkMutation();
     const [updateLink, updateLinkResponse] = useUpdateLinkMutation();
@@ -56,17 +63,19 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     const [findAllLinks, { isLoading }] = useLazyFindAllLinksQuery();
     const [duplicate, duplicateLinkResponse] = useLazyDuplicateLinkQuery();
     const [getLink, getLinkResponse] = useLazyGetLinkQuery();
-    const [debouncedSearch, setDebouncedSearch] = useState(search);
+    const [fetchMetadata, { data: fetchMetaDataResponse, isLoading: fetchMetaLoading, error }] =
+        useLazyFetchMetadataQuery();
 
+    const [debouncedSearch, setDebouncedSearch] = useState(search);
     const [loading, setLoading] = useState({
         duplicating: false,
         updating: false,
         deleting: false,
         finding: false,
-        fetching: false
+        creating: false
     });
+    const [loaded, setLoaded] = useState(false); // Track initial load to prevent multiple calls
 
-    // Unified loading state
     const isLoadingState = Object.values(loading).some((state) => state);
     const setLoadingState = (key: keyof typeof loading, value: boolean) => {
         setLoading((prev) => ({ ...prev, [key]: value }));
@@ -80,6 +89,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
             { path: 'qrCode' }
         ]),
         search: debouncedSearch,
+        all,
         ...filter
     };
 
@@ -87,11 +97,13 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     const handleSearchChange = debounce((newSearch) => {
         setDebouncedSearch(newSearch);
     }, 500);
+
     useEffect(() => {
-        if (callLinks) {
+        if (callLinks && !loaded) {
             findAllLinks({
                 ...params
             });
+            setLoaded(true); // Set loaded to true after the first call
         }
     }, [callLinks, debouncedSearch, filter]);
 
@@ -103,6 +115,15 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
             });
         }
     }, [id]);
+
+    useEffect(() => {
+        if (url) {
+            fetchMetadata({
+                url
+            });
+        }
+    }, [url]);
+
     const handleDeleteLink = (id: string) => {
         deleteLink({ payload: { id } });
     };
@@ -124,6 +145,9 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         handleDeleteLink,
         isLoadingState,
         setLoadingState,
-        handleSearchChange
+        handleSearchChange,
+        fetchMetadata,
+        fetchMetaDataResponse,
+        fetchMetaLoading
     };
 };

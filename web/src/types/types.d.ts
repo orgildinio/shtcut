@@ -1,4 +1,5 @@
 import { Dict } from '@shtcut-ui/react';
+import { DomainNameSpace } from '@shtcut/_shared/namespace/domain';
 
 interface Props {
     color?: string;
@@ -152,6 +153,7 @@ export interface DomainsTypes {
     selectedTabIndex: number;
     setSelectedTabIndex: Dispatch<SetStateAction<number>>;
     handleTabClick: (tab: number) => void;
+    findAllDomainsResponse: DomainNameSpace.Domain[];
 }
 export interface CountryType {
     code: string;
@@ -193,3 +195,4 @@ interface SocialMedia {
     name: string;
     isActive: boolean;
 }
+export type GeoTarget = { region: string; url: string };

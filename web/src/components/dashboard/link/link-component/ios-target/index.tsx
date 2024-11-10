@@ -1,7 +1,7 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Switch } from '@shtcut-ui/react';
 import React, { useState } from 'react';
 
-const IosTarget = (form: any) => {
+const IosTarget = ({ form, watchLink }: { form: any; watchLink: string }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const handleSwitchChange = (checked: boolean) => {
         setIsSwitchOn(checked);
@@ -13,13 +13,13 @@ const IosTarget = (form: any) => {
                     <h2 className="text-sm font-medium">iOS Targeting</h2>
                     <p className="text-xs mt-1 text-[#4d4d4d]">Target iOS users only</p>
                 </div>
-                <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} />
+                <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} disabled={!watchLink} />
             </div>
             {isSwitchOn && (
                 <div className="mt-2">
                     <FormField
                         control={form.control}
-                        name="iosURL"
+                        name="ios"
                         render={({ field }) => (
                             <FormItem className="border-none w-full">
                                 <FormLabel className="text-xs">URL</FormLabel>

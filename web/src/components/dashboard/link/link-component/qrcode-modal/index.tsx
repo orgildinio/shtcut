@@ -7,8 +7,8 @@ import Image from 'next/image';
 import React from 'react';
 import { CiImageOff } from 'react-icons/ci';
 import { QRCode } from 'react-qrcode-logo';
-const QrCodeModal = ({ singleLink, qrCodeRef }: { singleLink: LinkNameSpace.Link; qrCodeRef: any }) => {
-    const apexDomain = getApexDomain(singleLink?.target);
+const QrCodeModal = ({ data, qrCodeRef }: { data: LinkNameSpace.Link; qrCodeRef: any }) => {
+    const apexDomain = getApexDomain(data?.target);
 
     return (
         <div>
@@ -31,8 +31,8 @@ const QrCodeModal = ({ singleLink, qrCodeRef }: { singleLink: LinkNameSpace.Link
                 <h1 className="font-semibold">Download QR Code</h1>
                 <div className="border p-2  rounded-md border-[##E3E3E3]" ref={qrCodeRef}>
                     <QRCode
-                        id={singleLink?._id}
-                        value={`https://${singleLink?.domain?.slug}/${singleLink?.alias}`}
+                        id={data?._id}
+                        value={`https://${data?.domain?.slug}/${data?.alias}`}
                         size={90}
                         qrStyle={'squares'}
                     />

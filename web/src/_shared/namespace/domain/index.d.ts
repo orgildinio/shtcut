@@ -8,6 +8,7 @@ export namespace DomainNameSpace {
             code: string;
             dnsType: string;
             verified: boolean;
+            reason: string;
         };
         user: string | UserNamespace.LoggedInUser;
         workspace: string | WorkspaceNameSpace.Workspace;
@@ -18,6 +19,8 @@ export namespace DomainNameSpace {
         isDefault: boolean;
         type: string;
         banned: boolean;
+
+        verified: boolean;
     }
 
     export interface DomainRequest extends ApiRequest {

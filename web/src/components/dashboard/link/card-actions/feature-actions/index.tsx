@@ -13,12 +13,16 @@ const FeatureActions = ({
     onClickNavigation,
     onDeleteClick,
     onDuplicateClick,
-    onQrCodeClick
+    onQrCodeClick,
+    onClickAchive,
+    handleUpdateLink
 }: {
     onClickNavigation: () => void;
-    onDeleteClick: (() => void) | null | undefined;
-    onDuplicateClick: (() => void) | null | undefined;
-    onQrCodeClick: (() => void) | null | undefined;
+    onDeleteClick: (() => void) | undefined;
+    onDuplicateClick: (() => void) | undefined;
+    onQrCodeClick: (() => void) | undefined;
+    onClickAchive: (() => void) | undefined;
+    handleUpdateLink: (() => void) | undefined;
 }) => {
     return (
         <DropdownMenu>
@@ -28,7 +32,10 @@ const FeatureActions = ({
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-36 right-6 relative cursor-pointer">
-                <DropdownMenuCheckboxItem className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2 cursor-pointer">
+                <DropdownMenuCheckboxItem
+                    className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2 cursor-pointer"
+                    onClick={handleUpdateLink}
+                >
                     <PencilLine size={16} /> Edit Link
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
@@ -49,7 +56,10 @@ const FeatureActions = ({
                 >
                     <PiFolders size={16} /> Duplicate
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2 cursor-pointer">
+                <DropdownMenuCheckboxItem
+                    className="p-2 flex text-xs items-center gap-x-2 cursor-pointer"
+                    onClick={onClickAchive}
+                >
                     <Archive size={16} /> Archive
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2 cursor-pointer">

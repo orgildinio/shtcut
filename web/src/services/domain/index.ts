@@ -11,7 +11,7 @@ export const domainApi = api.injectEndpoints({
         findAllDomains: builder.query<ApiResponse<DomainNameSpace.Domain[]>, QueryArgs>({
             query: (params: QueryArgs) =>
                 ({
-                    url: SHTNER.domains,
+                    url: `${SHTNER.domains}`,
                     params
                 }) as unknown as FetchArgs,
             providesTags: [domainTag]
@@ -44,7 +44,7 @@ export const domainApi = api.injectEndpoints({
             },
             invalidatesTags: [domainTag]
         }),
-        deleteDomain: builder.mutation<Dict,  DomainNameSpace.DomainRequest>({
+        deleteDomain: builder.mutation<Dict, DomainNameSpace.DomainRequest>({
             query: ({ payload }) => {
                 return {
                     url: `${SHTNER.domains}/${payload?.id}`,

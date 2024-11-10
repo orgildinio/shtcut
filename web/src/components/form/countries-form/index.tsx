@@ -1,13 +1,12 @@
-/** @format */
-
 import { Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shtcut-ui/react';
 import { countries } from '@shtcut/_shared/data/countries';
 import { CountryType } from '@shtcut/types/types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 interface CountriesInputProps {
-    value: string;
-    onChange: (value: string) => void;
+    countryCode: string;
+    url: string;
+    onChange: (data: { countryCode: string; url: string }) => void;
     includePlusPrefix?: boolean;
     classNames?: string;
     showDivider?: boolean;
@@ -19,7 +18,8 @@ interface CountriesInputProps {
 }
 
 const CountriesInput: React.FC<CountriesInputProps> = ({
-    value,
+    countryCode,
+    url,
     onChange,
     includePlusPrefix = false,
     classNames,
@@ -29,49 +29,35 @@ const CountriesInput: React.FC<CountriesInputProps> = ({
     inputClassName,
     selectClassName
 }) => {
-    const [selectedCountry, setSelectedCountry] = useState<CountryType>(
-        countries.find((country) => country.code === 'NG') || countries[0]
-    );
-    const [phoneNumber, setPhoneNumber] = useState('');
-
-    useEffect(() => {
-        const formattedPhoneNumber = `${includePlusPrefix ? '+' : ''}${selectedCountry.phone}${phoneNumber}`;
-        onChange(formattedPhoneNumber);
-    }, [selectedCountry, phoneNumber, onChange, includePlusPrefix]);
-
     const handleCountryChange = (value: string) => {
-        const country = countries.find((c) => c.code === value);
-        if (country) {
-            setSelectedCountry(country);
-        }
+        onChange({ countryCode: value, url });
     };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const phone = event.target.value.replace(/\D/g, '');
-        setPhoneNumber(phone);
+        const url = event.target.value;
+
+        onChange({ countryCode, url });
     };
 
     return (
         <div className={`flex border w-full rounded-full items-center h-10 ${classNames}`}>
-            <Select value={selectedCountry.code} onValueChange={handleCountryChange}>
+            <Select value={countryCode} onValueChange={handleCountryChange}>
                 <SelectTrigger
-                    className={` ${includePlusPrefix ? 'w-40' : !showFlag ? 'w-20' : 'w-[130px]'}  ${
-                        selectClassName ? selectClassName : 'border-none  rounded-l-full border-r-2'
-                    }    `}
+                    className={`${includePlusPrefix ? 'w-40' : !showFlag ? 'w-20' : 'w-[130px]'} ${selectClassName || 'border-none rounded-l-full border-r-2'}`}
                 >
                     <SelectValue>
-                        <div className="flex items-center ">
+                        <div className="flex items-center">
                             {showFlag && (
                                 <img
                                     loading="lazy"
                                     width="24"
-                                    srcSet={`https://flagcdn.com/w40/${selectedCountry.code.toLowerCase()}.png 2x`}
-                                    src={`https://flagcdn.com/w20/${selectedCountry.code.toLowerCase()}.png`}
-                                    alt={selectedCountry.label}
+                                    srcSet={`https://flagcdn.com/w40/${countryCode.toLowerCase()}.png 2x`}
+                                    src={`https://flagcdn.com/w20/${countryCode.toLowerCase()}.png`}
+                                    alt={countryCode}
                                     className="mr-2"
                                 />
                             )}
-                            <span className="flex items-center">{selectedCountry.code}</span>
+                            <span className="flex items-center">{countryCode}</span>
                         </div>
                     </SelectValue>
                 </SelectTrigger>
@@ -93,12 +79,13 @@ const CountriesInput: React.FC<CountriesInputProps> = ({
                     ))}
                 </SelectContent>
             </Select>
+
             <Input
-                type="tel"
-                value={value.replace(`${includePlusPrefix ? '+' : ''}${selectedCountry.phone}`, '')}
+                type="url"
+                value={url}
                 onChange={handleInputChange}
                 placeholder="URL"
-                className={`border-0 ${showDivider ? 'border-l rounded-l-none' : ''} px-2 h-10 ${inputClassName} `}
+                className={`border-0 ${showDivider ? 'border-l rounded-l-none' : ''} px-2 h-10 ${inputClassName}`}
                 required={required}
             />
         </div>

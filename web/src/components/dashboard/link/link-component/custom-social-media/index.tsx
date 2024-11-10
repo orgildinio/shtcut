@@ -8,14 +8,12 @@ const CustomSocialMedia = ({
     form,
     setPreview,
     preview,
-    handleInputChangeTitle,
-    handleInputChangeDesc
+    watchLink
 }: {
     form: any;
     setPreview: (value: string | null) => void;
     preview: string | null;
-    handleInputChangeTitle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleInputChangeDesc: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    watchLink: string;
 }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const handleSwitchChange = (checked: boolean) => {
@@ -41,7 +39,7 @@ const CustomSocialMedia = ({
                     <h2 className="text-sm font-medium">Custom Social Media Cards</h2>
                     <p className="text-xs mt-1 text-[#4d4d4d]">Customize appearance when shared on social media</p>
                 </div>
-                <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} />
+                <Switch checked={isSwitchOn} onCheckedChange={handleSwitchChange} disabled={!watchLink} />
             </div>
 
             {isSwitchOn && (
@@ -57,6 +55,8 @@ const CustomSocialMedia = ({
                                         className="mt-4 object-cover w-full h-40  rounded-md"
                                         height={0}
                                         width={0}
+                                        unoptimized
+                                        priority
                                     />
                                     <div
                                         onClick={handleEmptyImage}
@@ -70,7 +70,7 @@ const CustomSocialMedia = ({
                             <>
                                 <FormField
                                     control={form.control}
-                                    name="file1"
+                                    name="image"
                                     render={({ field: { ...fieldProps } }) => (
                                         <FormItem className="flex flex-col items-center justify-center">
                                             <FormLabel className="flex cursor-pointer  items-center gap-1 rounded-lg flex-col justify-center w-full  h-24  border ">
@@ -113,7 +113,7 @@ const CustomSocialMedia = ({
                                             placeholder="Shtcut- Open source link management"
                                             className="h-10"
                                             {...field}
-                                            onChange={handleInputChangeTitle}
+                                            // onChange={handleInputChangeTitle}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -134,7 +134,7 @@ const CustomSocialMedia = ({
                                             placeholder="Shtcut- Open source link management"
                                             className="h-10"
                                             {...field}
-                                            onChange={handleInputChangeDesc}
+                                            // onChange={handleInputChangeDesc}
                                         />
                                     </FormControl>
                                     <FormMessage />

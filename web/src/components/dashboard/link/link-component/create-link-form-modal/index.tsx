@@ -17,6 +17,8 @@ import React from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import MultiTagsInput from '@shtcut/components/form/multi-tag-input';
+import { DomainNameSpace } from '@shtcut/_shared/namespace/domain';
+import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 
 const CreateLinkForm = ({
     form,
@@ -25,7 +27,10 @@ const CreateLinkForm = ({
     title,
     description,
     tags,
-    setTags
+    setTags,
+    watchLink,
+    findAllDomainsResponse,
+    singleLink
 }: {
     form: any;
     handleSelect: (val: string) => void;
@@ -34,6 +39,9 @@ const CreateLinkForm = ({
     description: string;
     tags: string[];
     setTags: React.Dispatch<React.SetStateAction<string[]>>;
+    watchLink: string;
+    findAllDomainsResponse: DomainNameSpace.Domain[];
+    singleLink: LinkNameSpace.Link | undefined;
 }) => {
     const handleTagsChange = (newTags: string[]) => {
         setTags(newTags);
@@ -46,12 +54,12 @@ const CreateLinkForm = ({
             <div className="flex flex-col px-14 gap-4">
                 <FormField
                     control={form.control}
-                    name="link"
+                    name="target"
                     render={({ field }) => (
                         <FormItem className="w-full">
                             <Label className="text-sm">Original Link</Label>
                             <FormControl>
-                                <Input placeholder="https://" className="h-10" {...field} />
+                                <Input placeholder="https://" className="h-10" {...field} type="url" required />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -62,23 +70,30 @@ const CreateLinkForm = ({
                     <div className="flex items-center mt-2 rounded-md border h-10">
                         <Select onValueChange={handleSelect}>
                             <SelectTrigger
+                                disabled={!watchLink}
                                 id="select-short-link"
                                 className=" text-sm text-[#2B3034]  shadow-none  border-none  w-1/3 "
                             >
-                                <SelectValue placeholder="short link" />
+                                {singleLink ? <p>{singleLink?.domain?.slug}</p> : <SelectValue placeholder="domain" />}
                             </SelectTrigger>
                             <SelectContent>
-                                {[1, 2, 3, 4, 5].map((links) => (
-                                    <SelectItem key={links} value={''} className="text-sm text-[#2B3034]">
-                                        Shtcut.sh
-                                    </SelectItem>
-                                ))}
+                                {findAllDomainsResponse &&
+                                    findAllDomainsResponse?.map((domain) => (
+                                        <SelectItem
+                                            key={domain?._id}
+                                            value={domain?._id}
+                                            disabled={!watchLink || Boolean(singleLink)}
+                                            className="text-sm text-[#2B3034]"
+                                        >
+                                            {domain?.slug}
+                                        </SelectItem>
+                                    ))}
                             </SelectContent>
                         </Select>
                         <Separator orientation="vertical" />
                         <FormField
                             control={form.control}
-                            name="shortLink"
+                            name="alias"
                             render={({ field }) => (
                                 <FormItem className=" border-none   w-full">
                                     <FormControl>
@@ -86,6 +101,7 @@ const CreateLinkForm = ({
                                             placeholder="link "
                                             className="h-10 border-none focus-visible:ring-0  shadow-none  w-full"
                                             {...field}
+                                            disabled={!watchLink || Boolean(singleLink)}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -103,6 +119,7 @@ const CreateLinkForm = ({
                         className=""
                         label="Select Tag"
                         selectOptions={predefinedTags}
+                        watchLink={watchLink}
                     />
                     {/* <div className="mt-4">
                         {tags.length > 0 ? (
@@ -127,9 +144,11 @@ const CreateLinkForm = ({
                                 className=" w-full  rounded-t-md h-40 object-cover"
                                 height={0}
                                 width={0}
+                                unoptimized
+                                priority
                             />
                             <div className="p-4 bg-gray-50">
-                                <h1 className=" font-semibold">{title}</h1>
+                                <h1 className=" font-semibold text-black">{title} </h1>
                                 <p className="text-xs text-[#726C6C] w-96 mt-2">{description}</p>
                             </div>
                         </div>
