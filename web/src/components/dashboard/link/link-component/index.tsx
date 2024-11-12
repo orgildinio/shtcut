@@ -23,8 +23,8 @@ import QrCodeModal from './qrcode-modal';
 import { useUser } from '@shtcut/hooks/user';
 import { LoadingButton } from '@shtcut/components/_shared/loading-button';
 import ArchiveModal from './archive-component';
-
-type ModalType = 'deleteModal' | 'duplicateModal' | 'qrCodeModal' | 'archiveModal' | null;
+import LinkDataComponent from './link-data';
+import { ModalType } from '@shtcut/types/types';
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -329,7 +329,7 @@ const LinkComponent = ({
     return (
         <section className=" ">
             <div className="flex justify-between  items-center">
-                <h1 className="font-semibold text-[#2B2829] text-xl">Link Shortener</h1>
+                <h1 className="font-semibold text-[#2B2829] text-xl">Link </h1>
 
                 <Button
                     className="bg-primary-0 text-xs h-8 rounded "
@@ -341,32 +341,17 @@ const LinkComponent = ({
                     Create Link
                 </Button>
             </div>
-            <SearchFilterActions search={search} onSearchChange={onSearchChange} />
-            {isLoading ? (
-                <div className="flex flex-1 h-[70vh] justify-center items-center">
-                    <StarLoader />
-                </div>
-            ) : findAllLinksResponse && findAllLinksResponse.length > 0 ? (
-                <div className="flex flex-col gap-y-[14px] mt-8">
-                    {findAllLinksResponse.map((data, index) => (
-                        <div key={index}>
-                            <LinkListedComponent
-                                data={data}
-                                onClickNavigate={() => handleNavigate(data.alias)}
-                                onDeleteClick={() => toggleSection('deleteModal', data)}
-                                onDuplicateClick={() => toggleSection('duplicateModal', data)}
-                                onQrCodeClick={() => toggleSection('qrCodeModal', data)}
-                                handleUpdateLink={() => handleUpdateLink(data)}
-                                onClickAchive={() => toggleSection('archiveModal', data)}
-                            />
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="flex h-[60vh] justify-center items-center text-gray-500">
-                    No data available for {search}
-                </div>
-            )}
+            <section>
+                <SearchFilterActions search={search} onSearchChange={onSearchChange} />
+            </section>
+            <LinkDataComponent
+                isLoading={isLoading}
+                findAllLinksResponse={findAllLinksResponse}
+                handleNavigate={handleNavigate}
+                toggleSection={toggleSection}
+                handleUpdateLink={handleUpdateLink}
+                search={search}
+            />
             <Modal
                 showModel={showModal}
                 className="h-[80%] max-w-screen-lg"
@@ -388,7 +373,9 @@ const LinkComponent = ({
                         )}
                         <div className="flex h-full">
                             <div className="  h-full w-full ">
-                                <h1 className="font-semibold px-14 py-6   border-b ">Create a new link</h1>
+                                <h1 className="font-semibold px-14 py-6   border-b ">
+                                    {singleLink ? 'Edit Link' : 'Create a new link'}
+                                </h1>
                                 <div className=" w-full  h-full ">
                                     <div className=" overflow-y-auto h-[60%]">
                                         <CreateLinkForm
