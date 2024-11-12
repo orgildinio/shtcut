@@ -196,3 +196,4 @@ interface SocialMedia {
     isActive: boolean;
 }
 export type GeoTarget = { region: string; url: string };
+export type ModalType = 'deleteModal' | 'duplicateModal' | 'qrCodeModal' | 'archiveModal' | null;
