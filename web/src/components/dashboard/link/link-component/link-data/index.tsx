@@ -39,6 +39,7 @@ const LinkDataComponent = ({
                                 onQrCodeClick={() => toggleSection('qrCodeModal', data)}
                                 handleUpdateLink={() => handleUpdateLink(data)}
                                 onClickAchive={() => toggleSection('archiveModal', data)}
+                                onClickShare={() => toggleSection('shareModal', data)}
                             />
                         </div>
                     ))}

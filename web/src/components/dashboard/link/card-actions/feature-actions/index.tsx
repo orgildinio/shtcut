@@ -15,6 +15,7 @@ const FeatureActions = ({
     onDuplicateClick,
     onQrCodeClick,
     onClickAchive,
+    onClickShare,
     handleUpdateLink
 }: {
     onClickNavigation: () => void;
@@ -22,6 +23,7 @@ const FeatureActions = ({
     onDuplicateClick: (() => void) | undefined;
     onQrCodeClick: (() => void) | undefined;
     onClickAchive: (() => void) | undefined;
+    onClickShare: (() => void) | undefined;
     handleUpdateLink: (() => void) | undefined;
 }) => {
     return (
@@ -62,7 +64,10 @@ const FeatureActions = ({
                 >
                     <Archive size={16} /> Archive
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2 cursor-pointer">
+                <DropdownMenuCheckboxItem
+                    className="p-2 flex text-xs items-center gap-x-2 cursor-pointer"
+                    onClick={onClickShare}
+                >
                     <FiShare2 size={16} /> Share
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem

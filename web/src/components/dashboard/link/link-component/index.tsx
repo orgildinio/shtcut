@@ -25,6 +25,7 @@ import { LoadingButton } from '@shtcut/components/_shared/loading-button';
 import ArchiveModal from './archive-component';
 import LinkDataComponent from './link-data';
 import { ModalType } from '@shtcut/types/types';
+import ShareLinkModal from './share-link-modal';
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -96,7 +97,8 @@ const LinkComponent = ({
             (val && type === 'deleteModal') ||
             (val && type === 'duplicateModal') ||
             (val && type === 'qrCodeModal') ||
-            (val && type === 'archiveModal')
+            (val && type === 'archiveModal') ||
+            (val && type === 'shareModal')
         ) {
             setSingleLink(val);
         }
@@ -457,6 +459,7 @@ const LinkComponent = ({
                         handleClose={handleCloseModal}
                     />
                 )}
+                {modalType === 'shareModal' && singleLink && <ShareLinkModal data={singleLink} />}
             </Modal>
         </section>
     );

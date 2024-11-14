@@ -1,5 +1,5 @@
 export * from './auth';
-export * from './link';
+export * from './url-shorten-er/link';
 export * from './landing';
 export * from './waitlist';
 export * from './url-shorten-er';
@@ -10,4 +10,3 @@ export * from './analytics';
 export * from './settings';
 
 export * from './social-container';
-

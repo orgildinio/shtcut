@@ -17,7 +17,8 @@ const LinkListedComponent = ({
     onDuplicateClick,
     onQrCodeClick,
     handleUpdateLink,
-    onClickAchive
+    onClickAchive,
+    onClickShare
 }: {
     edit?: boolean;
     data?: LinkNameSpace.Link;
@@ -26,6 +27,7 @@ const LinkListedComponent = ({
     onDuplicateClick?: (() => void) | undefined;
     onQrCodeClick?: (() => void) | undefined;
     onClickAchive?: (() => void) | undefined;
+    onClickShare?: (() => void) | undefined;
     handleUpdateLink?: (() => void) | undefined;
 }) => {
     const { toast } = useToast();
@@ -102,6 +104,7 @@ const LinkListedComponent = ({
                         onDeleteClick={onDeleteClick}
                         onDuplicateClick={onDuplicateClick}
                         onQrCodeClick={onQrCodeClick}
+                        onClickShare={onClickShare}
                         onClickAchive={onClickAchive}
                         handleUpdateLink={handleUpdateLink}
                         onClickNavigation={() => {
