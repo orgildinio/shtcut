@@ -127,7 +127,10 @@ export default function SideBar({ isOpen, isTab, setIsOpen, workSpaceTitle }: Pr
 
                 <ul className={`flex flex-col  ${isOpen ? '' : ''} mt-[14px] gap-1 w-full `}>
                     {navigationOptions?.map((data) => (
-                        <li key={data.id} className="w-full">
+                        <li
+                            key={data.id}
+                            className={`w-full ${data.id === '5' ? 'border-b pb-[14px]' : data.id === '6' ? 'mt-2' : ''} `}
+                        >
                             <Link href={data.href}>
                                 <div
                                     className={`flex hover:bg-[#E8EFFF] hover:text-primary-0 items-center  h-[34px] rounded hover:text-primary ${

@@ -13,6 +13,7 @@ const CardsActions = ({
     handleCopy,
     onQrCodeClick,
     onClickAchive,
+    onClickShare,
     handleUpdateLink
 }: {
     edit: boolean | undefined;
@@ -22,6 +23,7 @@ const CardsActions = ({
     onDuplicateClick: (() => void) | undefined;
     onQrCodeClick: (() => void) | undefined;
     onClickAchive: (() => void) | undefined;
+    onClickShare: (() => void) | undefined;
     handleCopy: () => void;
     handleUpdateLink?: () => void;
 }) => {
@@ -67,6 +69,7 @@ const CardsActions = ({
                     onDeleteClick={onDeleteClick}
                     onDuplicateClick={onDuplicateClick}
                     onQrCodeClick={onQrCodeClick}
+                    onClickShare={onClickShare}
                     onClickAchive={onClickAchive}
                     handleUpdateLink={handleUpdateLink}
                 />

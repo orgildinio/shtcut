@@ -283,3 +283,14 @@ textarea {
 #fc-dom-86 {
     font-size: 14px;
 }
+
+.custom-link {
+    text-decoration: none;
+    position: relative;
+}
+
+.custom-link:hover::after {
+    content: '';
+    display: block;
+    font-size: 0;
+}
