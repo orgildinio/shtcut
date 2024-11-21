@@ -10,6 +10,7 @@ import HeaderSideNav from './header-sidenav';
 import { Button, Label, Modal, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@shtcut-ui/react';
 import { Plus } from 'lucide-react';
 import CreateWorkSpace from '@shtcut/containers/work-space/work-space-modal';
+import UrlShortenerActionsFeatures from './url-shortner-btn';
 
 type Props = {
     setIsOpen: (val: boolean) => void;
@@ -103,7 +104,7 @@ export default function SideBar({ isOpen, isTab, setIsOpen, workSpaceTitle }: Pr
                                         </p>
                                     </Link>
                                 ) : (
-                                    <Button className="bg-primary-0 text-xs rounded h-8">Create New</Button>
+                                    <UrlShortenerActionsFeatures />
                                 )}
                             </div>
                         ) : (

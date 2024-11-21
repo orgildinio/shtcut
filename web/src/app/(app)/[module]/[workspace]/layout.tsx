@@ -14,6 +14,16 @@ import { IoIosLink } from 'react-icons/io';
 import { RiSurveyFill } from 'react-icons/ri';
 import { ChevronRight } from 'lucide-react';
 import NavTabs from '@shtcut/components/ui/nav-bar';
+import { useWorkspace } from '@shtcut/hooks';
+
+type SideNavItem = {
+    id: string;
+    icon?: JSX.Element;
+    img?: string;
+    workspace: string;
+    url: string;
+    title: string;
+};
 
 const WorkspaceLayout = ({ children }: any) => {
     const params = useParams();
@@ -25,41 +35,55 @@ const WorkspaceLayout = ({ children }: any) => {
     const navigationOptions = sideLinks(module as string, workspace as string);
     const [, setActiveId] = useState<string | null>('1');
     const router = useRouter();
-    const [, setActiveTab] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<string | null>(null);
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+    const { findAllWorkspacesResponse } = useWorkspace({ callWorkspaces: true });
+    const workSpaceNav = findAllWorkspacesResponse?.find((ws) => ws.slug === workspace);
+    const workspaceString = Array.isArray(workspace) ? workspace.join('') : workspace;
 
-    const sideNav = [
-        {
+    console.log('workSpaceNav', workSpaceNav);
+    console.log('workspaceString', workspaceString);
+    console.log('workspace::::', workspace);
+
+    const sideNav: SideNavItem[] = [];
+    if (workSpaceNav?.modules.includes('shtcut-shortener')) {
+        sideNav.push({
             id: '1',
             icon: <IoIosLink size={20} />,
-            workspace: 'url-shortener',
-            url: '/url/url-shortener/overview',
+            workspace: workspaceString,
+            url: `/url/${workspace}/overview`,
             title: 'Url Shortener'
-        },
-        {
-            id: '4',
-            img: params?.workspace === 'social-media' ? '/images/social-icon.png' : '/images/social.png',
-            workspace: 'social-media',
-            url: '/social/social-media/dashboard',
-            title: 'Social Media'
-        },
-
-        {
-            id: '2',
-            icon: <RiSurveyFill size={20} />,
-            workspace: 'survey-creation',
-            url: '/survey/survey-creation/overview',
-            title: 'Survey Creation'
-        },
-        {
+        });
+    }
+    if (workSpaceNav?.modules.includes('shtcut-marketing')) {
+        sideNav.push({
             id: '3',
             icon: <MdEmail size={20} />,
-            workspace: 'email-marketing',
-            url: '/email/email-marketing/overview',
+            workspace: workspaceString,
+            url: `/email/${workspace}/overview`,
             title: 'Email Marketing'
-        }
-    ];
+        });
+    }
+    if (workSpaceNav?.modules.includes('shtcut-survey')) {
+        sideNav.push({
+            id: '2',
+            icon: <RiSurveyFill size={20} />,
+            workspace: workspaceString,
+            url: `/survey/${workspace}/overview`,
+            title: 'Survey Creation'
+        });
+    }
+    if (workSpaceNav?.modules.includes('shtcut-social-media')) {
+        sideNav.push({
+            id: '4',
+            img: params?.workspace === 'social-media' ? '/images/social-icon.png' : '/images/social.png',
+            workspace: workspaceString,
+            url: `/social/${workspace}/dashboard`,
+            title: 'Social Media'
+        });
+    }
     const currentNav = sideNav.find((nav) => nav.workspace === workspace);
+
     const title = currentNav ? currentNav.title : '';
     const handleNavigation = (url: string, id: string) => {
         setActiveId(id);
@@ -74,6 +98,7 @@ const WorkspaceLayout = ({ children }: any) => {
     const handleTabChange = (index: number) => {
         setSelectedTabIndex(index);
     };
+
     return (
         <div className=" w-full h-screen flex">
             <div className="bg-white w-12  z-50 h-full fixed">
@@ -87,7 +112,7 @@ const WorkspaceLayout = ({ children }: any) => {
                                 <TooltipTrigger>
                                     <div
                                         className={`p-2 rounded-md cursor-pointer ${
-                                            params?.workspace === navs.workspace
+                                            workspace === workspaceString
                                                 ? 'bg-[#E5EDFD] text-primary-0'
                                                 : 'bg-transparent'
                                         }`}

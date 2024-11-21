@@ -620,3 +620,13 @@ export const formatDate = (dateInput: string | Date): string => {
 
     return formatter.format(date);
 };
+
+export function getInitials(fullName: string) {
+    if (!fullName) return '';
+
+    const names = fullName.trim().split(' ');
+    const firstLetter = names[0]?.charAt(0).toUpperCase() || '';
+    const lastLetter = names[names.length - 1]?.charAt(0).toUpperCase() || '';
+
+    return `${firstLetter}${lastLetter}`;
+}

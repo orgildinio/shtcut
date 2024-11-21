@@ -68,13 +68,11 @@ export const useWorkspace = (props: UseWorkspaceProps): UseWorkspaceReturnsType 
         createWorkspace,
         updateWorkspace,
         deleteWorkspace,
-
         createWorkspaceResponse,
         updateWorkspaceResponse,
         searchOneWorkspaceResponse,
         deleteWorkspaceResponse,
         findAllWorkspacesResponse,
-
         pagination
     };
 };

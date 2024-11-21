@@ -190,3 +190,7 @@ interface QrCodeHeaderTypes {
     selectedImage: string | null;
     handleImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
+export interface ContactActions {
+    name: string;
+    icon: any;
+}

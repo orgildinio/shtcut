@@ -7,7 +7,7 @@ const ImageSkeleton = () => {
         <div>
             <div
                 role="status"
-                className="flex items-center justify-center w-36 h-36  bg-gray-300 rounded-full animate-pulse dark:bg-gray-400"
+                className="flex items-center justify-center w-36 h-36  bg-gray-300 rounded-full  dark:bg-gray-400"
             >
                 <svg
                     className="w-6 h-6 text-gray-200 dark:text-gray-600"

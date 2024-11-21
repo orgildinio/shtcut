@@ -14,6 +14,7 @@ export namespace WorkspaceNameSpace {
         domains: string[];
         subscriptions: string[];
         logo: string;
+        members: string[];
     }
 
     export interface WorkspaceRequest extends ApiRequest {
