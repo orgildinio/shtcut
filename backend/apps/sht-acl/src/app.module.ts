@@ -13,7 +13,7 @@ import { SubscriptionModule } from './subscription';
 import { SecurityModule } from './security/security.module';
 import { PlanModule } from './plan';
 import { InvitationModule } from './invitation';
-import { TagModule } from '../../sht-shtner/src/tags';
+import { TagModule } from './tags';
 
 @Module({
   imports: [
