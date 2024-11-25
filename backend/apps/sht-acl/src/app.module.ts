@@ -13,7 +13,7 @@ import { SubscriptionModule } from './subscription';
 import { SecurityModule } from './security/security.module';
 import { PlanModule } from './plan';
 import { InvitationModule } from './invitation';
-
+import { TagModule } from '../../sht-shtner/src/tags';
 
 @Module({
   imports: [
@@ -26,6 +26,7 @@ import { InvitationModule } from './invitation';
     WorkspaceModule,
     PlanModule,
     InvitationModule,
+    TagModule,
     MongooseModule.forFeature([{ name: App.name, schema: AppSchema }]),
     ConfigModule.forRoot({
       isGlobal: true,

@@ -18,6 +18,8 @@ import {
   RedisService,
   IpService,
   HtmlMetaService,
+  TagSchema,
+  Tag,
 } from 'shtcut/core';
 import { HitModule } from '../hit';
 import { HttpModule } from '@nestjs/axios';
@@ -33,6 +35,7 @@ import { HttpModule } from '@nestjs/axios';
       { name: QrCode.name, schema: QrCodeSchema },
       { name: Workspace.name, schema: WorkspaceSchema },
       { name: User.name, schema: UserSchema },
+      { name: Tag.name, schema: TagSchema },
     ]),
   ],
   controllers: [LinkController],
