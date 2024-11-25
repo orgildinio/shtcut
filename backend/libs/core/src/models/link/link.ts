@@ -105,11 +105,11 @@ export class Link {
     type: [
       {
         type: MGSchema.Types.ObjectId,
-        ref: 'Label',
+        ref: 'Tag',
       },
     ],
   })
-  label: any;
+  tags: any;
 
   @Prop(
     raw({
@@ -219,7 +219,7 @@ LinkSchema.statics.config = () => {
       'user',
       'title',
       'metadata',
-      'labels',
+      'tags',
       'workspace',
       'domain',
       'domainName',
@@ -238,6 +238,7 @@ LinkSchema.statics.config = () => {
       'target',
       'labels',
       'title',
+      'tags',
       'metadata',
       'description',
       'expiryDate',

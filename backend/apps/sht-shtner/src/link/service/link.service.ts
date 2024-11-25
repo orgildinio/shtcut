@@ -20,6 +20,8 @@ import {
   QrCode,
   QrCodeDocument,
   RedisService,
+  Tag,
+  TagDocument,
   User,
   UserDocument,
   Utils,
@@ -41,6 +43,7 @@ export class LinkService extends MongoBaseService {
     @InjectModel(Domain.name) protected domainModel: Model<DomainDocument>,
     @InjectModel(Hit.name) protected hitModel: Model<HitDocument>,
     @InjectModel(QrCode.name) protected qrCodeModel: Model<QrCodeDocument>,
+    @InjectModel(Tag.name) protected tagModel: Model<TagDocument>,
     protected hitService: HitService,
     protected htmlMetaService: HtmlMetaService,
     protected ipService: IpService,
@@ -133,6 +136,14 @@ export class LinkService extends MongoBaseService {
 
       const { password, user } = obj;
 
+      let workspace = null;
+      if (obj.workspace) {
+        workspace = await this.workspaceModel.findOne({
+          id: workspace,
+          deleted: false,
+        });
+      }
+
       // Hash password if present
       if (password) {
         obj.password = await bcrypt.hash(obj.password, 10);
@@ -154,12 +165,22 @@ export class LinkService extends MongoBaseService {
           obj.metadata = { ...meta, ...og, images };
         }
       }
-
-      // Check if the domain is verified
-      // this.checkDomainVerification(domain);
-
+      const tags: any[] = [];
+      if (obj.tags && workspace) {
+        for (const t of obj.tags) {
+          const payload = {
+            ...t,
+            user: workspace.user,
+          };
+          const tag = await new this.tagModel({
+            ...payload,
+            publicId: Utils.generateUniqueId('tag'),
+          }).save({ session });
+          tags.push(String(tag._id));
+        }
+      }
       // Create and save associated QR code
-      let link = await super.createNewObject({ ..._.omit(obj, ['qrCode']) }, session);
+      let link = await super.createNewObject({ ..._.omit(obj, ['qrCode', 'tags']) }, session);
       const qrCode = await new this.qrCodeModel({
         properties: {
           ...obj.qrCode,
@@ -172,8 +193,9 @@ export class LinkService extends MongoBaseService {
         domain: domain._id,
       }).save({ session });
 
-      // Associate QR code with link and save link
+      // Associate QR code and tags with link and save link
       link.qrCode = qrCode._id;
+      link.tags = tags;
       link = await link.save({ session });
 
       await session?.commitTransaction();
@@ -246,8 +268,6 @@ export class LinkService extends MongoBaseService {
       }
 
       const ipAddressInfo = await this.ipService.getClientIpInfo(req);
-
-      console.log('ipAddressInfo:::', ipAddressInfo);
 
       // If tracking is enabled, update hit information
       if (link.enableTracking) {
