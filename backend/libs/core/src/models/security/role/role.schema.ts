@@ -40,6 +40,20 @@ export class Role {
   permissions: string;
 
   @Prop({
+    type: Types.ObjectId,
+    required: true,
+    ref: 'User',
+  })
+  user: string;
+
+  @Prop({
+    type: Types.ObjectId,
+    required: true,
+    ref: 'Workspace',
+  })
+  workspace: string;
+
+  @Prop({
     type: Boolean,
     default: false,
   })
@@ -59,8 +73,8 @@ RoleSchema.statics.config = () => {
   return {
     idToken: 'role',
     uniques: ['title'],
-    fillables: ['title', 'description', 'permissions'],
-    updateFillables: ['title', 'description', 'permissions'],
+    fillables: ['title', 'description', 'permissions', 'user', 'workspace'],
+    updateFillables: ['title', 'description', 'permissions', 'user'],
     hiddenFields: ['deleted'],
   };
 };

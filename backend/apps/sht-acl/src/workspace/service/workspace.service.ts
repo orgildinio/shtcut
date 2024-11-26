@@ -7,6 +7,8 @@ import {
   CreateInvitationDto,
   CreateWorkspaceDto,
   Dict,
+  Invitation,
+  InvitationDocument,
   MongoBaseService,
   Plan,
   PlanDocument,
@@ -19,12 +21,16 @@ import {
   Utils,
   Workspace,
   WorkspaceDocument,
+  WorkspaceMember,
+  WorkspaceMemberDocument,
 } from 'shtcut/core';
 import * as _ from 'lodash';
 import { ClientSession } from 'mongodb';
 import { SubscriptionService } from '../../subscription';
 import { InvitationService } from '../../invitation';
 import lang from 'apps/sht-acl/lang';
+import { UserService } from '../../user';
+import { AuthService } from '../../auth';
 
 @Injectable()
 export class WorkspaceService extends MongoBaseService {
@@ -32,9 +38,13 @@ export class WorkspaceService extends MongoBaseService {
     @InjectModel(Workspace.name) protected model: Model<WorkspaceDocument>,
     @InjectModel(Subscription.name) protected subscriptionModel: Model<SubscriptionDocument>,
     @InjectModel(Plan.name) protected planModel: Model<PlanDocument>,
+    @InjectModel(Invitation.name) protected invitationModel: Model<InvitationDocument>,
     @InjectModel(User.name) protected userModel: Model<UserDocument>,
+    @InjectModel(WorkspaceMember.name) protected memberModel: Model<WorkspaceMemberDocument>,
     protected subscriptionService: SubscriptionService,
     protected invitationService: InvitationService,
+    protected authService: AuthService,
+    protected userService: UserService,
     protected redisService: RedisService,
   ) {
     super(model);
@@ -76,10 +86,9 @@ export class WorkspaceService extends MongoBaseService {
   public async createNewObject(obj: CreateWorkspaceDto & Dict, session?: ClientSession) {
     try {
       session = session ?? (await this.model.startSession());
-
       session.startTransaction();
 
-      const { plan, modules } = obj;
+      const { plan, modules, memberEmails, redirectUrl } = obj;
 
       if (!plan) {
         const plan = await this.planModel.findOne({ name: 'Free' });
@@ -89,14 +98,15 @@ export class WorkspaceService extends MongoBaseService {
       obj.slug = obj.slug ?? Utils.slugifyText(obj.name);
 
       const workspace = await super.createNewObject(obj, session);
+      let members = [];
 
-      if (obj.memberEmails && obj.memberEmails.length) {
+      if (memberEmails && memberEmails.length && redirectUrl) {
         const invitationPayload: CreateInvitationDto = {
-          emails: obj.memberEmails,
-          redirectLink: obj.redirectUrl,
+          emails: memberEmails,
+          redirectLink: redirectUrl,
           workspace: String(workspace._id),
         };
-        await this.invitationService.createNewObject(invitationPayload, session);
+        members = await this.invitationService.createNewObject(invitationPayload, session);
       }
 
       const [subscription, _] = await Promise.all([
@@ -106,7 +116,7 @@ export class WorkspaceService extends MongoBaseService {
 
       workspace.subscriptions = [subscription._id];
       workspace.modules = modules;
-      workspace.members = obj.memberEmails ?? [];
+      workspace.members = members.map((m) => m._id);
 
       await workspace.save({ session });
 
@@ -221,6 +231,36 @@ export class WorkspaceService extends MongoBaseService {
       user.save({ session });
     } catch (e) {
       throw e;
+    }
+  }
+
+  async acceptInvitation(payload: { token: string; email: string; password: string }) {
+    const { token, email, password } = payload;
+    const session = await this.model.startSession();
+    try {
+      session.startTransaction();
+      const invitation = await this.invitationModel.findOne({ token, email });
+      if (!invitation) {
+        throw AppException.BAD_REQUEST('Invalid invitation token or email');
+      }
+
+      const auth = await this.authService.createNewObject({ email, password }, session);
+      const [newMember, user] = await Promise.all([
+        await this.userService.createNewObject({ ...auth, _id: auth._id, authId: auth._id, role: '' }, session),
+        await new this.memberModel({ email, user: auth._id, workspace: invitation.workspace }).save({ session }),
+      ]);
+
+      await session?.commitTransaction();
+
+      return {
+        ...user,
+        member: newMember,
+      };
+    } catch (e) {
+      await session?.abortTransaction();
+      throw e;
+    } finally {
+      await session?.endSession();
     }
   }
 }

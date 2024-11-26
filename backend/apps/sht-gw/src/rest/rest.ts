@@ -16,6 +16,8 @@ export const AclEndpoints = [
   { path: '/acl/plans*', method: RequestMethod.ALL },
   { path: '/acl/invitations*', method: RequestMethod.ALL },
   { path: '/acl/tags*', method: RequestMethod.ALL },
+  { path: '/acl/roles*', method: RequestMethod.ALL },
+  { path: '/acl/permissions*', method: RequestMethod.ALL },
 ];
 
 export const ShtnerEndpoints = [
