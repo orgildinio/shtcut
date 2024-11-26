@@ -10,11 +10,15 @@ import {
   Workspace,
   WorkspaceDocument,
   AppException,
+  Dict,
+  Pagination,
+  QueryParser,
 } from 'shtcut/core';
 import { ClientSession, Model } from 'mongoose';
 import { InvitationEmail } from '../invitation.email';
 import { ConfigService } from '@nestjs/config';
 import lang from '../../../lang';
+import { Request } from 'express';
 
 @Injectable()
 export class InvitationService extends MongoBaseService {
@@ -27,12 +31,21 @@ export class InvitationService extends MongoBaseService {
     super(model);
     this.routes = {
       create: true,
-      find: false,
+      find: true,
       findOne: false,
       update: true,
       patch: true,
       remove: false,
     };
+  }
+
+  public async buildModelQueryObject(pagination: Pagination, queryParser: QueryParser, req?: Request) {
+    try {
+      queryParser.query.user = req.user['_id'];
+      return super.buildModelQueryObject(pagination, queryParser, req);
+    } catch (e) {
+      throw e;
+    }
   }
 
   /**
@@ -71,6 +84,7 @@ export class InvitationService extends MongoBaseService {
       savedInvites.forEach((invitation) => {
         const { email, token } = invitation;
         const link = `${obj.redirectLink}?email=${email}&workspace=${workspace}&token=${token}`;
+        inviteeWorkspace.members.push(invitation._id);
         this.sendInvitationEmail({ email, workspace: inviteeWorkspace?.name, link });
       });
 
