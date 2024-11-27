@@ -82,9 +82,9 @@ export class InvitationService extends MongoBaseService {
       ]);
 
       savedInvites.forEach((invitation) => {
-        const { email, token } = invitation;
+        const { email, token, _id } = invitation;
         const link = `${obj.redirectLink}?email=${email}&workspace=${workspace}&token=${token}`;
-        inviteeWorkspace.members.push(invitation._id);
+        inviteeWorkspace.members.push(_id);
         this.sendInvitationEmail({ email, workspace: inviteeWorkspace?.name, link });
       });
 
