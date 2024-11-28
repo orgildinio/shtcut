@@ -6,10 +6,13 @@ import ImageSkeleton from '@shtcut/components/image-skeleton';
 import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { Camera } from 'lucide-react';
+import { useUser } from '@shtcut/hooks';
 
 const GeneralScreen = () => {
     const [, setPreview] = useState<null | string>(null);
-
+    const { loggedInUserData } = useUser({ callLoggedInUser: true });
+    const { data } = loggedInUserData;
+    const { data: user } = data || {};
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
         if (file) {
@@ -19,6 +22,8 @@ const GeneralScreen = () => {
             setPreview(null);
         }
     };
+
+    console.log('user:::id::', user);
 
     const form = useForm({
         defaultValues: {
@@ -41,15 +46,21 @@ const GeneralScreen = () => {
                         <section className="flex border border-[##E3E3E3] flex-col gap-3 mt-5 rounded-[4px] p-4">
                             <section>
                                 <Label className="text-xs">Full Name</Label>
-                                <Input placeholder="Stephen Adebayo" className="mt-2" />
+                                <Input
+                                    placeholder="Stephen Adebayo"
+                                    className="mt-2"
+                                    defaultValue={user?.firstName + ' ' + user?.lastName}
+                                    disabled
+                                />
                             </section>
                             <section>
                                 <Label className="text-xs">Email</Label>
-                                <Input placeholder="Stephen Adebayo" className="mt-2" />
-                            </section>
-                            <section>
-                                <Label className="text-xs">User ID</Label>
-                                <Input placeholder="Stephen Adebayo" className="mt-2" />
+                                <Input
+                                    placeholder="Stephen Adebayo"
+                                    className="mt-2"
+                                    defaultValue={user?.email}
+                                    disabled
+                                />
                             </section>
                         </section>
                         <section className="h-10 mt-4 flex items-center px-4 border border-[#e3e3e3] bg-[#f7f7f7] rounded-[4px]">

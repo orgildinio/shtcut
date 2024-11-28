@@ -74,8 +74,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         finding: false,
         creating: false
     });
-    const [loaded, setLoaded] = useState(false); // Track initial load to prevent multiple calls
-
+    const [loaded, setLoaded] = useState(false);
     const isLoadingState = Object.values(loading).some((state) => state);
     const setLoadingState = (key: keyof typeof loading, value: boolean) => {
         setLoading((prev) => ({ ...prev, [key]: value }));
@@ -105,7 +104,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
             });
             setLoaded(true); // Set loaded to true after the first call
         }
-    }, [callLinks, debouncedSearch, filter]);
+    }, [callLinks, debouncedSearch, filter, findAllLinks, loaded]);
 
     useEffect(() => {
         if (id) {

@@ -12,14 +12,22 @@ import {
 } from './component';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { tabs } from '@shtcut/_shared/data';
+import { SettingsComponentType } from '@shtcut/types/types';
 
-const SettingComponent = () => {
+const SettingComponent = ({
+    findAllTagsResponse,
+    isLoading,
+    deleteTag,
+    setLoadingState,
+    findAllTags,
+    isLoadingState,
+    deleteTagResponse
+}: SettingsComponentType) => {
     const params = useParams();
     const { module, workspace } = params;
     const router = useRouter();
     const searchParams = useSearchParams();
     const queryTag = searchParams.get('tag') || 'general';
-
     const [selectedTabIndex, setSelectedTabIndex] = useState(() => {
         const index = tabs.findIndex((tab) => tab.id === queryTag);
         return index !== -1 ? index : 0;
@@ -53,7 +61,17 @@ const SettingComponent = () => {
             </div>
             <section className="mt-8 w-full">
                 {selectedTabIndex === 0 && <GeneralScreen />}
-                {selectedTabIndex === 1 && <TagsScreen />}
+                {selectedTabIndex === 1 && (
+                    <TagsScreen
+                        findAllTagsResponse={findAllTagsResponse}
+                        isLoading={isLoading}
+                        deleteTag={deleteTag}
+                        setLoadingState={setLoadingState}
+                        findAllTags={findAllTags}
+                        isLoadingState={isLoadingState}
+                        deleteTagResponse={deleteTagResponse}
+                    />
+                )}
                 {selectedTabIndex === 2 && <BillingsScreen />}
                 {selectedTabIndex === 3 && <WorkspaceScreen />}
                 {selectedTabIndex === 4 && <SecurityScreen />}

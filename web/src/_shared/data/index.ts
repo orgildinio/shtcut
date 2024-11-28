@@ -1,4 +1,13 @@
-import { GeneralType, IntegrationSectionType, Plan, PostInterface, SocialPost } from '@shtcut/types/types';
+import { faker } from '@faker-js/faker';
+import {
+    ChatConversation,
+    ChatMessage,
+    GeneralType,
+    IntegrationSectionType,
+    Plan,
+    PostInterface,
+    SocialPost
+} from '@shtcut/types/types';
 import dayjs from 'dayjs';
 import { Activity, Command, PieChart } from 'lucide-react';
 
@@ -905,3 +914,312 @@ export const initialLabels = [
     { id: 'fashion', name: 'Fashion' }
 ];
 export const labelColors = ['bg-[#8789F3]', 'bg-[#F4C029]', 'bg-[#F070AF]', 'bg-[#A5E534]'];
+
+export const chatConversations: ChatConversation[] = [
+    {
+        conversationId: '1',
+        participants: ['John Doe', 'Jane Doe'],
+        messages: [
+            {
+                id: '1',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Hey, how are you?',
+                timestamp: '2024-11-20T10:00:00Z',
+                status: 'sent',
+                type: 'text'
+            },
+            {
+                id: '2',
+                sender: 'others',
+                senderName: 'Jane Doe',
+                content: 'I’m good, thanks! How about you?',
+                timestamp: '2024-11-20T10:01:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '3',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'I’m doing well! Thanks for asking. 😊',
+                timestamp: '2024-11-20T10:02:00Z',
+                status: 'delivered',
+                type: 'text'
+            }
+        ]
+    },
+    {
+        conversationId: '2',
+        participants: ['John Doe', 'Alice Smith'],
+        messages: [
+            {
+                id: '1',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Hi Alice, did you get the report?',
+                timestamp: '2024-11-20T11:00:00Z',
+                status: 'sent',
+                type: 'text'
+            },
+            {
+                id: '2',
+                sender: 'others',
+                senderName: 'Alice Smith',
+                content: 'Yes, I got it. Thanks!',
+                timestamp: '2024-11-20T11:01:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '3',
+                sender: 'others',
+                senderName: 'Alice Smith',
+                content: 'Let me know if there’s anything else you need.',
+                timestamp: '2024-11-20T11:02:00Z',
+                status: 'read',
+                type: 'text'
+            }
+        ]
+    },
+    {
+        conversationId: '3',
+        participants: ['John Doe', 'Bob Lee'],
+        messages: [
+            {
+                id: '1',
+                sender: 'others',
+                senderName: 'Bob Lee',
+                content: 'Hey John, check out this image!',
+                timestamp: '2024-11-20T12:00:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '2',
+                sender: 'others',
+                senderName: 'Bob Lee',
+                content: faker.image.urlPicsumPhotos(),
+                timestamp: '2024-11-20T12:01:00Z',
+                status: 'read',
+                type: 'image'
+            },
+            {
+                id: '3',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Thanks, Bob. Looks good!',
+                timestamp: '2024-11-20T12:02:00Z',
+                status: 'sent',
+                type: 'text'
+            },
+            {
+                id: '4',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: faker.image.urlPicsumPhotos(),
+                timestamp: '2024-11-20T12:01:00Z',
+                status: 'read',
+                type: 'image'
+            }
+        ]
+    },
+    {
+        conversationId: '4',
+        participants: ['John Doe', 'Chris Martin'],
+        messages: [
+            {
+                id: '1',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Chris, are we still on for tomorrow?',
+                timestamp: '2024-11-20T13:00:00Z',
+                status: 'sent',
+                type: 'text'
+            },
+            {
+                id: '2',
+                sender: 'others',
+                senderName: 'Chris Martin',
+                content: 'Yes, see you at 10 AM!',
+                timestamp: '2024-11-20T13:01:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '3',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Perfect, see you then.',
+                timestamp: '2024-11-20T13:02:00Z',
+                status: 'delivered',
+                type: 'text'
+            }
+        ]
+    },
+    {
+        conversationId: '5',
+        participants: ['John Doe', 'Sarah Connor'],
+        messages: [
+            {
+                id: '1',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'Hey John, I found this really helpful link.',
+                timestamp: '2024-11-20T14:00:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '2',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'https://www.example.com',
+                timestamp: '2024-11-20T14:01:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '3',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Thanks, Sarah! I’ll check it out.',
+                timestamp: '2024-11-20T14:02:00Z',
+                status: 'sent',
+                type: 'text'
+            }
+        ]
+    },
+    {
+        conversationId: '5',
+        participants: ['John Doe', 'Sarah Connor'],
+        messages: [
+            {
+                id: '1',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'Hey John, I found this really helpful link.',
+                timestamp: '2024-11-20T14:00:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '2',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'https://www.example.com',
+                timestamp: '2024-11-20T14:01:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '3',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Thanks, Sarah! I’ll check it out.',
+                timestamp: '2024-11-20T14:02:00Z',
+                status: 'sent',
+                type: 'text'
+            }
+        ]
+    },
+    {
+        conversationId: '5',
+        participants: ['John Doe', 'Sarah Connor'],
+        messages: [
+            {
+                id: '1',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'Hey John, I found this really helpful link.',
+                timestamp: '2024-11-20T14:00:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '2',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'https://www.example.com',
+                timestamp: '2024-11-20T14:01:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '3',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Thanks, Sarah! I’ll check it out.',
+                timestamp: '2024-11-20T14:02:00Z',
+                status: 'sent',
+                type: 'text'
+            }
+        ]
+    },
+    {
+        conversationId: '5',
+        participants: ['John Doe', 'Sarah Connor'],
+        messages: [
+            {
+                id: '1',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'Hey John, I found this really helpful link.',
+                timestamp: '2024-11-20T14:00:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '2',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'https://www.example.com',
+                timestamp: '2024-11-20T14:01:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '3',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Thanks, Sarah! I’ll check it out.',
+                timestamp: '2024-11-20T14:02:00Z',
+                status: 'sent',
+                type: 'text'
+            }
+        ]
+    },
+    {
+        conversationId: '5',
+        participants: ['John Doe', 'Sarah Connor'],
+        messages: [
+            {
+                id: '1',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'Hey John, I found this really helpful link.',
+                timestamp: '2024-11-20T14:00:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '2',
+                sender: 'others',
+                senderName: 'Sarah Connor',
+                content: 'https://www.example.com',
+                timestamp: '2024-11-20T14:01:00Z',
+                status: 'read',
+                type: 'text'
+            },
+            {
+                id: '3',
+                sender: 'me',
+                senderName: 'John Doe',
+                content: 'Thanks, Sarah! I’ll check it out.',
+                timestamp: '2024-11-20T14:02:00Z',
+                status: 'sent',
+                type: 'text'
+            }
+        ]
+    }
+];

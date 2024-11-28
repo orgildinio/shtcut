@@ -14,6 +14,7 @@ import InviteModal from './invite-modal';
 import UserModal from './user-modal';
 import CreateRole from './create-role';
 import EditRole from './edit-role';
+import { useWorkspace } from '@shtcut/hooks';
 
 const WorkspaceScreen = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -21,8 +22,9 @@ const WorkspaceScreen = () => {
     const [showInvite, setShowInvite] = useState(false);
     const [inputs, setInputs] = useState(['', '', '']);
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-    const [selectedStatus,] = useState<string | null>(null);
+    const [selectedStatus] = useState<string | null>(null);
     const [modalType, setModalType] = useState<string | null>(null);
+    const { findAllWorkspacesResponse } = useWorkspace({ callWorkspaces: true });
     const addInput = () => {
         if (inputs.length < 10) {
             setInputs([...inputs, '']);
@@ -120,27 +122,30 @@ const WorkspaceScreen = () => {
                             <Button className="text-xs h-8 rounded bg-primary-0">Create Workspace</Button>
                         </section>
                         <section className="flex flex-col gap-4 mt-6">
-                            {[1, 2, 3, 4].map((list) => (
-                                <div
-                                    key={list}
-                                    className="flex bg-white border border-[#e3e3e3] px-3 py-2 rounded justify-between items-center "
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <Image src={'/images/send-icon.png'} width={44} height={44} alt="send" />
-                                        <div>
-                                            <p className="text-sm font-semibold">Timeweb</p>
-                                            <p className="text-xs text-[#83899F]">10 Members</p>
-                                        </div>
-                                    </div>
-                                    <Button
-                                        variant={'unstyled'}
-                                        className="text-primary-0 text-xs font-semibold"
-                                        onClick={() => setShowMember(true)}
+                            {findAllWorkspacesResponse &&
+                                findAllWorkspacesResponse.map((workspace) => (
+                                    <div
+                                        key={workspace?._id}
+                                        className="flex bg-white border border-[#e3e3e3] px-3 py-2 rounded justify-between items-center "
                                     >
-                                        Manage workspace
-                                    </Button>
-                                </div>
-                            ))}
+                                        <div className="flex items-center gap-4">
+                                            <Image src={'/images/send-icon.png'} width={44} height={44} alt="send" />
+                                            <div>
+                                                <p className="text-sm font-semibold">{workspace?.name}</p>
+                                                <p className="text-xs text-[#83899F]">
+                                                    {workspace?.members?.length} Members
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Button
+                                            variant={'unstyled'}
+                                            className="text-primary-0 text-xs font-semibold"
+                                            onClick={() => setShowMember(true)}
+                                        >
+                                            Manage workspace
+                                        </Button>
+                                    </div>
+                                ))}
                         </section>
                     </section>
                 </>

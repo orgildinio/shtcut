@@ -3,7 +3,15 @@ import { PencilLine, Trash2, Copy } from 'lucide-react';
 import React from 'react';
 import { IoEllipsisVerticalSharp } from 'react-icons/io5';
 
-const ActionsTag = () => {
+const ActionsTag = ({
+    onClickDelete,
+    onClickEdit,
+    onClickCopy
+}: {
+    onClickDelete: () => void;
+    onClickEdit: () => void;
+    onClickCopy: () => void;
+}) => {
     return (
         <div>
             <DropdownMenu>
@@ -13,14 +21,20 @@ const ActionsTag = () => {
                     </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-24 right-6 relative">
-                    <DropdownMenuCheckboxItem className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2">
+                    <DropdownMenuCheckboxItem
+                        className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2"
+                        onClick={onClickEdit}
+                    >
                         <PencilLine size={16} /> Edit tag
                     </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2">
+                    <DropdownMenuCheckboxItem
+                        className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2"
+                        onClick={onClickCopy}
+                    >
                         <Copy size={16} /> Copy
                     </DropdownMenuCheckboxItem>
 
-                    <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2">
+                    <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2" onClick={onClickDelete}>
                         <Trash2 size={16} /> Delete
                     </DropdownMenuCheckboxItem>
                 </DropdownMenuContent>

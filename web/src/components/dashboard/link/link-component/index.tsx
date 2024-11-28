@@ -26,6 +26,10 @@ import ArchiveModal from './archive-component';
 import LinkDataComponent from './link-data';
 import { ModalType } from '@shtcut/types/types';
 import ShareLinkModal from './share-link-modal';
+import { useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from '@shtcut/redux/store';
+import { setDropdownState, toggleDropdown } from '@shtcut/redux/slices/ui';
+import { useTags } from '@shtcut/hooks/tags';
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -49,6 +53,8 @@ const LinkComponent = ({
     updateLink,
     updateLinkResponse
 }: LinkComponentType) => {
+    const { findAllTagsResponse } = useTags({ callTags: true });
+    const dispatch = useAppDispatch();
     const qrCodeRef = useRef(null);
     const { loggedInUserData } = useUser({ callLoggedInUser: true });
     const { data } = loggedInUserData;
@@ -58,7 +64,6 @@ const LinkComponent = ({
     const [modalType, setModalType] = useState<ModalType>(null);
     const [showSections, setShowSections] = useState(false);
     const [singleLink, setSingleLink] = useState<LinkNameSpace.Link | null>(null);
-    const [showModal, setShowModal] = useState(false);
     const pathName = usePathname();
     const route = useRouter();
     const [domain, setDomain] = useState<string | null>(null);
@@ -67,6 +72,7 @@ const LinkComponent = ({
     const [tags, setTags] = useState<string[]>([]);
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(undefined);
     const workspaceId = user?.workspace?.find((ws) => ws.slug === workspace)?._id;
+    const showDropdown = useSelector((state: RootState) => state.ui.showDropdown);
 
     const handleDateChange = (date: Date | undefined) => {
         setSelectedDate(date);
@@ -182,7 +188,7 @@ const LinkComponent = ({
             await createLink({ payload });
             form.reset();
             setLoadingState('creating', false);
-            setShowModal(false);
+            dispatch(toggleDropdown());
             const successMessage = createLinkResponse?.data?.meta?.message;
             toast({
                 variant: 'default',
@@ -212,16 +218,13 @@ const LinkComponent = ({
             }
         };
 
-        console.log('payload::::', payload);
-
         try {
             await updateLink({ payload, id: singleLink?._id });
             form.reset();
             setLoadingState('updating', false);
-            setShowModal(false);
+            dispatch(toggleDropdown());
             const successMessage = updateLinkResponse?.data?.meta?.message;
 
-            console.log('successMessage', successMessage);
             toast({
                 variant: 'default',
                 title: 'Link Updated',
@@ -304,7 +307,7 @@ const LinkComponent = ({
     }, [isSuccess, duplicateIsSuccess]);
 
     const handleUpdateLink = (data: LinkNameSpace.Link) => {
-        setShowModal(true);
+        dispatch(toggleDropdown());
         setSingleLink(data);
         if (data) {
             setValue('target', data?.target);
@@ -322,7 +325,7 @@ const LinkComponent = ({
     // }, [singleLink]);
 
     const onCloseModal = () => {
-        setShowModal(false);
+        dispatch(setDropdownState(false));
         setSingleLink(null);
         setValue('target', '');
         setPreview(null);
@@ -336,7 +339,7 @@ const LinkComponent = ({
                 <Button
                     className="bg-primary-0 text-xs h-8 rounded "
                     onClick={() => {
-                        setShowModal(true);
+                        dispatch(toggleDropdown());
                         setSingleLink(null);
                     }}
                 >
@@ -355,9 +358,9 @@ const LinkComponent = ({
                 search={search}
             />
             <Modal
-                showModel={showModal}
+                showModel={showDropdown}
+                setShowModal={onCloseModal}
                 className="h-[80%] max-w-screen-lg"
-                setShowModal={setShowModal}
                 onClose={onCloseModal}
                 showCloseIcon
             >
@@ -387,7 +390,7 @@ const LinkComponent = ({
                                             title={watchTitle}
                                             description={watchDescription}
                                             setTags={setTags}
-                                            tags={tags}
+                                            tags={findAllTagsResponse}
                                             watchLink={watchLink}
                                             findAllDomainsResponse={findAllDomainsResponse}
                                             singleLink={singleLink ?? undefined}

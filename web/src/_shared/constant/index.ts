@@ -327,7 +327,8 @@ export const ACL = {
     updatePasswordUrl: 'acl/auth/reset-password',
     changePasswordUrl: 'acl/auth/change-password',
     loggedInUserUrl: 'acl/users/me',
-    workspace: 'acl/workspaces'
+    workspace: 'acl/workspaces',
+    tags: 'acl/tags'
 };
 
 export const SHTNER = {
@@ -620,3 +621,13 @@ export const formatDate = (dateInput: string | Date): string => {
 
     return formatter.format(date);
 };
+
+export function getInitials(fullName: string) {
+    if (!fullName) return '';
+
+    const names = fullName.trim().split(' ');
+    const firstLetter = names[0]?.charAt(0).toUpperCase() || '';
+    const lastLetter = names[names.length - 1]?.charAt(0).toUpperCase() || '';
+
+    return `${firstLetter}${lastLetter}`;
+}

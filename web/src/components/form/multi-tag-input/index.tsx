@@ -1,8 +1,9 @@
 import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger } from '@shtcut-ui/react';
+import { TagResponse } from '@shtcut/types/tags';
 import React, { useState, KeyboardEvent, ChangeEvent } from 'react';
 
 interface MultiTagsInputProps {
-    initialTags?: string[];
+    initialTags?: TagResponse[] | undefined;
     onTagsChange?: (tags: string[]) => void;
     placeholder?: string;
     className?: string;
@@ -36,7 +37,7 @@ const MultiTagsInput = ({
     watchLink
 }: MultiTagsInputProps) => {
     const [tags, setTags] = useState<{ text: string; color: string }[]>(
-        initialTags.map((tag) => ({ text: tag, color: getRandomColor() }))
+        initialTags.map((tag) => ({ text: tag.name, color: getRandomColor() }))
     );
     const [inputValue, setInputValue] = useState<string>('');
 
@@ -45,6 +46,7 @@ const MultiTagsInput = ({
         if (!tags.some((tag) => tag.text.toLowerCase() === normalizedTagText)) {
             const newTag = { text: tagText, color: getRandomColor() };
             const newTags = [...tags, newTag];
+            console.log('newTags:::', newTags);
             setTags(newTags);
             if (onTagsChange) {
                 onTagsChange(newTags.map((tag) => tag.text));
@@ -52,6 +54,8 @@ const MultiTagsInput = ({
         }
         setInputValue('');
     };
+
+    console.log('tags:::', tags);
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && inputValue.trim() !== '') {
@@ -91,7 +95,7 @@ const MultiTagsInput = ({
                     {tags.map((tag, index) => (
                         <div
                             key={index}
-                            className={`flex items-center space-x-2 border ${tag.color} text-white m-1 px-2 rounded`}
+                            className={`flex items-center space-x-2 border ${tag.color}  m-1 px-2 rounded`}
                         >
                             <span className="text-xs">{tag.text}</span>
                             <button
@@ -114,17 +118,18 @@ const MultiTagsInput = ({
                         placeholder={placeholder}
                         disabled={!watchLink}
                     />
-                    {selectOptions && selectOptions.length > 0 && (
+                    {initialTags && initialTags.length > 0 && (
                         <Select onValueChange={handleSelectChange}>
                             <SelectTrigger disabled={!watchLink} className="border-none  rounded-none h-10 w-1/3">
                                 {/* <SelectValue placeholder="Select a tag" /> */}
                             </SelectTrigger>
                             <SelectContent className="border-none">
-                                {selectOptions.map((option, index) => (
-                                    <SelectItem disabled={!watchLink} key={index} value={option}>
-                                        {option}
-                                    </SelectItem>
-                                ))}
+                                {initialTags &&
+                                    initialTags?.map((option, index) => (
+                                        <SelectItem disabled={!watchLink} key={index} value={option?.name}>
+                                            {option?.name}
+                                        </SelectItem>
+                                    ))}
                             </SelectContent>
                         </Select>
                     )}{' '}

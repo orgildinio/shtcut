@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 import ColorPicker from 'react-pick-color';
 import { useDispatch, useSelector } from 'react-redux';
+import TemplatesComponent from '../../../vcard-component/templates';
 
 const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
     const dispatch = useDispatch();
@@ -41,6 +42,10 @@ const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
 
     return (
         <div>
+            <section>
+                <TemplatesComponent />
+            </section>
+            <p className="my-4 font-medium">Presets</p>
             <div className="grid grid-cols-6 gap-x-10 w-1/2 gap-y-3">
                 {colors.map((color) => (
                     <Button

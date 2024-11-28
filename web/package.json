@@ -16,6 +16,7 @@
         "@dnd-kit/sortable": "^7.0.2",
         "@emoji-mart/data": "^1.2.1",
         "@emoji-mart/react": "^1.1.1",
+        "@faker-js/faker": "^9.2.0",
         "@fullcalendar/common": "^5.11.5",
         "@fullcalendar/core": "^6.1.15",
         "@fullcalendar/daygrid": "^6.1.15",

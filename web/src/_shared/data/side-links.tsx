@@ -1,5 +1,5 @@
-import { LogOut, MailOpen, Link, Image } from 'lucide-react';
-import { PiQrCodeBold } from 'react-icons/pi';
+import { LogOut, MailOpen, Link, Image, Headset, AudioLines } from 'lucide-react';
+import { PiChatCenteredTextLight, PiCheckSquareOffset, PiQrCodeBold, PiUserCircleGear } from 'react-icons/pi';
 import { AiFillAppstore } from 'react-icons/ai';
 import { PiProjectorScreenChartBold } from 'react-icons/pi';
 import { PiFolderSimplePlusLight } from 'react-icons/pi';
@@ -96,15 +96,39 @@ export const sideLinks = (module: string, workspace: string): SideLink[] => {
         },
         {
             id: '5',
-            title: 'Analytics',
-            href: `/social/${workspace}/calendars`,
-            icon: <GoGraph size={16} />
+            title: 'Messages',
+            href: `/social/${workspace}/messages`,
+            icon: <PiChatCenteredTextLight size={16} />
         },
         {
             id: '6',
-            title: 'Sign out',
-            href: `/social/${workspace}/calendars`,
-            icon: <LogOut size={16} />
+            title: 'Social Listening',
+            href: `/social/${workspace}/social-listening`,
+            icon: <AudioLines size={16} />
+        },
+        {
+            id: '7',
+            title: 'CRM',
+            href: `/social/${workspace}/crm`,
+            icon: <Headset size={16} />
+        },
+        {
+            id: '8',
+            title: 'Analytics',
+            href: `/social/${workspace}/analytics`,
+            icon: <GoGraph size={16} />
+        },
+        {
+            id: '9',
+            title: 'Tasks',
+            href: `/social/${workspace}/tasks`,
+            icon: <PiCheckSquareOffset size={16} />
+        },
+        {
+            id: '10',
+            title: 'All Account',
+            href: `/social/${workspace}/all-accounts`,
+            icon: <PiUserCircleGear size={16} />
         }
     ];
 
