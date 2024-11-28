@@ -1,12 +1,13 @@
-import { Body, Controller, Get, HttpCode, Next, Param, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Next, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
-import { AppController, CreateInvitationDto, OK } from 'shtcut/core';
+import { AppController, CreateInvitationDto, JwtAuthGuard, OK } from 'shtcut/core';
 import { InvitationService } from '../service/invitation.service';
 import { NextFunction, Request, Response } from 'express';
 
 @ApiTags('Invitations')
 @Controller('invitations')
+@UseGuards(JwtAuthGuard)
 export class InvitationController extends AppController {
   constructor(
     protected service: InvitationService,

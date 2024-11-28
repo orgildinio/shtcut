@@ -13,3 +13,4 @@ export * from './admin-auth';
 export * from './app.schema';
 export * from './subscription';
 export * from './invitation';
+export * from './tag';

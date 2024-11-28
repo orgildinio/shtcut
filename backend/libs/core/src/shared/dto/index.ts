@@ -7,3 +7,4 @@ export * from './workspace';
 export * from './qrcode';
 export * from './feature';
 export * from './invitation';
+export * from './tags';

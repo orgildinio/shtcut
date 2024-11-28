@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, Next, Param, Patch, Post, Put, Req, Re
 import {
   AppController,
   CreateLinkDto,
+  CurrentUser,
   GetClientInfo,
   JwtAuthGuard,
   NOT_FOUND,
