@@ -177,7 +177,15 @@ interface SocialMedia {
     isActive: boolean;
 }
 export type GeoTarget = { region: string; url: string };
-export type ModalType = 'deleteModal' | 'duplicateModal' | 'qrCodeModal' | 'archiveModal' | 'shareModal' | null;
+export type ModalType =
+    | 'deleteModal'
+    | 'duplicateModal'
+    | 'qrCodeModal'
+    | 'archiveModal'
+    | 'shareModal'
+    | 'add-tags'
+    | 'updateModal'
+    | null;
 interface QrCodeHeaderTypes {
     label: string;
     description: string;
@@ -193,4 +201,37 @@ interface QrCodeHeaderTypes {
 export interface ContactActions {
     name: string;
     icon: any;
+}
+export type MessageType = 'text' | 'image' | 'file';
+
+export interface ChatMessage {
+    id: string;
+    sender: 'me' | 'others';
+    senderName: string;
+    content: string;
+    timestamp: string;
+    status: 'sent' | 'delivered' | 'read';
+    type: MessageType;
+}
+
+export interface ChatConversation {
+    conversationId: string;
+    participants: string[];
+    messages: ChatMessage[];
+}
+
+interface SettingsComponentType {
+    findAllTagsResponse: TagResponse[] | undefined;
+    isLoading: boolean;
+    isLoadingState: boolean;
+    deleteTag: MutationTrigger<any>;
+    setLoadingState: (key: 'creating' | 'deleting', value: boolean) => void;
+    findAllTags: any;
+    deleteTagResponse: Dict;
+}
+
+interface DeleteComponentType {
+    isLoadingState: boolean;
+    handleDelete: () => void;
+    handleClose: () => void;
 }

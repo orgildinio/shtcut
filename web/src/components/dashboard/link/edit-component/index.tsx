@@ -47,7 +47,7 @@ const EditComponent = ({}: { form: any }) => {
                             <Tag size={16} /> Add tags
                         </Label>
                         <MultiTagsInput
-                            initialTags={tags}
+                            initialTags={undefined}
                             onTagsChange={handleTagsChange}
                             placeholder=" Select tags...."
                             className="mt-1"

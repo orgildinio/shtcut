@@ -130,7 +130,7 @@ export default function SideBar({ isOpen, isTab, setIsOpen, workSpaceTitle }: Pr
                     {navigationOptions?.map((data) => (
                         <li
                             key={data.id}
-                            className={`w-full ${data.id === '5' ? 'border-b pb-[14px]' : data.id === '6' ? 'mt-2' : ''} `}
+                            className={`w-full ${data.id === '5' && module === 'url' ? 'border-b pb-[14px]' : data.id === '6' && module === 'url' ? 'mt-2' : ''}  ${data.id === '8' && module === 'social' ? 'border-b pb-[14px]' : data.id === '8' && module === 'social' ? 'mt-2' : ''} `}
                         >
                             <Link href={data.href}>
                                 <div

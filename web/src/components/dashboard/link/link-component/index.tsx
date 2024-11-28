@@ -29,6 +29,7 @@ import ShareLinkModal from './share-link-modal';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '@shtcut/redux/store';
 import { setDropdownState, toggleDropdown } from '@shtcut/redux/slices/ui';
+import { useTags } from '@shtcut/hooks/tags';
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -52,6 +53,7 @@ const LinkComponent = ({
     updateLink,
     updateLinkResponse
 }: LinkComponentType) => {
+    const { findAllTagsResponse } = useTags({ callTags: true });
     const dispatch = useAppDispatch();
     const qrCodeRef = useRef(null);
     const { loggedInUserData } = useUser({ callLoggedInUser: true });
@@ -62,7 +64,6 @@ const LinkComponent = ({
     const [modalType, setModalType] = useState<ModalType>(null);
     const [showSections, setShowSections] = useState(false);
     const [singleLink, setSingleLink] = useState<LinkNameSpace.Link | null>(null);
-
     const pathName = usePathname();
     const route = useRouter();
     const [domain, setDomain] = useState<string | null>(null);
@@ -96,7 +97,6 @@ const LinkComponent = ({
             }
         });
     };
-    console.log('showDropdown', showDropdown);
 
     const toggleSection = (type?: ModalType, val?: LinkNameSpace.Link) => {
         if (
@@ -218,8 +218,6 @@ const LinkComponent = ({
             }
         };
 
-        console.log('payload::::', payload);
-
         try {
             await updateLink({ payload, id: singleLink?._id });
             form.reset();
@@ -227,7 +225,6 @@ const LinkComponent = ({
             dispatch(toggleDropdown());
             const successMessage = updateLinkResponse?.data?.meta?.message;
 
-            console.log('successMessage', successMessage);
             toast({
                 variant: 'default',
                 title: 'Link Updated',
@@ -393,7 +390,7 @@ const LinkComponent = ({
                                             title={watchTitle}
                                             description={watchDescription}
                                             setTags={setTags}
-                                            tags={tags}
+                                            tags={findAllTagsResponse}
                                             watchLink={watchLink}
                                             findAllDomainsResponse={findAllDomainsResponse}
                                             singleLink={singleLink ?? undefined}

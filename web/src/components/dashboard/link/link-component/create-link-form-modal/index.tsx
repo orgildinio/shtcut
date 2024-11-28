@@ -19,6 +19,7 @@ import Image from 'next/image';
 import MultiTagsInput from '@shtcut/components/form/multi-tag-input';
 import { DomainNameSpace } from '@shtcut/_shared/namespace/domain';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
+import { TagResponse } from '@shtcut/types/tags';
 
 const CreateLinkForm = ({
     form,
@@ -37,7 +38,7 @@ const CreateLinkForm = ({
     preview: string | null;
     title: string;
     description: string;
-    tags: string[];
+    tags: TagResponse[] | undefined;
     setTags: React.Dispatch<React.SetStateAction<string[]>>;
     watchLink: string;
     findAllDomainsResponse: DomainNameSpace.Domain[];
@@ -118,7 +119,6 @@ const CreateLinkForm = ({
                         placeholder="Type a tag and press enter"
                         className=""
                         label="Select Tag"
-                        selectOptions={predefinedTags}
                         watchLink={watchLink}
                     />
                     {/* <div className="mt-4">

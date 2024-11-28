@@ -327,7 +327,8 @@ export const ACL = {
     updatePasswordUrl: 'acl/auth/reset-password',
     changePasswordUrl: 'acl/auth/change-password',
     loggedInUserUrl: 'acl/users/me',
-    workspace: 'acl/workspaces'
+    workspace: 'acl/workspaces',
+    tags: 'acl/tags'
 };
 
 export const SHTNER = {
