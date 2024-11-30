@@ -63,7 +63,7 @@ const WorkSpaceContainerPage = () => {
             type: workspaceType,
             memberEmails: emailArray,
             modules: moduleValues,
-            redirectUrl: process.env.NEXT_PUBLIC_REDIRECT_URL
+            redirectUrl: process.env.NEXT_PUBLIC_REDIRECT_URL || '',
         };
         createWorkspace({
             payload,
