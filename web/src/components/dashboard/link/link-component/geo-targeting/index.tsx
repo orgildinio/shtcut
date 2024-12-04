@@ -74,3 +74,12 @@ const GeoTargeting = ({ setCountriesData, watchLink, countriesData }: GeoTargeti
 };
 
 export default GeoTargeting;
+
+//  <div className="flex items-center gap-3 mt-6 w-full">
+//      <Button className="w-full text-xs" variant="outline">
+//          Cancel
+//      </Button>
+//      <Button type="submit" className="w-full bg-primary-0 text-xs">
+//          Send Invitation
+//      </Button>
+//  </div>;

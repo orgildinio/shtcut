@@ -44,8 +44,7 @@ const StepperDivider = ({ isActive }: { isActive: boolean }) => (
     </div>
 );
 
-
-const Stepper = ({ step }: { step: number }) => {
+const Stepper = ({ step, userValue }: { step: number; userValue: string }) => {
     return (
         <div className="mx-auto p-4 sm:w-full">
             <div className="flex flex-col items-start w-full">
@@ -72,30 +71,20 @@ const Stepper = ({ step }: { step: number }) => {
                     isActive={step === 2}
                     isCompleted={step > 2}
                 />
-                <StepperDivider isActive={step >= 3} />
-                <StepperStep
-                    number={3}
-                    label={
-                        <section className="text-white">
-                            <h1 className="font-semibold">Invite members</h1>
-                            <p className="text-sm"> Invite people to your workspace</p>
-                        </section>
-                    }
-                    isActive={step === 3}
-                    isCompleted={step > 3}
-                />
-                <StepperDivider isActive={step >= 4} />
-                <StepperStep
-                    number={4}
-                    label={
-                        <section className="text-white">
-                            <h1 className="font-semibold">Tools you use</h1>
-                            <p className="text-sm"> To help tailor your shhtcut experience</p>
-                        </section>
-                    }
-                    isActive={step === 4}
-                    isCompleted={step > 4}
-                />
+                {userValue === 'team' && <StepperDivider isActive={step >= 3} />}
+                {userValue === 'team' && (
+                    <StepperStep
+                        number={3}
+                        label={
+                            <section className="text-white">
+                                <h1 className="font-semibold">Invite members</h1>
+                                <p className="text-sm"> Invite people to your workspace</p>
+                            </section>
+                        }
+                        isActive={step === 3}
+                        isCompleted={step > 3}
+                    />
+                )}
             </div>
         </div>
     );

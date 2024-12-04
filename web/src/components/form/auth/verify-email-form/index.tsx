@@ -14,7 +14,7 @@ import {
     InputOTPSlot
 } from '@shtcut-ui/react';
 import { AppButton } from '@shtcut/components';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -34,6 +34,8 @@ interface VerifyEmailFormProps {
 }
 
 export function VerifyEmailPasswordForm(props: VerifyEmailFormProps) {
+    const [countdown, setCountdown] = useState(30);
+    const [canResend, setCanResend] = useState(false);
     const { isLoading, handleVerifyEmailSubmit, handleResendVerification, email, mobileDesktop } = props;
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -47,6 +49,30 @@ export function VerifyEmailPasswordForm(props: VerifyEmailFormProps) {
             verificationCode: data.pin
         });
     };
+
+    const handleResendClick = () => {
+        setCanResend(false);
+        setCountdown(30);
+        handleResendVerification();
+    };
+
+    useEffect(() => {
+        if (!canResend) {
+            const timer = setInterval(() => {
+                setCountdown((prev) => {
+                    if (prev > 0) {
+                        return prev - 1;
+                    } else {
+                        clearInterval(timer);
+                        setCanResend(true);
+                        return prev;
+                    }
+                });
+            }, 1000);
+
+            return () => clearInterval(timer);
+        }
+    }, [canResend]);
 
     return (
         <div className="">
@@ -85,12 +111,18 @@ export function VerifyEmailPasswordForm(props: VerifyEmailFormProps) {
                     />
                     <div className="flex justify-center flex-col items-center">
                         <p className=" mt-10 text-center text-sm text-[#64748B]">
-                            Send Code in <span className="text-[#151314] font-bold">00:10</span>{' '}
+                            Send Code in{' '}
+                            <span className="text-[#151314] font-bold">
+                                {countdown > 0 ? `00:${String(countdown).padStart(2, '0')}` : '00:00'}
+                            </span>
                         </p>
                         <Button
                             variant="link"
-                            className="  text-center text-primary-0 hover:text-blue-500"
-                            onClick={handleResendVerification}
+                            className={`text-center ${
+                                canResend ? 'text-primary-0 hover:text-blue-500' : 'text-gray-400 cursor-not-allowed'
+                            }`}
+                            onClick={handleResendClick}
+                            disabled={!canResend}
                         >
                             Resend
                         </Button>

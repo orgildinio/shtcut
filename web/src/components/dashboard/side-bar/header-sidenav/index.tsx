@@ -26,11 +26,8 @@ const HeaderSideNav = ({
     openCreateWorkSpace: () => void;
 }) => {
     const { findAllWorkspacesResponse } = useWorkspace({ callWorkspaces: true });
-    console.log('findAllWorkspacesResponse', findAllWorkspacesResponse);
     const [open, setOpen] = React.useState(false);
     const { module, workspace } = useParams();
-    console.log('module', module);
-    console.log('workspace', workspace);
     const router = useRouter();
     const activeWorkspace = findAllWorkspacesResponse?.find((data) => data.slug === workspace);
     const activeWorkspaceName = activeWorkspace?.name || 'Default Workspace';

@@ -17,7 +17,7 @@ const SettingContainer = () => {
 
     return (
         <SettingComponent
-            findAllTagsResponse={findAllTagsResponse}
+            findAllTagsResponse={findAllTagsResponse?.data}
             isLoading={isLoading}
             deleteTag={deleteTag}
             isLoadingState={isLoadingState}

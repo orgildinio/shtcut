@@ -17,3 +17,17 @@ export const signUpValues = {
     password: ''
 };
 export const signUpValidationSchema = z.object({ firstName, lastName, email, password });
+
+const emailSchema = z.string().email('Invalid email address');
+export const inviteFormSchema = z.object({
+    emails: z.array(emailSchema).min(1, 'At least one email is required')
+});
+
+export const createRoleSchema = z.object({
+    title: z.string().min(1, { message: 'Role name is required' }),
+    permissions: z.array(z.string()).min(1, { message: 'At least one permission must be selected' })
+});
+
+export const updateRoleSchema = z.object({
+    title: z.string().min(1, { message: 'Role name is required' })
+});

@@ -1,4 +1,4 @@
-import { Button, Modal } from '@shtcut-ui/react';
+import { Button, Modal, toast } from '@shtcut-ui/react';
 
 import Image from 'next/image';
 import React, { useState } from 'react';
@@ -13,35 +13,66 @@ import RolesTable from '@shtcut/components/workspace-table';
 import InviteModal from './invite-modal';
 import UserModal from './user-modal';
 import CreateRole from './create-role';
-import EditRole from './edit-role';
 import { useWorkspace } from '@shtcut/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { inviteFormSchema } from '@shtcut/components/form/auth/sign-up-form/validation';
+import { useCurrentWorkSpace } from '@shtcut/hooks/current-workspace';
+import { useCreateInviteMutation } from '@shtcut/services/members';
+import StarLoader from '@shtcut/components/loader/star-loader';
+import { useRole } from '@shtcut/hooks/roles';
+import { RolesDataResponse } from '@shtcut/types/workspace';
 
 const WorkspaceScreen = () => {
+    const currentWorkspace = useCurrentWorkSpace();
+    const [singleRole, setSingleRole] = useState<RolesDataResponse | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [showMember, setShowMember] = useState(false);
     const [showInvite, setShowInvite] = useState(false);
-    const [inputs, setInputs] = useState(['', '', '']);
+    const [emailsInput, setEmailsInput] = useState(['', '', '']);
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
     const [selectedStatus] = useState<string | null>(null);
     const [modalType, setModalType] = useState<string | null>(null);
-    const { findAllWorkspacesResponse } = useWorkspace({ callWorkspaces: true });
+    const { findAllWorkspacesResponse, findAllWorkspacesLoading } = useWorkspace({ callWorkspaces: true });
+    const [createInvite, { isLoading }] = useCreateInviteMutation();
+    const { findRolesResponse } = useRole({ callRoles: true });
     const addInput = () => {
-        if (inputs.length < 10) {
-            setInputs([...inputs, '']);
+        if (emailsInput.length < 10) {
+            setEmailsInput([...emailsInput, '']);
         }
     };
-
     const removeInput = () => {
-        setInputs(inputs.slice(0, -1));
+        setEmailsInput(emailsInput.slice(0, -1));
     };
 
     const form = useForm({
+        resolver: zodResolver(inviteFormSchema),
         defaultValues: {
-            email: ''
+            emails: ['', '', '']
         }
     });
-    const handleFormSubmit = (values: any) => {
-        console.log(values);
+
+    const handleFormSubmit = async (values: { emails: string[] }) => {
+        if (currentWorkspace?._id) {
+            const payload = {
+                emails: values.emails,
+                workspace: currentWorkspace?._id,
+                redirectLink: process.env.NEXT_PUBLIC_REDIRECT_URL || ''
+            };
+            try {
+                await createInvite(payload).unwrap();
+                setShowInvite(false);
+                form.reset();
+                toast({
+                    description: 'Invitation sent successfully!',
+                    title: 'Members Invitation'
+                });
+            } catch (error) {
+                toast({
+                    description: 'Something went wrong!',
+                    title: 'Members Invitation'
+                });
+            }
+        }
     };
 
     const filteredData = users.filter((user) => {
@@ -60,9 +91,18 @@ const WorkspaceScreen = () => {
         { id: 'roles', label: 'Roles' }
     ];
 
-    const handleOpenModal = (type: string) => {
+    const handleOpenModal = (type: string, role?: RolesDataResponse) => {
+        if (type === 'edit-role' && role) {
+            setSingleRole(role);
+        }
         setModalType(type);
         setShowInvite(true);
+    };
+
+    const handleClose = () => {
+        setSingleRole(null);
+        setModalType(null);
+        setShowInvite(false);
     };
 
     return (
@@ -106,7 +146,8 @@ const WorkspaceScreen = () => {
                         {selectedTabIndex === 1 && (
                             <RolesTable
                                 onClickViewUser={() => handleOpenModal('user')}
-                                onClickEdit={() => handleOpenModal('edit-role')}
+                                onClickEdit={handleOpenModal}
+                                findRolesResponse={findRolesResponse?.data}
                             />
                         )}
                     </section>
@@ -121,37 +162,52 @@ const WorkspaceScreen = () => {
                             </section>
                             <Button className="text-xs h-8 rounded bg-primary-0">Create Workspace</Button>
                         </section>
-                        <section className="flex flex-col gap-4 mt-6">
-                            {findAllWorkspacesResponse &&
-                                findAllWorkspacesResponse.map((workspace) => (
-                                    <div
-                                        key={workspace?._id}
-                                        className="flex bg-white border border-[#e3e3e3] px-3 py-2 rounded justify-between items-center "
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <Image src={'/images/send-icon.png'} width={44} height={44} alt="send" />
-                                            <div>
-                                                <p className="text-sm font-semibold">{workspace?.name}</p>
-                                                <p className="text-xs text-[#83899F]">
-                                                    {workspace?.members?.length} Members
-                                                </p>
+                        <section>
+                            {findAllWorkspacesLoading ? (
+                                <div className="pt-10">
+                                    <StarLoader />
+                                </div>
+                            ) : findAllWorkspacesResponse && findAllWorkspacesResponse?.length > 0 ? (
+                                <section className="flex flex-col gap-4 mt-6">
+                                    {findAllWorkspacesResponse &&
+                                        findAllWorkspacesResponse.map((workspace) => (
+                                            <div
+                                                key={workspace?._id}
+                                                className="flex bg-white border border-[#e3e3e3] px-3 py-2 rounded justify-between items-center "
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <Image
+                                                        src={'/images/send-icon.png'}
+                                                        width={44}
+                                                        height={44}
+                                                        alt="send"
+                                                    />
+                                                    <div>
+                                                        <p className="text-sm font-semibold">{workspace?.name}</p>
+                                                        <p className="text-xs text-[#83899F]">
+                                                            {workspace?.members?.length} Members
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    variant={'unstyled'}
+                                                    className="text-primary-0 text-xs font-semibold"
+                                                    onClick={() => setShowMember(true)}
+                                                >
+                                                    Manage workspace
+                                                </Button>
                                             </div>
-                                        </div>
-                                        <Button
-                                            variant={'unstyled'}
-                                            className="text-primary-0 text-xs font-semibold"
-                                            onClick={() => setShowMember(true)}
-                                        >
-                                            Manage workspace
-                                        </Button>
-                                    </div>
-                                ))}
+                                        ))}
+                                </section>
+                            ) : (
+                                <div className="text-center text-sm">No avaliable workspace</div>
+                            )}
                         </section>
                     </section>
                 </>
             )}
             <Modal
-                onClose={() => setShowInvite(false)}
+                onClose={handleClose}
                 showModel={showInvite}
                 setShowModal={setShowInvite}
                 className={`relative ${modalType === 'user' ? 'max-w-2xl' : 'max-w-md'} p-4`}
@@ -161,13 +217,15 @@ const WorkspaceScreen = () => {
                         removeInput={removeInput}
                         handleFormSubmit={handleFormSubmit}
                         form={form}
-                        inputs={inputs}
+                        emailsInput={emailsInput}
                         addInput={addInput}
+                        isLoading={isLoading}
                     />
                 )}
                 {modalType === 'user' && <UserModal onClose={() => setShowInvite(false)} />}
-                {modalType === 'create-role' && <CreateRole onClose={() => setShowInvite(false)} />}
-                {modalType === 'edit-role' && <EditRole onClose={() => setShowInvite(false)} />}
+                {(modalType === 'create-role' || modalType === 'edit-role') && (
+                    <CreateRole onClose={handleClose} singleRole={singleRole} />
+                )}
             </Modal>
         </div>
     );

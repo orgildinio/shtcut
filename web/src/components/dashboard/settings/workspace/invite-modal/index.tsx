@@ -1,31 +1,22 @@
 import React from 'react';
-import {
-    Button,
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    Input,
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from '@shtcut-ui/react';
-import { InviteList } from '@shtcut/_shared/data';
+import { Button, Form, FormControl, FormField, FormItem, FormMessage, Input } from '@shtcut-ui/react';
 import { Minus, Plus } from 'lucide-react';
+import { Controller } from 'react-hook-form';
+import { LoadingButton } from '@shtcut/components/_shared/loading-button';
 const InviteModal = ({
     form,
-    inputs,
+    emailsInput,
     addInput,
     handleFormSubmit,
-    removeInput
+    removeInput,
+    isLoading
 }: {
     form: any;
-    inputs: string[];
+    emailsInput: string[];
     addInput: () => void;
     handleFormSubmit: (val: any) => void;
     removeInput: () => void;
+    isLoading: boolean;
 }) => {
     return (
         <section className="">
@@ -37,45 +28,28 @@ const InviteModal = ({
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleFormSubmit)}>
                         <section className="flex flex-col gap-1">
-                            {inputs.map((value, index) => (
+                            {emailsInput.map((_, index) => (
                                 <div key={index} className="relative">
                                     <div className="flex items-center gap-2">
-                                        <FormField
-                                            key={index}
-                                            control={form.control}
-                                            name="email"
-                                            render={({ field }) => (
-                                                <FormItem className="w-full">
+                                        <FormItem className="w-full">
+                                            <Controller
+                                                name={`emails.${index}`}
+                                                control={form.control}
+                                                render={({ field }) => (
                                                     <FormControl>
-                                                        <Input placeholder="user@email.com" className="" {...field} />
+                                                        <Input {...field} placeholder="user@email.com" />
                                                     </FormControl>
-                                                </FormItem>
+                                                )}
+                                            />
+                                            {form.formState.errors.emails?.[index] && (
+                                                <FormMessage className="text-red-500 text-xs mt-1">
+                                                    {form.formState.errors.emails[index]?.message}
+                                                </FormMessage>
                                             )}
-                                        />
-                                        <div className="w-40">
-                                            <Select>
-                                                <SelectTrigger
-                                                    id="select-month"
-                                                    className=" text-[10px] text-[#2B3034]  shadow-none "
-                                                >
-                                                    <SelectValue placeholder="month" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {InviteList.map((list) => (
-                                                        <SelectItem
-                                                            key={list.value}
-                                                            value={list.value}
-                                                            className="text-xs text-[#2B3034]"
-                                                        >
-                                                            {list.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
+                                        </FormItem>
                                     </div>
                                     <div className="flex gap-x-3 mt-3 relative top-2 items-center">
-                                        {index === inputs.length - 1 && inputs.length < 10 && (
+                                        {index === emailsInput.length - 1 && emailsInput.length < 10 && (
                                             <div
                                                 onClick={addInput}
                                                 className="cursor-pointer text-primary-0 gap-3 text-xs  flex justify-end"
@@ -83,7 +57,7 @@ const InviteModal = ({
                                                 <Plus size={18} /> Add more
                                             </div>
                                         )}
-                                        {index === inputs.length - 1 && index >= 3 && (
+                                        {index === emailsInput.length - 1 && index >= 3 && (
                                             <div onClick={removeInput} className="cursor-pointer   ">
                                                 <Minus className="text-red-500 text-sm" />
                                             </div>
@@ -96,7 +70,9 @@ const InviteModal = ({
                             <Button className="w-full text-xs" variant={'outline'}>
                                 Cancel
                             </Button>
-                            <Button className="w-full bg-primary-0 text-xs">Send Invitation</Button>
+                            <LoadingButton loading={isLoading} className="w-full bg-primary-0 text-xs">
+                                Send Invitation
+                            </LoadingButton>
                         </div>
                     </form>
                 </Form>

@@ -34,6 +34,13 @@ const TagsScreen = ({
         setModalType(type || null);
         setShowModal(type !== null);
     };
+
+    const handleClose = () => {
+        setSingleTag(null);
+        setModalType(null);
+        setShowModal(false);
+    };
+
     const handleDeleteLink = (id: string) => {
         setLoadingState('deleting', true);
         deleteTag({
@@ -113,11 +120,11 @@ const TagsScreen = ({
                     </Card>
                 )}
             </section>
-            <Modal onClose={() => setShowModal(false)} showModel={showModal} setShowModal={setShowModal}>
-                {modalType === 'updateModal' && singleTag && (
-                    <CreateTags onClose={() => setShowModal(false)} singleTag={singleTag} />
+            <Modal onClose={handleClose} showModel={showModal} setShowModal={setShowModal}>
+                {(modalType === 'updateModal' || modalType === 'add-tags') && (
+                    <CreateTags onClose={handleClose} singleTag={singleTag} findAllTags={findAllTags} />
                 )}
-                {modalType === 'add-tags' && <CreateTags onClose={() => setShowModal(false)} />}
+
                 {modalType === 'deleteModal' && singleTag && (
                     <DeleteTag
                         isLoadingState={isLoadingState}

@@ -3,12 +3,12 @@ import { Logo } from '../../logo';
 import { Stepper } from '@shtcut/components/stepper';
 import AnimatedContainer from '@shtcut/components/framer/animate-div';
 
-const WorkSpaceSideBar = ({ step }: { step: number }) => {
+const WorkSpaceSideBar = ({ step, userValue }: { step: number; userValue: string }) => {
     return (
         <div className="bg-primary-0 hidden lg:flex flex-col justify-between py-10 px-6 rounded-xl h-full w-[40rem]">
             <AnimatedContainer direction="left">
                 <Logo whiteLogo />
-                <Stepper step={step} />
+                <Stepper step={step} userValue={userValue} />
             </AnimatedContainer>
             <div className="flex justify-between items-center">
                 <p className="text-[#CCCBCB]">Shutcut 2024</p>

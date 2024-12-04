@@ -34,6 +34,7 @@ interface UseWorkspaceReturnsType {
     updateWorkspaceResponse: Dict;
     deleteWorkspaceResponse: Dict;
     pagination: Pagination;
+    findAllWorkspacesLoading: boolean;
 }
 
 export const useWorkspace = (props: UseWorkspaceProps): UseWorkspaceReturnsType => {
@@ -43,7 +44,7 @@ export const useWorkspace = (props: UseWorkspaceProps): UseWorkspaceReturnsType 
     const [createWorkspace, createWorkspaceResponse] = useCreateWorkspaceMutation();
     const [updateWorkspace, updateWorkspaceResponse] = useUpdateWorkspaceMutation();
     const [deleteWorkspace, deleteWorkspaceResponse] = useDeleteWorkspaceMutation();
-    const [triggerWorkspaces] = useLazyFindAllWorkspacesQuery();
+    const [triggerWorkspaces, { isLoading: findAllWorkspacesLoading }] = useLazyFindAllWorkspacesQuery();
     const [triggerSearchOneWorkspace] = useLazySearchOneWorkspaceQuery();
 
     const params = {
@@ -73,6 +74,7 @@ export const useWorkspace = (props: UseWorkspaceProps): UseWorkspaceReturnsType 
         searchOneWorkspaceResponse,
         deleteWorkspaceResponse,
         findAllWorkspacesResponse,
-        pagination
+        pagination,
+        findAllWorkspacesLoading
     };
 };

@@ -41,9 +41,9 @@ const WorkspaceLayout = ({ children }: any) => {
     const workSpaceNav = findAllWorkspacesResponse?.find((ws) => ws.slug === workspace);
     const workspaceString = Array.isArray(workspace) ? workspace.join('') : workspace;
 
-    console.log('workSpaceNav', workSpaceNav);
-    console.log('workspaceString', workspaceString);
-    console.log('workspace::::', workspace);
+    console.log('findAllWorkspacesResponse', findAllWorkspacesResponse);
+
+    console.log('workspace', workspace);
 
     const sideNav: SideNavItem[] = [];
     if (workSpaceNav?.modules.includes('shtcut-shortener')) {
@@ -51,7 +51,7 @@ const WorkspaceLayout = ({ children }: any) => {
             id: '1',
             icon: <IoIosLink size={20} />,
             workspace: workspaceString,
-            url: `/url/${workspace}/overview`,
+            url: `/url/${workspace}/links`,
             title: 'Url Shortener'
         });
     }
@@ -73,7 +73,7 @@ const WorkspaceLayout = ({ children }: any) => {
             title: 'Survey Creation'
         });
     }
-    if (workSpaceNav?.modules.includes('shtcut-social-media')) {
+    if (workSpaceNav?.modules.includes('shtcut-social-manager')) {
         sideNav.push({
             id: '4',
             img: params?.workspace === 'social-media' ? '/images/social-icon.png' : '/images/social.png',
@@ -82,6 +82,8 @@ const WorkspaceLayout = ({ children }: any) => {
             title: 'Social Media'
         });
     }
+
+    console.log('sideNav', sideNav);
     const currentNav = sideNav.find((nav) => nav.workspace === workspace);
 
     const title = currentNav ? currentNav.title : '';

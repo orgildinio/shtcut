@@ -1,22 +1,21 @@
-import { Button, Input, Label, useToast } from '@shtcut-ui/react';
+import { Input, Label, useToast } from '@shtcut-ui/react';
 import { LoadingButton } from '@shtcut/components/_shared/loading-button';
 import { useTags } from '@shtcut/hooks/tags';
 import { TagResponse } from '@shtcut/types/tags';
 import { Check } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-const CreateTags = ({ onClose, singleTag }: { onClose: () => void; singleTag?: TagResponse | null }) => {
+const CreateTags = ({
+    onClose,
+    singleTag,
+    findAllTags
+}: {
+    onClose: () => void;
+    singleTag: TagResponse | null;
+    findAllTags: any;
+}) => {
     const { toast } = useToast();
-    const {
-        createTags,
-        updateTags,
-        updateTagsResponse,
-        isLoadingState,
-        createTagsResponse,
-        setLoadingState,
-        setFindAllTagsResponse,
-        findAllTags
-    } = useTags({
+    const { createTags, updateTags, isLoadingState, createTagsResponse, setLoadingState } = useTags({
         callTags: true
     });
 
@@ -29,8 +28,6 @@ const CreateTags = ({ onClose, singleTag }: { onClose: () => void; singleTag?: T
     ];
     const [inputValue, setInputValue] = useState('');
     const [selectedColor, setSelectedColor] = useState<string>('#0B7B69');
-
-    console.log('single:::', singleTag);
 
     useEffect(() => {
         if (singleTag) {
@@ -74,18 +71,17 @@ const CreateTags = ({ onClose, singleTag }: { onClose: () => void; singleTag?: T
                 const response = await updateTags(singleTag?._id, payload);
                 toast({
                     title: 'Tag Updated',
-                    description: response?.meta?.message || 'Tag updated successfully.',
-                    variant: 'default'
+                    description: response?.meta?.message || 'Tag updated successfully.'
                 });
+                findAllTags();
             } else {
                 await createTags(payload);
                 toast({
                     title: 'Tag Added',
-                    description: createTagsResponse?.meta?.message || 'Tag created successfully.',
-                    variant: 'default'
+                    description: createTagsResponse?.meta?.message || 'Tag created successfully.'
                 });
+                findAllTags();
             }
-
             setLoadingState('creating', false);
             setInputValue('');
             setSelectedColor('');

@@ -93,6 +93,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     };
 
     const findAllLinksResponse = useAppSelector((state) => selectFindAllLinkData(state, params));
+
     const handleSearchChange = debounce((newSearch) => {
         setDebouncedSearch(newSearch);
     }, 500);
@@ -102,7 +103,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
             findAllLinks({
                 ...params
             });
-            setLoaded(true); // Set loaded to true after the first call
+            setLoaded(true);
         }
     }, [callLinks, debouncedSearch, filter, findAllLinks, loaded]);
 

@@ -1,4 +1,16 @@
-import { Button, Form, FormControl, FormField, FormItem, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shtcut-ui/react';
+import {
+    Button,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    Input,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '@shtcut-ui/react';
 import { InviteList } from '@shtcut/_shared/data';
 import { Plus, Minus } from 'lucide-react';
 import React, { useState } from 'react';
