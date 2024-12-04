@@ -35,7 +35,7 @@ export const tagsApi = api.injectEndpoints({
         }),
         updateTags: builder.mutation<TagsApiResponse, { id: string; payload: Partial<CreateTagPayload> }>({
             query: ({ id, payload }) => ({
-                url: `/tags/${id}`,
+                url: `${ACL.tags}/${id}`,
                 method: 'PUT',
                 body: payload
             })

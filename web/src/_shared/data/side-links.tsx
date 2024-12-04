@@ -22,12 +22,12 @@ export interface SideLink extends NavLink {
 
 export const sideLinks = (module: string, workspace: string): SideLink[] => {
     const urlNavs: NavLink[] = [
-        {
-            id: '1',
-            title: 'Dashboard',
-            href: `/url/${workspace}/overview`,
-            icon: <AiFillAppstore size={16} />
-        },
+        // {
+        //     id: '1',
+        //     title: 'Dashboard',
+        //     href: `/url/${workspace}/overview`,
+        //     icon: <AiFillAppstore size={16} />
+        // },
         {
             id: '2',
             title: 'Links',

@@ -27,9 +27,8 @@ interface UseTagsReturnsType {
     updateTags: any;
     findAllTags: any;
     isLoading: boolean;
-    findAllTagsResponse: TagResponse[] | undefined;
+    findAllTagsResponse: TagsApiResponse | undefined;
     deleteTag: MutationTrigger<any>;
-    setFindAllTagsResponse: React.Dispatch<React.SetStateAction<TagResponse[] | undefined>>;
     createTagsResponse: TagsApiResponse | undefined;
     isLoadingState: boolean;
     setLoadingState: (key: 'creating' | 'deleting' | 'updating', value: boolean) => void;
@@ -41,10 +40,10 @@ export const useTags = (props: UseTagsProps): UseTagsReturnsType => {
     const { callTags = false, search = '', filter, all } = props;
     const { paginate, pagination } = usePagination({ key: 'findAllTags' });
     const [createTagsTrigger, { data: createTagsResponse }] = useCreateTagsMutation();
-    const [findAllTags, { isLoading }] = useLazyFindAllTagsQuery();
+    const [findAllTags, { isLoading, data: findAllTagsResponse }] = useLazyFindAllTagsQuery();
     const [deleteTag, deleteTagResponse] = useDeleteTagsMutation();
     const [updateTagsTrigger, { data: updateTagsResponse }] = useUpdateTagsMutation();
-    const [findAllTagsResponse, setFindAllTagsResponse] = useState<TagResponse[] | undefined>([]);
+
     const [loaded, setLoaded] = useState(false);
     const [debouncedSearch, setDebouncedSearch] = useState(search);
     const [loading, setLoading] = useState({
@@ -74,19 +73,16 @@ export const useTags = (props: UseTagsProps): UseTagsReturnsType => {
 
     useEffect(() => {
         if (callTags && !loaded) {
-            findAllTags({ ...params }).then((response) => {
-                if (response?.data?.data) {
-                    setFindAllTagsResponse(response.data.data);
-                }
+            findAllTags({
+                ...params
             });
             setLoaded(true);
         }
-    }, [callTags, debouncedSearch, filter, findAllTags, params, loaded]);
+    }, [callTags, debouncedSearch, filter, findAllTags, loaded]);
 
     return {
         isLoading,
         findAllTagsResponse,
-        setFindAllTagsResponse,
         createTags,
         updateTags,
         createTagsResponse,

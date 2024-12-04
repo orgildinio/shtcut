@@ -1,6 +1,5 @@
 import { Button, Form, Modal, Separator, toast } from '@shtcut-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
-import LinkListedComponent from '../link-listed-component';
 import SearchFilterActions from '../search-filter-actions';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';

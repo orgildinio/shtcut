@@ -235,3 +235,12 @@ interface DeleteComponentType {
     handleDelete: () => void;
     handleClose: () => void;
 }
+
+interface GeneralResponse {
+    publicId: string;
+    createdAt: string;
+    updatedAt: string;
+    _id: string;
+    id: string;
+    __v: number;
+}

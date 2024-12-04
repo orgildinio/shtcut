@@ -41,7 +41,7 @@ export const linkApi = api.injectEndpoints({
             query: ({ payload, id }) => {
                 return {
                     url: `${SHTNER.links}/${id}`,
-                    method: 'PUT',
+                    method: PUT,
                     body: payload
                 };
             },

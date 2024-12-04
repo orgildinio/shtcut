@@ -6,8 +6,6 @@ import TeamForm from '../../team-form';
 import { PropsCreate } from '@shtcut/types/types';
 
 const HowTopPlan = ({ userValue, handleOptionChange, form }: PropsCreate) => {
-    
-
     return (
         <div>
             <div className="flex items-center gap-x-5 justify-center w-full ">
@@ -28,8 +26,9 @@ const HowTopPlan = ({ userValue, handleOptionChange, form }: PropsCreate) => {
                     icon={<RiUserFill size={24} />}
                 />
             </div>
+
             <div className="flex items-center gap-x-3 my-3">
-                <TeamForm form={form} />
+                <TeamForm form={form} userValue={userValue} />
             </div>
         </div>
     );

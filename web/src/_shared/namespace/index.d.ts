@@ -43,6 +43,7 @@ export interface Meta {
     token?: string;
     error?: ApiError;
     pagination: ApiPagination;
+    message?: string;
 }
 
 export interface ApiResponse<T> {

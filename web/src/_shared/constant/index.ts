@@ -328,7 +328,10 @@ export const ACL = {
     changePasswordUrl: 'acl/auth/change-password',
     loggedInUserUrl: 'acl/users/me',
     workspace: 'acl/workspaces',
-    tags: 'acl/tags'
+    tags: 'acl/tags',
+    permissions: '/acl/permissions',
+    invitation: 'acl/invitations',
+    roles: 'acl/roles'
 };
 
 export const SHTNER = {
@@ -591,7 +594,7 @@ export const dummyLinkHistory = [
 
 // utils/formatName.ts
 export const FormatName = (fullName: string): string => {
-    const names = fullName.split(' ');
+    const names = fullName?.split(' ');
     if (names.length < 2) return '';
 
     const firstNameInitial = names[0].charAt(0).toUpperCase();
@@ -631,3 +634,53 @@ export function getInitials(fullName: string) {
 
     return `${firstLetter}${lastLetter}`;
 }
+
+type DateFormatOptions = {
+    includeTime?: boolean;
+};
+
+export const fullFormatDate = (
+    dateInput: Date | string,
+    options: DateFormatOptions = { includeTime: true }
+): string => {
+    const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+
+    if (isNaN(date.getTime())) {
+        throw new Error('Invalid date input');
+    }
+
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+
+    const suffix = getDaySuffix(day);
+
+    let formattedDate = `${month} ${day}${suffix}, ${year}`;
+
+    if (options.includeTime) {
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const amPm = hours >= 12 ? 'PM' : 'AM';
+
+        const formattedHours = hours % 12 || 12;
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+
+        formattedDate += ` ${formattedHours}:${formattedMinutes} ${amPm}`;
+    }
+
+    return formattedDate;
+};
+
+const getDaySuffix = (day: number): string => {
+    if (day >= 11 && day <= 13) return 'th';
+    switch (day % 10) {
+        case 1:
+            return 'st';
+        case 2:
+            return 'nd';
+        case 3:
+            return 'rd';
+        default:
+            return 'th';
+    }
+};
