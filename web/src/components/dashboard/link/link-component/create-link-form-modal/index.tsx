@@ -46,7 +46,6 @@ const CreateLinkForm = ({
 }) => {
     const handleTagsChange = (newTags: string[]) => {
         setTags(newTags);
-        console.log('Selected Tags:', newTags);
     };
     const predefinedTags = ['JavaScript', 'React', 'CSS', 'TypeScript', 'HTML'];
 
