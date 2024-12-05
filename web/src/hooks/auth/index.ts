@@ -14,6 +14,7 @@ import {
 import { logout } from '@shtcut/redux/slices/auth';
 import { AUTH_TOKEN_KEY } from '@shtcut/_shared/constant';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 interface UseAuthReturnType {
     // mutations
@@ -43,6 +44,7 @@ interface UseAuthReturnType {
 }
 
 export const useAuth = (): UseAuthReturnType => {
+    const router = useRouter();
     const dispatch = useAppDispatch();
     const [signUp, signUpResponse] = useSignUpMutation();
     const [signIn, signInResponse] = useSignInMutation();
@@ -57,6 +59,7 @@ export const useAuth = (): UseAuthReturnType => {
 
     const handleLogout = () => {
         dispatch(logout());
+        router.push('/landing');
     };
 
     const sessionToken: string | undefined = Cookies.get(AUTH_TOKEN_KEY);

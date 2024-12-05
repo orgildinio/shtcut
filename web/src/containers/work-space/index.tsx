@@ -106,7 +106,7 @@ const WorkSpaceContainerPage = () => {
 
     const handleFormSubmit = (values: Dict) => {
         const emailFields = Object.keys(values).filter((key) => key.startsWith('email'));
-        const emailArray = emailFields.map((key) => values[key]).filter(Boolean); // Remove falsy values
+        const emailArray = emailFields.map((key) => values[key]).filter(Boolean);
 
         const personalPayload = {
             name: get(values, ['name']),
