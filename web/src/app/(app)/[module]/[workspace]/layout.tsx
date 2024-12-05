@@ -41,10 +41,6 @@ const WorkspaceLayout = ({ children }: any) => {
     const workSpaceNav = findAllWorkspacesResponse?.find((ws) => ws.slug === workspace);
     const workspaceString = Array.isArray(workspace) ? workspace.join('') : workspace;
 
-    console.log('findAllWorkspacesResponse', findAllWorkspacesResponse);
-
-    console.log('workspace', workspace);
-
     const sideNav: SideNavItem[] = [];
     if (workSpaceNav?.modules.includes('shtcut-shortener')) {
         sideNav.push({

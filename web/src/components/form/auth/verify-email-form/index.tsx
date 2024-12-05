@@ -19,9 +19,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const FormSchema = z.object({
-    pin: z.string().min(6, {
-        message: 'Your one-time password must be 6 characters.'
-    })
+    pin: z
+        .string()
+        .min(6, { message: 'Your one-time password must be 6 characters.' })
+        .max(6, { message: 'Your one-time password must be 6 characters.' })
 });
 
 interface VerifyEmailFormProps {
@@ -39,6 +40,7 @@ export function VerifyEmailPasswordForm(props: VerifyEmailFormProps) {
     const { isLoading, handleVerifyEmailSubmit, handleResendVerification, email, mobileDesktop } = props;
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
+        mode: 'onChange',
         defaultValues: {
             pin: ''
         }
@@ -131,7 +133,7 @@ export function VerifyEmailPasswordForm(props: VerifyEmailFormProps) {
                         className={mobileDesktop ? 'w-full' : 'w-[95%]'}
                         type="submit"
                         loading={isLoading}
-                        disabled={isLoading}
+                        disabled={!form.formState.isValid || isLoading}
                     >
                         Verify
                     </AppButton>

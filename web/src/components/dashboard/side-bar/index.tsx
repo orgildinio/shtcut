@@ -11,6 +11,7 @@ import { Button, Label, Modal, Tooltip, TooltipContent, TooltipProvider, Tooltip
 import { Plus } from 'lucide-react';
 import CreateWorkSpace from '@shtcut/containers/work-space/work-space-modal';
 import UrlShortenerActionsFeatures from './url-shortner-btn';
+import { useAuth } from '@shtcut/hooks';
 
 type Props = {
     setIsOpen: (val: boolean) => void;
@@ -25,10 +26,10 @@ export default function SideBar({ isOpen, isTab, setIsOpen, workSpaceTitle }: Pr
     const pathName = usePathname();
     const { module, workspace } = params;
     const navigationOptions = sideLinks(module as string, workspace as string);
+    const { handleLogout } = useAuth();
     const isMd = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
     const [activeTab, setActiveTab] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
-    console.log('workSpaceTitle', workSpaceTitle);
     const Sidebar_animation = isTab
         ? {
               open: {
@@ -131,6 +132,11 @@ export default function SideBar({ isOpen, isTab, setIsOpen, workSpaceTitle }: Pr
                         <li
                             key={data.id}
                             className={`w-full ${data.id === '5' && module === 'url' ? 'border-b pb-[14px]' : data.id === '6' && module === 'url' ? 'mt-2' : ''}  ${data.id === '8' && module === 'social' ? 'border-b pb-[14px]' : data.id === '8' && module === 'social' ? 'mt-2' : ''} `}
+                            onClick={() => {
+                                if (data.key === 'sign-out') {
+                                    handleLogout();
+                                }
+                            }}
                         >
                             <Link href={data.href}>
                                 <div

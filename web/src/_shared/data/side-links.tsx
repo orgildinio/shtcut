@@ -14,6 +14,7 @@ export interface NavLink {
     label?: string;
     href: string;
     icon?: JSX.Element;
+    key?: string;
 }
 
 export interface SideLink extends NavLink {
@@ -63,6 +64,7 @@ export const sideLinks = (module: string, workspace: string): SideLink[] => {
         {
             id: '7',
             title: 'Sign out',
+            key: 'sign-out',
             // href: `/url/${workspace}/settings`,
             href: '#',
             icon: <LogOut size={16} />
