@@ -17,7 +17,7 @@ const ResetPasswordContainer = () => {
     const searchParams = useSearchParams();
     const emailParams = searchParams.get('email');
     const { push } = useRouter();
-    const { updatePassword, updatePasswordResponse } = useAuth();
+    const { updatePassword, updatePasswordResponse, forgotPassword, forgotPasswordResponse } = useAuth();
     const { isSuccess, isLoading, error } = updatePasswordResponse;
     const errorMessage = get(error, ['data', 'meta', 'error', 'message'], 'An error occurred, please try again.');
 
@@ -38,6 +38,19 @@ const ResetPasswordContainer = () => {
                 }
             });
         }
+    };
+
+    const handleResendCode = () => {
+        const payload = {
+            email: emailParams
+        };
+        forgotPassword({
+            payload,
+            options: {
+                successMessage: 'An email has been resent to your email address',
+                errorMessage: 'This email does not exist in our database'
+            }
+        });
     };
 
     const ErrorAlert = ({ message }: { message: string }) => (
@@ -79,6 +92,7 @@ const ResetPasswordContainer = () => {
                                 onNext={handleNextStep}
                                 step={step}
                                 mobileDesktop={mobileDesktop}
+                                handleResendCode={handleResendCode}
                             />
                         </div>
                     </div>

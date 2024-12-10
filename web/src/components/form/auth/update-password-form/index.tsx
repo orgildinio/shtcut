@@ -19,8 +19,9 @@ import { updatePasswordValidationSchema } from './validation';
 import { NavLink } from '@shtcut/components';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Fragment, HTMLAttributes } from 'react';
+import { Fragment, HTMLAttributes, useEffect, useState } from 'react';
 import z from 'zod';
+import { useAuth } from '@shtcut/hooks';
 
 interface UpdatePasswordFormProps extends HTMLAttributes<HTMLDivElement> {
     isLoading: boolean;
@@ -29,10 +30,14 @@ interface UpdatePasswordFormProps extends HTMLAttributes<HTMLDivElement> {
     onNext: () => void;
     step?: number;
     mobileDesktop?: boolean;
+    handleResendCode: () => void;
 }
 
 export const UpdatePasswordForm = (props: UpdatePasswordFormProps) => {
-    const { isLoading, handleUpdatePasswordSubmit, className, onNext, step, mobileDesktop } = props;
+    const [countdown, setCountdown] = useState(30);
+
+    const [canResend, setCanResend] = useState(false);
+    const { isLoading, handleUpdatePasswordSubmit, className, onNext, step, mobileDesktop, handleResendCode } = props;
     const form = useForm<z.infer<typeof updatePasswordValidationSchema>>({
         resolver: zodResolver(updatePasswordValidationSchema),
         defaultValues: {
@@ -46,6 +51,30 @@ export const UpdatePasswordForm = (props: UpdatePasswordFormProps) => {
         handleUpdatePasswordSubmit(values);
         console.log('values::', values);
     };
+
+    const handleResendClick = () => {
+        setCanResend(false);
+        setCountdown(30);
+        handleResendCode();
+    };
+
+    useEffect(() => {
+        if (!canResend) {
+            const timer = setInterval(() => {
+                setCountdown((prev) => {
+                    if (prev > 0) {
+                        return prev - 1;
+                    } else {
+                        clearInterval(timer);
+                        setCanResend(true);
+                        return prev;
+                    }
+                });
+            }, 1000);
+
+            return () => clearInterval(timer);
+        }
+    }, [canResend]);
 
     return (
         <div className={cn('grid gap-6', className)} {...props}>
@@ -119,11 +148,20 @@ export const UpdatePasswordForm = (props: UpdatePasswordFormProps) => {
                         {step === 1 && (
                             <div className="flex justify-center flex-col items-center">
                                 <p className=" mt-10 text-center text-sm text-[#64748B]">
-                                    Send Code in <span className="text-[#151314] font-bold">00:10</span>{' '}
+                                    Send Code in{' '}
+                                    <span className="text-[#151314] font-bold">
+                                        {countdown > 0 ? `00:${String(countdown).padStart(2, '0')}` : '00:00'}
+                                    </span>
                                 </p>
                                 <Button
                                     variant="unstyled"
-                                    className="text-center p-0 m-0 text-primary-0 hover:text-blue-500"
+                                    className={`text-center ${
+                                        canResend
+                                            ? 'text-primary-0 hover:text-blue-500'
+                                            : 'text-gray-400 cursor-not-allowed'
+                                    }`}
+                                    disabled={!canResend}
+                                    onClick={handleResendClick}
                                 >
                                     Resend
                                 </Button>

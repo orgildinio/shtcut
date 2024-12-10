@@ -92,6 +92,8 @@ export interface LinkComponentType {
     fetchMetadata: Dict;
     setUrl: Dispatch<SetStateAction<string>>;
     findAllDomainsResponse: DomainNameSpace.Domain[];
+    setSearch?: any;
+    handleCloseLoading: () => void;
 }
 
 export interface SearchType {
@@ -137,4 +139,5 @@ export interface LinkTypeResponse {
     isLoadingState: boolean;
     updateLink: MutationTrigger<any>;
     setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'creating', value: boolean) => void;
+    findAllLinks: any;
 }

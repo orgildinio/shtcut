@@ -37,11 +37,8 @@ const QrCodeModal = ({ data, qrCodeRef }: { data: LinkNameSpace.Link; qrCodeRef:
                         qrStyle={'squares'}
                     />
                 </div>
-                <div className="flex mt-10 items-center w-full gap-4">
-                    <Button variant={'outline'} className="w-full h-8 text-xs" onClick={() => {}}>
-                        Copy
-                    </Button>
-                    <DownloadBtn qrCodeRef={qrCodeRef} />
+                <div className="flex mt-10 items-center w-1/2 gap-4">
+                    <DownloadBtn qrCodeRef={qrCodeRef} value={`https://${data?.domain?.slug}/${data?.alias}`} />
                 </div>
             </div>
         </div>

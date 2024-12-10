@@ -37,7 +37,6 @@ interface UseLinkReturnsType {
     fetchMetadata: Dict;
     findAllLinks: any;
     isLoading: boolean;
-    handleDeleteLink: (id: string) => void;
     findAllLinksResponse: LinkNameSpace.Link[] | undefined;
     fetchMetaDataResponse: MetadataResponse | undefined;
     fetchMetaLoading: boolean;
@@ -49,7 +48,7 @@ interface UseLinkReturnsType {
     deleteLinkResponse: Dict;
     pagination: Pagination;
     isLoadingState: boolean;
-
+    handleCloseLoading: () => void;
     setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'creating', value: boolean) => void;
     handleSearchChange: any;
 }
@@ -60,13 +59,14 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     const [createLink, createLinkResponse] = useCreateLinkMutation();
     const [updateLink, updateLinkResponse] = useUpdateLinkMutation();
     const [deleteLink, deleteLinkResponse] = useDeleteLinkMutation();
-    const [findAllLinks, { isLoading }] = useLazyFindAllLinksQuery();
+    const [findAllLinks, { isLoading, data }] = useLazyFindAllLinksQuery();
     const [duplicate, duplicateLinkResponse] = useLazyDuplicateLinkQuery();
     const [getLink, getLinkResponse] = useLazyGetLinkQuery();
     const [fetchMetadata, { data: fetchMetaDataResponse, isLoading: fetchMetaLoading, error }] =
         useLazyFetchMetadataQuery();
 
     const [debouncedSearch, setDebouncedSearch] = useState(search);
+
     const [loading, setLoading] = useState({
         duplicating: false,
         updating: false,
@@ -74,10 +74,19 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         finding: false,
         creating: false
     });
-    const [loaded, setLoaded] = useState(false);
     const isLoadingState = Object.values(loading).some((state) => state);
     const setLoadingState = (key: keyof typeof loading, value: boolean) => {
         setLoading((prev) => ({ ...prev, [key]: value }));
+    };
+
+    const handleCloseLoading = () => {
+        setLoading({
+            duplicating: false,
+            updating: false,
+            deleting: false,
+            finding: false,
+            creating: false
+        });
     };
 
     const params = {
@@ -92,20 +101,18 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         ...filter
     };
 
-    const findAllLinksResponse = useAppSelector((state) => selectFindAllLinkData(state, params));
-
-    const handleSearchChange = debounce((newSearch) => {
+    const findAllLinksResponse = data && data?.data;
+    const handleSearchChange = debounce((newSearch: string) => {
         setDebouncedSearch(newSearch);
     }, 500);
 
     useEffect(() => {
-        if (callLinks && !loaded) {
+        if (callLinks) {
             findAllLinks({
                 ...params
             });
-            setLoaded(true);
         }
-    }, [callLinks, debouncedSearch, filter, findAllLinks, loaded]);
+    }, [callLinks, debouncedSearch, filter]);
 
     useEffect(() => {
         if (id) {
@@ -124,10 +131,6 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         }
     }, [url]);
 
-    const handleDeleteLink = (id: string) => {
-        deleteLink({ payload: { id } });
-    };
-
     return {
         isLoading,
         createLink,
@@ -142,7 +145,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         duplicateLinkResponse,
         deleteLinkResponse,
         pagination,
-        handleDeleteLink,
+        handleCloseLoading,
         isLoadingState,
         setLoadingState,
         handleSearchChange,

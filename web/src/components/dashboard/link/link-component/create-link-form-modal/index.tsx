@@ -47,8 +47,8 @@ const CreateLinkForm = ({
     const handleTagsChange = (newTags: string[]) => {
         setTags(newTags);
     };
-    const predefinedTags = ['JavaScript', 'React', 'CSS', 'TypeScript', 'HTML'];
 
+    console.log('singleLink?.alias', singleLink?.alias);
     return (
         <div className="w-full py-6">
             <div className="flex flex-col px-14 gap-4">
@@ -74,7 +74,11 @@ const CreateLinkForm = ({
                                 id="select-short-link"
                                 className=" text-sm text-[#2B3034]  shadow-none  border-none  w-1/3 "
                             >
-                                {singleLink ? <p>{singleLink?.domain?.slug}</p> : <SelectValue placeholder="domain" />}
+                                {singleLink ? (
+                                    <p>{singleLink?.domain?.slug}</p>
+                                ) : (
+                                    <SelectValue placeholder="shtcut.co" defaultValue={'shtcut.co'} />
+                                )}
                             </SelectTrigger>
                             <SelectContent>
                                 {findAllDomainsResponse &&
@@ -82,7 +86,7 @@ const CreateLinkForm = ({
                                         <SelectItem
                                             key={domain?._id}
                                             value={domain?._id}
-                                            disabled={!watchLink || Boolean(singleLink)}
+                                            disabled
                                             className="text-sm text-[#2B3034]"
                                         >
                                             {domain?.slug}
@@ -98,10 +102,11 @@ const CreateLinkForm = ({
                                 <FormItem className=" border-none   w-full">
                                     <FormControl>
                                         <Input
-                                            placeholder="link "
+                                            placeholder={singleLink ? singleLink?.alias : ''}
                                             className="h-10 border-none focus-visible:ring-0  shadow-none  w-full"
                                             {...field}
                                             disabled={!watchLink || Boolean(singleLink)}
+                                            defaultValue={singleLink ? singleLink?.alias : ''}
                                         />
                                     </FormControl>
                                     <FormMessage />

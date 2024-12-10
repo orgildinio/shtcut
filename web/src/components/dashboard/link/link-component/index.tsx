@@ -1,7 +1,7 @@
 import { Button, Form, Modal, Separator, toast } from '@shtcut-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import SearchFilterActions from '../search-filter-actions';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import {
     AndroidTarget,
@@ -13,13 +13,12 @@ import {
     PasswordProtection,
     UTMbuilder
 } from '../component';
-
+import { selectFindAllLinkData } from '@shtcut/redux/selectors/link';
 import StarLoader from '@shtcut/components/loader/star-loader';
 import { LinkComponentType, LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import DeleteComponent from './delete-modal';
 import DuplicateComponent from './duplicate-modal';
 import QrCodeModal from './qrcode-modal';
-import { useUser } from '@shtcut/hooks/user';
 import { LoadingButton } from '@shtcut/components/_shared/loading-button';
 import ArchiveModal from './archive-component';
 import LinkDataComponent from './link-data';
@@ -29,6 +28,7 @@ import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '@shtcut/redux/store';
 import { setDropdownState, toggleDropdown } from '@shtcut/redux/slices/ui';
 import { useTags } from '@shtcut/hooks/tags';
+import { useCurrentWorkSpace } from '@shtcut/hooks/current-workspace';
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -50,16 +50,13 @@ const LinkComponent = ({
     createLink,
     createLinkResponse,
     updateLink,
-    updateLinkResponse
+    updateLinkResponse,
+    setSearch,
+    handleCloseLoading
 }: LinkComponentType) => {
     const { findAllTagsResponse } = useTags({ callTags: true });
     const dispatch = useAppDispatch();
     const qrCodeRef = useRef(null);
-    const { loggedInUserData } = useUser({ callLoggedInUser: true });
-    const { data } = loggedInUserData;
-    const { data: user } = data || {};
-    const params = useParams();
-    const { workspace } = params;
     const [modalType, setModalType] = useState<ModalType>(null);
     const [showSections, setShowSections] = useState(false);
     const [singleLink, setSingleLink] = useState<LinkNameSpace.Link | null>(null);
@@ -70,7 +67,7 @@ const LinkComponent = ({
     const [countriesData, setCountriesData] = useState<{ countryCode: string; url: string }[]>([]);
     const [tags, setTags] = useState<string[]>([]);
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(undefined);
-    const workspaceId = user?.workspace?.find((ws) => ws.slug === workspace)?._id;
+    const currentWorkspace = useCurrentWorkSpace();
     const showDropdown = useSelector((state: RootState) => state.ui.showDropdown);
 
     const handleDateChange = (date: Date | undefined) => {
@@ -83,18 +80,6 @@ const LinkComponent = ({
 
     const handleNavigate = (alias: string) => {
         route.push(`${pathName}/analytics/${alias}`);
-    };
-    const handleDeleteLink = (id: string) => {
-        setLoadingState('deleting', true);
-        deleteLink({
-            payload: { id },
-            options: {
-                successMessage: 'Link deleted successfully',
-                onSuccess: () => {
-                    findAllLinks();
-                }
-            }
-        });
     };
 
     const toggleSection = (type?: ModalType, val?: LinkNameSpace.Link) => {
@@ -136,12 +121,33 @@ const LinkComponent = ({
     const watchTitle = watch('title');
     const watchDescription = watch('description');
 
+    const handleDeleteLink = (id: string) => {
+        setLoadingState('deleting', true);
+        deleteLink({
+            payload: { id },
+            options: {
+                successMessage: 'Link deleted successfully'
+            }
+        });
+    };
+
+    const handleDuplicateLink = async (linkId: string) => {
+        setLoadingState('duplicating', true);
+        duplicate({
+            payload: { id: linkId },
+            options: {
+                successMessage: 'Link Duplicated successfully'
+            }
+        });
+    };
+
     useEffect(() => {
         if (fetchMetaDataResponse?.data?.meta) {
             const { title, description } = fetchMetaDataResponse.data.meta;
             const { image } = fetchMetaDataResponse.data.og;
             setValue('title', title);
             setValue('description', description);
+
             setPreview(image);
         }
     }, [fetchMetaDataResponse, setValue]);
@@ -150,23 +156,33 @@ const LinkComponent = ({
         if (watchLink) {
             setUrl(watchLink);
         }
-    }, [watchLink, setUrl]);
+        if (singleLink?.createdAt) {
+            setSelectedDate(new Date(singleLink.createdAt));
+        }
+    }, [watchLink, setUrl, singleLink]);
 
     const handleCloseModal = () => {
         setShowSections(false);
+        setModalType(null);
+        handleCloseLoading();
+        setSingleLink(null);
     };
 
+    console.log('show::', showSections, modalType);
+
     const onSubmit = async (data: any) => {
-        setLoadingState('creating', true);
+        const isUpdating = Boolean(singleLink);
+        setLoadingState(isUpdating ? 'updating' : 'creating', true);
         const geoObject = countriesData.reduce((acc, { countryCode, url }) => {
             acc[countryCode] = url;
             return acc;
         }, {});
+
         const payload = {
             title: data?.title,
             target: data?.target,
-            workspace: workspaceId,
-            domain: domain,
+            workspace: currentWorkspace?._id,
+            domain: '66059257bcb47c8944881927',
             password: data?.password,
             enableTracking: true,
             expiryDate: selectedDate,
@@ -174,6 +190,7 @@ const LinkComponent = ({
                 android: data?.android,
                 ios: data?.ios
             },
+            tags: [],
             geo: geoObject,
             utmParams: {
                 source: data?.source,
@@ -183,56 +200,22 @@ const LinkComponent = ({
                 content: data?.content
             }
         };
-        try {
-            await createLink({ payload });
-            form.reset();
-            setLoadingState('creating', false);
-            dispatch(toggleDropdown());
-            const successMessage = createLinkResponse?.data?.meta?.message;
-            toast({
-                variant: 'default',
-                title: 'Link Created',
-                description: successMessage
-            });
-            setPreview(null);
-        } catch (err) {
-            const errorMessage = (err as any)?.data?.message || 'Failed . Please try again.';
-            setLoadingState('creating', false);
-            toast({
-                variant: 'destructive',
-                title: 'Error!',
-                description: errorMessage
-            });
-        }
-    };
 
-    const onSubmitUpdate = async (data: any) => {
-        setLoadingState('updating', true);
-        const payload = {
-            title: data?.title || singleLink?.title,
-            target: data?.target || singleLink?.title,
-            devices: {
-                android: data?.android || singleLink?.devices?.android,
-                ios: data?.ios || singleLink?.devices?.ios
+        try {
+            if (isUpdating) {
+                await updateLink({ payload, id: singleLink?._id });
+            } else {
+                await createLink({ payload });
             }
-        };
-
-        try {
-            await updateLink({ payload, id: singleLink?._id });
             form.reset();
-            setLoadingState('updating', false);
+            setLoadingState(isUpdating ? 'updating' : 'creating', false);
             dispatch(toggleDropdown());
-            const successMessage = updateLinkResponse?.data?.meta?.message;
-
-            toast({
-                variant: 'default',
-                title: 'Link Updated',
-                description: successMessage || 'links successfully updated'
-            });
+            // setSearch('');
+            findAllLinks();
             setPreview(null);
         } catch (err) {
-            const errorMessage = (err as any)?.data?.message || 'Failed . Please try again.';
-            setLoadingState('updating', false);
+            const errorMessage = (err as any)?.data?.message || 'Failed. Please try again.';
+            setLoadingState(isUpdating ? 'updating' : 'creating', false);
             toast({
                 variant: 'destructive',
                 title: 'Error!',
@@ -274,36 +257,33 @@ const LinkComponent = ({
         }
     };
 
-    const handleDuplicateLink = async (linkId: string) => {
-        setLoadingState('duplicating', true);
-        duplicate({
-            payload: { id: linkId }
-        });
-    };
-
     const { isSuccess } = deleteLinkResponse;
     const { isSuccess: duplicateIsSuccess } = duplicateLinkResponse;
+    const { isSuccess: createLinkSuccess } = createLinkResponse;
+    const { isSuccess: updateLinkSuccess } = updateLinkResponse;
 
     useEffect(() => {
         if (isSuccess) {
-            setLoadingState('deleting', false);
-            setShowSections(false);
-            toast({
-                variant: 'default',
-                title: 'Link Delete',
-                description: 'Link Deleted successfully'
-            });
+            findAllLinks();
+            handleCloseModal();
         }
         if (duplicateIsSuccess) {
-            setLoadingState('duplicating', false);
-            setShowSections(false);
+            handleCloseModal();
+            findAllLinks();
+        }
+        if (createLinkSuccess) {
+            findAllLinks();
+            handleCloseModal();
             toast({
                 variant: 'default',
-                title: 'Link Duplicated',
-                description: 'Link Duplicated successfully'
+                title: 'Link Created',
+                description: 'links successfully created'
             });
         }
-    }, [isSuccess, duplicateIsSuccess]);
+        if (updateLinkSuccess) {
+            findAllLinks();
+        }
+    }, [isSuccess, duplicateIsSuccess, createLinkSuccess, updateLinkSuccess]);
 
     const handleUpdateLink = (data: LinkNameSpace.Link) => {
         dispatch(toggleDropdown());
@@ -311,23 +291,24 @@ const LinkComponent = ({
         if (data) {
             setValue('target', data?.target);
             setValue('title', data?.title);
+            setValue('medium', data?.utmParams?.medium ?? '');
+            setValue('source', data?.utmParams?.source ?? '');
+            setValue('campaign', data?.utmParams?.campaign ?? '');
+            setValue('term', data?.utmParams?.term ?? '');
+            setValue('content', data?.utmParams?.content ?? '');
+            setValue('ios', data?.devices?.ios ?? '');
+            setValue('android', data?.devices?.android ?? '');
             setDomain(data?.domain?.slug);
             setPreview(data?.metadata?.image);
         }
     };
-
-    // useEffect(() => {
-    //     if (singleLink) {
-    //         setValue('target', singleLink?.target);
-    //         setDomain(singleLink?.domain?.slug);
-    //     }
-    // }, [singleLink]);
 
     const onCloseModal = () => {
         dispatch(setDropdownState(false));
         setSingleLink(null);
         setValue('target', '');
         setPreview(null);
+        handleCloseLoading();
     };
 
     return (
@@ -364,10 +345,7 @@ const LinkComponent = ({
                 showCloseIcon
             >
                 <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(singleLink ? onSubmitUpdate : onSubmit)}
-                        className=" h-screen relative"
-                    >
+                    <form onSubmit={form.handleSubmit(onSubmit)} className=" h-screen relative">
                         {fetchMetaLoading && (
                             <div className="absolute left-0 right-0 bg-opacity-75 bg-white flex justify-center items-center h-full z-10">
                                 <div className="relative bottom-20">
@@ -400,7 +378,7 @@ const LinkComponent = ({
                                             type="submit"
                                             className="text-xs h-8 bg-primary-0 rounded w-full"
                                             loading={isLoadingState}
-                                            disabled={!watchLink || !domain}
+                                            disabled={!watchLink}
                                         >
                                             {singleLink ? 'Update Link' : '    Create Link'}
                                         </LoadingButton>
@@ -430,6 +408,7 @@ const LinkComponent = ({
                                         setCountriesData={setCountriesData}
                                         countriesData={countriesData}
                                         watchLink={watchLink}
+                                        initialGeo={singleLink?.geo}
                                     />
                                 </div>
                             </div>
@@ -437,7 +416,7 @@ const LinkComponent = ({
                     </form>
                 </Form>
             </Modal>
-            <Modal onClose={() => setShowSections(false)} showModel={showSections} setShowModal={setShowSections}>
+            <Modal onClose={handleCloseModal} showModel={showSections} setShowModal={setShowSections}>
                 {modalType === 'deleteModal' && singleLink && (
                     <DeleteComponent
                         isLoadingState={isLoadingState}

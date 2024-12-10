@@ -46,7 +46,6 @@ const MultiTagsInput = ({
         if (!tags.some((tag) => tag.text.toLowerCase() === normalizedTagText)) {
             const newTag = { text: tagText, color: getRandomColor() };
             const newTags = [...tags, newTag];
-            console.log('newTags:::', newTags);
             setTags(newTags);
             if (onTagsChange) {
                 onTagsChange(newTags.map((tag) => tag.text));
@@ -54,8 +53,6 @@ const MultiTagsInput = ({
         }
         setInputValue('');
     };
-
-    console.log('tags:::', tags);
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && inputValue.trim() !== '') {

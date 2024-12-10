@@ -7,13 +7,19 @@ import {
     DropdownMenuTrigger
 } from '@shtcut-ui/react';
 import { Download } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { toJpeg, toPng } from 'html-to-image';
 import { saveAs } from 'file-saver';
 import { PiQrCode, PiFolders, PiPencilSimpleLine } from 'react-icons/pi';
 import { FiDownload } from 'react-icons/fi';
+import QRCode from 'qrcode';
+const DownloadBtn = ({ qrCodeRef, value }: { qrCodeRef: any; value: string }) => {
+    const [svg, setSvg] = useState<string | null>(null);
+    const generateSVG = async () => {
+        const svgString = await QRCode.toString(value, { type: 'svg' });
+        setSvg(svgString);
+    };
 
-const DownloadBtn = ({ qrCodeRef }: any) => {
     const handleDownloadPNG = async () => {
         if (qrCodeRef.current) {
             const png = await toPng(qrCodeRef.current);
@@ -27,28 +33,17 @@ const DownloadBtn = ({ qrCodeRef }: any) => {
         }
     };
     const handleDownloadSVG = () => {
-        if (qrCodeRef.current) {
-            const svgElement = qrCodeRef.current.querySelector('svg');
-            if (svgElement) {
-                const serializer = new XMLSerializer();
-                let source = serializer.serializeToString(svgElement);
-
-                // Add namespaces
-                if (!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
-                    source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-                }
-                if (!source.match(/^<svg[^>]+"http:\/\/www\.w3\.org\/1999\/xlink"/)) {
-                    source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
-                }
-
-                // Add XML declaration
-                source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-
-                const blob = new Blob([source], { type: 'image/svg+xml' });
-                saveAs(blob, 'qrcode.svg');
-            }
+        if (svg) {
+            const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+            saveAs(blob, 'qrcode.svg');
+        } else {
+            console.error('SVG data is not available.');
         }
     };
+
+    React.useEffect(() => {
+        generateSVG();
+    }, []);
 
     return (
         <div className="w-full">

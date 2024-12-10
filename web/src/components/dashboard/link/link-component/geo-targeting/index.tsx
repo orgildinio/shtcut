@@ -1,6 +1,6 @@
 import { Button, Switch } from '@shtcut-ui/react';
 import CountriesInput from '@shtcut/components/form/countries-form';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 interface CountryData {
     countryCode: string;
@@ -11,8 +11,9 @@ interface GeoTargetingProps {
     setCountriesData: React.Dispatch<React.SetStateAction<CountryData[]>>;
     watchLink: string;
     countriesData: CountryData[];
+    initialGeo?: Record<string, string>;
 }
-const GeoTargeting = ({ setCountriesData, watchLink, countriesData }: GeoTargetingProps) => {
+const GeoTargeting = ({ setCountriesData, watchLink, countriesData, initialGeo }: GeoTargetingProps) => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const handleSwitchChange = (checked: boolean) => {
         setIsSwitchOn(checked);
@@ -20,6 +21,16 @@ const GeoTargeting = ({ setCountriesData, watchLink, countriesData }: GeoTargeti
     const addCountryEntry = () => {
         setCountriesData([...countriesData, { countryCode: '', url: '' }]);
     };
+    useEffect(() => {
+        if (initialGeo && Object.keys(initialGeo).length > 0) {
+            const formattedGeoData = Object.entries(initialGeo).map(([countryCode, url]) => ({
+                countryCode,
+                url
+            }));
+            setCountriesData(formattedGeoData);
+            setIsSwitchOn(true);
+        }
+    }, [initialGeo, setCountriesData]);
 
     const handleCountriesDataChange = (index: number, newData: { countryCode: string; url: string }) => {
         const updatedCountriesData = [...countriesData];
