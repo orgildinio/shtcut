@@ -5,14 +5,21 @@ import { useLink } from '@shtcut/hooks/link';
 import React from 'react';
 
 const LinkArchiveContainer = () => {
-    const { findAllLinksResponse, isLoading, updateLinkResponse, isLoadingState, updateLink, setLoadingState } =
-        useLink({
-            callLinks: true,
-            filter: {
-                archived: true,
-                all: true
-            }
-        });
+    const {
+        findAllLinksResponse,
+        isLoading,
+        updateLinkResponse,
+        isLoadingState,
+        updateLink,
+        setLoadingState,
+        findAllLinks
+    } = useLink({
+        callLinks: true,
+        filter: {
+            archived: true,
+            all: true
+        }
+    });
 
     return (
         <LinkArchiveComponent
@@ -22,6 +29,7 @@ const LinkArchiveContainer = () => {
             isLoadingState={isLoadingState}
             updateLink={updateLink}
             setLoadingState={setLoadingState}
+            findAllLinks={findAllLinks}
         />
     );
 };

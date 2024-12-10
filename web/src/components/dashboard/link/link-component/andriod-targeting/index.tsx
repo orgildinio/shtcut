@@ -25,6 +25,7 @@ const AndroidTarget = ({ form, watchLink }: { form: any; watchLink: string }) =>
                                 <FormLabel className="text-xs">URL</FormLabel>
                                 <FormControl>
                                     <Input
+                                        type="url"
                                         placeholder="https://"
                                         className="h-10  focus-visible:ring-0 shadow-none w-full"
                                         {...field}

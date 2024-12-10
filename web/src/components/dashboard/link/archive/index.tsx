@@ -17,10 +17,13 @@ const LinkArchiveComponent = ({
     isLoadingState,
     updateLink,
     updateLinkResponse,
-    setLoadingState
+    setLoadingState,
+    findAllLinks
 }: LinkTypeResponse) => {
     const [selectData, setSelectData] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState(false);
+    const [loadingId, setLoadingId] = useState<string | null>(null); // State for specific ID loading
+
     const handleCheckboxChange = (id: string, isChecked: boolean) => {
         if (isChecked) {
             setSelectData((prevSelected) => [...prevSelected, id]);
@@ -43,6 +46,7 @@ const LinkArchiveComponent = ({
     };
 
     const handleRecover = async (data: LinkNameSpace.Link) => {
+        setLoadingId(data._id);
         setLoadingState('updating', true);
         const payload = {
             title: data?.title,
@@ -61,6 +65,7 @@ const LinkArchiveComponent = ({
                 title: 'Link Updated',
                 description: successMessage || 'links successfully Archived'
             });
+            findAllLinks();
             setLoadingState('updating', false);
         } catch (err) {
             const errorMessage = (err as any)?.data?.message || 'Failed . Please try again.';
@@ -70,6 +75,9 @@ const LinkArchiveComponent = ({
                 title: 'Error!',
                 description: errorMessage
             });
+        } finally {
+            setLoadingId(null); // Reset loading state
+            setLoadingState('updating', false);
         }
     };
 
@@ -162,7 +170,7 @@ const LinkArchiveComponent = ({
                                             </div>
                                             <LoadingButton
                                                 variant={'outline'}
-                                                loading={isLoadingState}
+                                                loading={loadingId === data._id}
                                                 className="flex items-center shadow-none gap-x-2 w-24 bg-transparent border"
                                                 onClick={() => handleRecover(data)}
                                             >

@@ -33,7 +33,7 @@ const LinkListedComponent = ({
     const { toast } = useToast();
     const apexDomain = getApexDomain(data?.target ?? '');
     const handleCopy = () => {
-        const textToCopy = `${data?.domain?.name}/${data?.alias}`;
+        const textToCopy = `shtcut.co/${data?.alias}`;
         if (textToCopy) {
             navigator.clipboard
                 .writeText(textToCopy)
@@ -75,11 +75,17 @@ const LinkListedComponent = ({
                         )}
                     </div>
                     <div className="">
-                        <div>
+                        <div className="flex flex-col">
                             <h1 className="font-semibold text-sm text-[#151314]">{data?.title}</h1>
-                            <p className="text-xs text-primary-0 font-normal">
-                                {data?.domain?.name}/{data?.alias}
-                            </p>
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={`${data?.domain?.name?.startsWith('http') ? '' : 'https://'}shtcut.co/${data?.alias}`}
+                                className="text-xs text-primary-0 font-normal"
+                            >
+                                shtcut.co/{data?.alias}
+                            </a>
+
                             <a href={data?.target} target="_blank" className="text-[#2B2829] text-xs">
                                 {truncate(data?.target ?? '', 100)}
                             </a>

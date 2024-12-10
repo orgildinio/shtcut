@@ -29,14 +29,14 @@ const LinkContainer = () => {
         fetchMetaDataResponse,
         fetchMetaLoading,
         updateLink,
-        updateLinkResponse
+        updateLinkResponse,
+        handleCloseLoading
     } = useLink({
         callLinks: true,
         search,
         url
     });
     const { findAllDomainsResponse } = useDomain({ callDomain: true });
-
     const onSearchChange = (value: string) => {
         setSearch(value);
         handleSearchChange(value);
@@ -73,6 +73,8 @@ const LinkContainer = () => {
             fetchMetaDataResponse={fetchMetaDataResponse}
             fetchMetaLoading={fetchMetaLoading}
             setUrl={setUrl}
+            setSearch={setSearch}
+            handleCloseLoading={handleCloseLoading}
         />
     );
 };
