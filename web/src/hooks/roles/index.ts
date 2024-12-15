@@ -15,6 +15,7 @@ import {
     useLazyGetRolesQuery
 } from '@shtcut/services/roles';
 import { WorkspaceNameSpace } from '@shtcut/_shared/namespace/workspace';
+import { UsePaginationState } from '@shtcut/types/pagination';
 
 interface UseRoleProps {
     id?: string;
@@ -36,7 +37,7 @@ interface UseRoleReturnsType {
     updateRoleResponse: Dict;
     deleteRoleResponse: Dict;
     getRoleResponse: Dict;
-    pagination: Pagination;
+    pagination: UsePaginationState;
     isLoadingState: boolean;
 
     setLoadingState: (key: 'creating' | 'updating' | 'deleting' | 'finding', value: boolean) => void;
@@ -45,7 +46,7 @@ interface UseRoleReturnsType {
 
 export const useRole = (props: UseRoleProps): UseRoleReturnsType => {
     const { callRoles = false, search, filter, id } = props;
-    const { paginate, pagination } = usePagination({ key: 'findRoles' });
+    const { pagination } = usePagination();
     const [createRole, createRoleResponse] = useCreateRolesMutation();
     const [updateRole, updateRoleResponse] = useUpdateRolesMutation();
     const [deleteRole, deleteRoleResponse] = useDeleteRolesMutation();
@@ -67,7 +68,7 @@ export const useRole = (props: UseRoleProps): UseRoleReturnsType => {
     };
 
     const params = {
-        ...paginate,
+        ...pagination,
         search: debouncedSearch,
         ...filter
     };

@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
 import { Dict } from '@shtcut-ui/react';
-import { Pagination } from '@shtcut/_shared/namespace';
 import { WorkspaceNameSpace } from '@shtcut/_shared/namespace/workspace';
 import { usePagination } from '../usePagination';
 import {
@@ -14,6 +13,7 @@ import {
 import { useEffect } from 'react';
 import { useAppSelector } from '@shtcut/redux/store';
 import { selectFindAllWorkspaceData, selectWorkspaceData } from '@shtcut/redux/selectors/workspace';
+import { UsePaginationState } from '@shtcut/types/pagination';
 
 interface UseWorkspaceProps {
     key?: string;
@@ -33,14 +33,14 @@ interface UseWorkspaceReturnsType {
     searchOneWorkspaceResponse: WorkspaceNameSpace.Workspace | undefined;
     updateWorkspaceResponse: Dict;
     deleteWorkspaceResponse: Dict;
-    pagination: Pagination;
+    pagination: UsePaginationState;
     findAllWorkspacesLoading: boolean;
 }
 
 export const useWorkspace = (props: UseWorkspaceProps): UseWorkspaceReturnsType => {
     const { callWorkspaces = false, callSearchOneWorkspace = false, search, filter } = props;
 
-    const { paginate, pagination } = usePagination({ key: 'findAllWorkspaces' });
+    const { pagination } = usePagination();
     const [createWorkspace, createWorkspaceResponse] = useCreateWorkspaceMutation();
     const [updateWorkspace, updateWorkspaceResponse] = useUpdateWorkspaceMutation();
     const [deleteWorkspace, deleteWorkspaceResponse] = useDeleteWorkspaceMutation();
@@ -48,7 +48,7 @@ export const useWorkspace = (props: UseWorkspaceProps): UseWorkspaceReturnsType 
     const [triggerSearchOneWorkspace] = useLazySearchOneWorkspaceQuery();
 
     const params = {
-        ...paginate,
+        ...pagination,
         population: JSON.stringify(['user']),
         search,
         ...filter

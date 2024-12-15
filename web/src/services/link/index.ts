@@ -36,13 +36,23 @@ export const linkApi = api.injectEndpoints({
         }),
         updateLink: builder.mutation<
             ApiResponse<LinkNameSpace.Link>,
-            { payload: LinkNameSpace.LinkRequest; id: string }
+            { payload?: LinkNameSpace.LinkRequest; id: string }
         >({
             query: ({ payload, id }) => {
                 return {
                     url: `${SHTNER.links}/${id}`,
                     method: PUT,
                     body: payload
+                };
+            },
+            invalidatesTags: [linkTag]
+        }),
+        updateArchivedLink: builder.mutation<ApiResponse<LinkNameSpace.Link>, { id: string }>({
+            query: ({ id }) => {
+                return {
+                    url: `${SHTNER.links}/${id}`,
+                    method: 'PUT',
+                    body: { archived: true }
                 };
             },
             invalidatesTags: [linkTag]
@@ -92,5 +102,16 @@ export const {
     useLazyDuplicateLinkQuery,
     useLazyFetchMetadataQuery,
     useGetLinkQuery,
-    endpoints: { createLink, findAllLinks, getLink, updateLink, deleteLink, duplicateLink, fetchMetadata, visitLink }
+    useUpdateArchivedLinkMutation,
+    endpoints: {
+        createLink,
+        findAllLinks,
+        getLink,
+        updateLink,
+        deleteLink,
+        duplicateLink,
+        fetchMetadata,
+        visitLink,
+        updateArchivedLink
+    }
 } = linkApi;

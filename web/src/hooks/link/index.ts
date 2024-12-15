@@ -3,10 +3,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
 import { Dict } from '@shtcut-ui/react';
-import { Pagination } from '@shtcut/_shared/namespace';
 import { usePagination } from '../usePagination';
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '@shtcut/redux/store';
 import {
     useCreateLinkMutation,
     useDeleteLinkMutation,
@@ -16,9 +14,9 @@ import {
     useLazyGetLinkQuery,
     useUpdateLinkMutation
 } from '@shtcut/services/link';
-import { LinkNameSpace, MetadataResponse } from '@shtcut/_shared/namespace/link';
-import { selectFindAllLinkData } from '@shtcut/redux/selectors/link';
+import { FindAllLinkResresponseType, MetadataResponse } from '@shtcut/_shared/namespace/link';
 import { debounce } from 'lodash';
+import { UsePaginationActions, UsePaginationState } from '@shtcut/types/pagination';
 
 interface UseLinkProps {
     id?: string;
@@ -37,7 +35,7 @@ interface UseLinkReturnsType {
     fetchMetadata: Dict;
     findAllLinks: any;
     isLoading: boolean;
-    findAllLinksResponse: LinkNameSpace.Link[] | undefined;
+    findAllLinksResponse: FindAllLinkResresponseType | any;
     fetchMetaDataResponse: MetadataResponse | undefined;
     fetchMetaLoading: boolean;
     createLinkResponse: Dict;
@@ -46,20 +44,21 @@ interface UseLinkReturnsType {
     duplicateLinkResponse: Dict;
     duplicate: any;
     deleteLinkResponse: Dict;
-    pagination: Pagination;
+    pagination: UsePaginationState;
     isLoadingState: boolean;
     handleCloseLoading: () => void;
     setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'creating', value: boolean) => void;
     handleSearchChange: any;
+    paginationActions: UsePaginationActions;
 }
 
 export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     const { callLinks = false, search, filter, id, url, all } = props;
-    const { paginate, pagination } = usePagination({ key: 'findAllLinks' });
+    const { paginationActions, pagination } = usePagination();
     const [createLink, createLinkResponse] = useCreateLinkMutation();
     const [updateLink, updateLinkResponse] = useUpdateLinkMutation();
     const [deleteLink, deleteLinkResponse] = useDeleteLinkMutation();
-    const [findAllLinks, { isLoading, data }] = useLazyFindAllLinksQuery();
+    const [findAllLinks, { isLoading, data: findAllLinksResponse }] = useLazyFindAllLinksQuery();
     const [duplicate, duplicateLinkResponse] = useLazyDuplicateLinkQuery();
     const [getLink, getLinkResponse] = useLazyGetLinkQuery();
     const [fetchMetadata, { data: fetchMetaDataResponse, isLoading: fetchMetaLoading, error }] =
@@ -90,7 +89,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     };
 
     const params = {
-        ...paginate,
+        ...pagination,
         population: JSON.stringify([
             { path: 'user' },
             { path: 'domain', select: ['slug', 'name'] },
@@ -101,7 +100,8 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         ...filter
     };
 
-    const findAllLinksResponse = data && data?.data;
+    // console.log('data',data);
+
     const handleSearchChange = debounce((newSearch: string) => {
         setDebouncedSearch(newSearch);
     }, 500);
@@ -112,7 +112,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
                 ...params
             });
         }
-    }, [callLinks, debouncedSearch, filter]);
+    }, [callLinks, debouncedSearch, findAllLinks, pagination]);
 
     useEffect(() => {
         if (id) {
@@ -151,6 +151,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         handleSearchChange,
         fetchMetadata,
         fetchMetaDataResponse,
-        fetchMetaLoading
+        fetchMetaLoading,
+        paginationActions
     };
 };

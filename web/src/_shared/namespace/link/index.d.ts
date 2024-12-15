@@ -1,6 +1,9 @@
 import { Dict } from '@shtcut-ui/react';
 import { AppObject, QueryArgs } from '../index';
 import { UserNamespace } from '../user';
+import { boolean } from 'yup';
+import { PaginationType } from '@shtcut/types';
+import { Pagination, UsePaginationActions, UsePaginationState } from '@shtcut/types/pagination';
 
 export namespace LinkNameSpace {
     export interface Link extends AppObject {
@@ -49,12 +52,14 @@ export namespace LinkNameSpace {
             _id?: string;
             id?: string;
             title?: string;
-            target: string;
-            workspace: string;
-            domain: string;
+            target?: string;
+            alias?: string;
+            workspace?: string;
+            domain?: string;
             password?: string;
             enableTracking?: boolean;
             expiryDate?: string | Date;
+            archived?: boolean;
             devices?: {
                 android?: string;
                 ios?: string;
@@ -70,9 +75,13 @@ export namespace LinkNameSpace {
         };
     }
 }
+export type FindAllLinkResresponseType = {
+    data: LinkNameSpace.Link[] | undefined;
+    meta: Meta;
+};
 
 export interface LinkComponentType {
-    findAllLinksResponse: LinkNameSpace.Link[];
+    findAllLinksResponse: FindAllLinkResresponseType | undefined;
     deleteLink: MutationTrigger<any>;
     createLink: MutationTrigger<any>;
     updateLink: MutationTrigger<any>;
@@ -94,6 +103,8 @@ export interface LinkComponentType {
     findAllDomainsResponse: DomainNameSpace.Domain[];
     setSearch?: any;
     handleCloseLoading: () => void;
+    pagination: UsePaginationState;
+    paginationActions: UsePaginationActions;
 }
 
 export interface SearchType {
@@ -110,6 +121,7 @@ export interface MetadataResponse {
 export interface Meta {
     statusCode: number;
     success: boolean;
+    pagination: Pagination;
 }
 
 export interface MetaDataInfo {

@@ -48,7 +48,6 @@ const CreateLinkForm = ({
         setTags(newTags);
     };
 
-    console.log('singleLink?.alias', singleLink?.alias);
     return (
         <div className="w-full py-6">
             <div className="flex flex-col px-14 gap-4">
@@ -125,18 +124,8 @@ const CreateLinkForm = ({
                         label="Select Tag"
                         watchLink={watchLink}
                     />
-                    {/* <div className="mt-4">
-                        {tags.length > 0 ? (
-                            <ul className="list-disc pl-5">
-                                {tags.map((tag, index) => (
-                                    <li key={index}>{tag}</li>
-                                ))}
-                            </ul>
-                        ) : null}
-                    </div> */}
                 </div>
             </div>
-            {/* <Separator orientation="horizontal" className="mt-6" /> */}
             <div>
                 <h1 className="font-semibold px-14 py-3">Social media preview</h1>
                 <div className="px-14  ">
