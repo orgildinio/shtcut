@@ -38,7 +38,7 @@ interface UseTagsReturnsType {
 
 export const useTags = (props: UseTagsProps): UseTagsReturnsType => {
     const { callTags = false, search = '', filter, all } = props;
-    const { paginate, pagination } = usePagination({ key: 'findAllTags' });
+    const { pagination } = usePagination();
     const [createTagsTrigger, { data: createTagsResponse }] = useCreateTagsMutation();
     const [findAllTags, { isLoading, data: findAllTagsResponse }] = useLazyFindAllTagsQuery();
     const [deleteTag, deleteTagResponse] = useDeleteTagsMutation();
@@ -56,7 +56,7 @@ export const useTags = (props: UseTagsProps): UseTagsReturnsType => {
         setLoading((prev) => ({ ...prev, [key]: value }));
     };
     const params = {
-        ...paginate,
+        ...pagination,
         search: debouncedSearch,
         all,
         ...filter

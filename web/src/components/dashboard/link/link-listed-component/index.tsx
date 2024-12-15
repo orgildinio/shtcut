@@ -80,10 +80,10 @@ const LinkListedComponent = ({
                             <a
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                href={`${data?.domain?.name?.startsWith('http') ? '' : 'https://'}shtcut.co/${data?.alias}`}
+                                href={`${data?.domain?.name?.startsWith('http') ? '' : 'http://'}localhost:3000/${data?.alias}`}
                                 className="text-xs text-primary-0 font-normal"
                             >
-                                shtcut.co/{data?.alias}
+                                {data?.domain.name}/{data?.alias}
                             </a>
 
                             <a href={data?.target} target="_blank" className="text-[#2B2829] text-xs">

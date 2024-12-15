@@ -30,12 +30,17 @@ const LinkContainer = () => {
         fetchMetaLoading,
         updateLink,
         updateLinkResponse,
-        handleCloseLoading
+        handleCloseLoading,
+        pagination,
+        paginationActions
     } = useLink({
         callLinks: true,
         search,
-        url
+        filter: {
+            archived: false
+        }
     });
+
     const { findAllDomainsResponse } = useDomain({ callDomain: true });
     const onSearchChange = (value: string) => {
         setSearch(value);
@@ -43,6 +48,7 @@ const LinkContainer = () => {
         const newUrl = value ? `${pathName}?search=${encodeURIComponent(value)}` : `${pathName}`;
         router.replace(newUrl);
     };
+
     useEffect(() => {
         const state = getParams.get('search');
         if (state) {
@@ -51,9 +57,11 @@ const LinkContainer = () => {
         }
     }, [getParams]);
 
+    console.log('find:::', findAllLinksResponse);
+
     return (
         <LinkComponent
-            findAllLinksResponse={findAllLinksResponse ?? []}
+            findAllLinksResponse={findAllLinksResponse}
             findAllDomainsResponse={findAllDomainsResponse ?? []}
             deleteLink={deleteLink}
             updateLink={updateLink}
@@ -75,6 +83,8 @@ const LinkContainer = () => {
             setUrl={setUrl}
             setSearch={setSearch}
             handleCloseLoading={handleCloseLoading}
+            pagination={pagination}
+            paginationActions={paginationActions}
         />
     );
 };

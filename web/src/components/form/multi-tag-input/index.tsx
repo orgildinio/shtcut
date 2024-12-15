@@ -36,19 +36,23 @@ const MultiTagsInput = ({
     selectOptions,
     watchLink
 }: MultiTagsInputProps) => {
-    const [tags, setTags] = useState<{ text: string; color: string }[]>(
-        initialTags.map((tag) => ({ text: tag.name, color: getRandomColor() }))
+    const isEdit = false;
+    const [tags, setTags] = useState<{ _id: string; text: string; color: string }[]>(
+        isEdit ? initialTags.map((tag) => ({ _id: tag?._id, text: tag.name, color: getRandomColor() })) : []
     );
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
 
-    const addTag = (tagText: string) => {
+    const addTag = (tagText: string, _id: string) => {
         const normalizedTagText = tagText.toLowerCase();
         if (!tags.some((tag) => tag.text.toLowerCase() === normalizedTagText)) {
-            const newTag = { text: tagText, color: getRandomColor() };
+            const newTag = { _id, text: tagText, color: getRandomColor() };
             const newTags = [...tags, newTag];
+            const newIds = [...selectedIds, _id];
             setTags(newTags);
+            setSelectedIds(newIds);
             if (onTagsChange) {
-                onTagsChange(newTags.map((tag) => tag.text));
+                onTagsChange(newIds);
             }
         }
         setInputValue('');
@@ -57,28 +61,32 @@ const MultiTagsInput = ({
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && inputValue.trim() !== '') {
             e.preventDefault();
-            addTag(inputValue.trim());
+            addTag(inputValue.trim(), `custom-${Date.now()}`);
         }
     };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
     };
-
     const handleSelectChange = (selectedValue: string) => {
-        addTag(selectedValue);
+        const selectedTag = initialTags?.find((tag) => tag.name === selectedValue);
+        if (selectedTag) {
+            addTag(selectedTag.name, selectedTag._id);
+        }
     };
-
     const removeTag = (indexToRemove: number) => {
         const newTags = tags.filter((_, index) => index !== indexToRemove);
+        const newIds = selectedIds.filter((_, index) => index !== indexToRemove);
         setTags(newTags);
+        setSelectedIds(newIds);
         if (onTagsChange) {
-            onTagsChange(newTags.map((tag) => tag.text));
+            onTagsChange(newIds);
         }
     };
 
     const clearTags = () => {
         setTags([]);
+        setSelectedIds([]);
         if (onTagsChange) {
             onTagsChange([]);
         }
@@ -123,7 +131,11 @@ const MultiTagsInput = ({
                             <SelectContent className="border-none">
                                 {initialTags &&
                                     initialTags?.map((option, index) => (
-                                        <SelectItem disabled={!watchLink} key={index} value={option?.name}>
+                                        <SelectItem
+                                            disabled={!watchLink || selectedIds.includes(option._id)}
+                                            key={index}
+                                            value={option?.name}
+                                        >
                                             {option?.name}
                                         </SelectItem>
                                     ))}

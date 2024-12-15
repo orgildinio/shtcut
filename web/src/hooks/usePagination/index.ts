@@ -1,38 +1,30 @@
-import { Pagination } from '@shtcut/_shared/namespace';
-import { useAppSelector } from '@shtcut/redux/store';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { UsePaginationReturnType } from '@shtcut/types/pagination';
+import { useMemo, useState } from 'react';
 
-interface UsePaginationReturnType {
-    paginate: Record<'page' | 'perPage', any>;
-    setPaginate?: Dispatch<SetStateAction<Record<'page' | 'perPage', any>>>;
-    pagination: Pagination;
-}
+export const usePagination = (): UsePaginationReturnType => {
+    const [page, setPage] = useState(0);
+    const [perPage, setPerPage] = useState(10);
 
-interface UsePaginationProps {
-    key: string;
-}
-
-export const usePagination = ({ key }: UsePaginationProps): UsePaginationReturnType => {
-    const [paginate, setPaginate] = useState({
-        page: 1,
-        perPage: 5
-    });
-
-    const { pagination: _pagination } = useAppSelector((state) => state.ui);
-
-    const handlePageChange = (page: number, pageSize: number) => {
-        setPaginate({ page, perPage: pageSize });
+    const handlePageChange = (index: number) => {
+        setPage(index);
     };
 
-    const pagination = {
-        showSizeChanger: true,
-        onChange: handlePageChange,
-        current: _pagination?.[key]?.current,
-        pageSize: _pagination?.[key]?.perPage,
-        total: _pagination?.[key]?.totalCount
+    const pagination = useMemo(
+        () => ({
+            page: page + 1,
+            perPage
+        }),
+        [page, perPage]
+    );
+
+    const paginationActions = {
+        handlePageChange,
+        setPage,
+        setPerPage
     };
+
     return {
-        paginate,
-        pagination
+        pagination,
+        paginationActions
     };
 };

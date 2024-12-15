@@ -5,6 +5,14 @@ type MaybePromise<T> = T | Promise<T>;
 
 export type UrlParams = Dict<string | string[] | undefined>;
 
+export interface PaginationType {
+    showSizeChanger?: boolean | undefined;
+    onChange: (page: number, pageSize: number) => void;
+    current: number;
+    pageSize?: number | undefined;
+    total: number;
+}
+
 export interface QrCodeType {
     enableQrCode: boolean;
     removeLogo: boolean;

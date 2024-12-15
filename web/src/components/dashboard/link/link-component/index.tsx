@@ -13,7 +13,6 @@ import {
     PasswordProtection,
     UTMbuilder
 } from '../component';
-import { selectFindAllLinkData } from '@shtcut/redux/selectors/link';
 import StarLoader from '@shtcut/components/loader/star-loader';
 import { LinkComponentType, LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import DeleteComponent from './delete-modal';
@@ -29,6 +28,7 @@ import { RootState, useAppDispatch } from '@shtcut/redux/store';
 import { setDropdownState, toggleDropdown } from '@shtcut/redux/slices/ui';
 import { useTags } from '@shtcut/hooks/tags';
 import { useCurrentWorkSpace } from '@shtcut/hooks/current-workspace';
+import { useLazyFindAllLinksQuery, useUpdateArchivedLinkMutation } from '@shtcut/services/link';
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -52,9 +52,21 @@ const LinkComponent = ({
     updateLink,
     updateLinkResponse,
     setSearch,
+    pagination,
+    paginationActions,
     handleCloseLoading
 }: LinkComponentType) => {
     const { findAllTagsResponse } = useTags({ callTags: true });
+    const [updateLinksArchived, updateLinkResponses] = useUpdateArchivedLinkMutation();
+    const [findAllLinkData, { data, error }] = useLazyFindAllLinksQuery();
+
+    useEffect(() => {
+        findAllLinkData({
+            archived: false,
+            perPage: 5
+        });
+    }, [findAllLinkData]);
+
     const dispatch = useAppDispatch();
     const qrCodeRef = useRef(null);
     const [modalType, setModalType] = useState<ModalType>(null);
@@ -77,6 +89,8 @@ const LinkComponent = ({
     const handleSelect = (value: string) => {
         setDomain(value);
     };
+
+    console.log('tagscomponent', tags);
 
     const handleNavigate = (alias: string) => {
         route.push(`${pathName}/analytics/${alias}`);
@@ -168,8 +182,6 @@ const LinkComponent = ({
         setSingleLink(null);
     };
 
-    console.log('show::', showSections, modalType);
-
     const onSubmit = async (data: any) => {
         const isUpdating = Boolean(singleLink);
         setLoadingState(isUpdating ? 'updating' : 'creating', true);
@@ -177,10 +189,10 @@ const LinkComponent = ({
             acc[countryCode] = url;
             return acc;
         }, {});
-
         const payload = {
             title: data?.title,
             target: data?.target,
+            alias: data?.alias,
             workspace: currentWorkspace?._id,
             domain: '66059257bcb47c8944881927',
             password: data?.password,
@@ -190,7 +202,7 @@ const LinkComponent = ({
                 android: data?.android,
                 ios: data?.ios
             },
-            tags: [],
+            tags: tags,
             geo: geoObject,
             utmParams: {
                 source: data?.source,
@@ -226,34 +238,27 @@ const LinkComponent = ({
 
     const handleArchive = async () => {
         setLoadingState('updating', true);
-        const payload = {
-            title: singleLink?.title,
-            target: singleLink?.target,
-            devices: {
-                android: singleLink?.devices?.android,
-                ios: singleLink?.devices?.ios
-            },
-            archived: true
-        };
-        try {
-            await updateLink({ payload, id: singleLink?._id });
-            form.reset();
-            setLoadingState('updating', false);
-            handleCloseModal();
-            const successMessage = updateLinkResponse?.data?.meta?.message;
-            toast({
-                variant: 'default',
-                title: 'Link Updated',
-                description: successMessage || 'links successfully Archived'
-            });
-        } catch (err) {
-            const errorMessage = (err as any)?.data?.message || 'Failed . Please try again.';
-            setLoadingState('updating', false);
-            toast({
-                variant: 'destructive',
-                title: 'Error!',
-                description: errorMessage
-            });
+        const id = singleLink?._id;
+        if (id) {
+            try {
+                const response = await updateLinksArchived({ id }).unwrap();
+                console.log('Link archived successfully:', response);
+                setLoadingState('updating', false);
+                handleCloseModal();
+                toast({
+                    variant: 'default',
+                    title: 'Link Updated'
+                });
+                findAllLinkData({ archived: false });
+            } catch (err) {
+                const errorMessage = (err as any)?.data?.message || 'Failed. Please try again.';
+                setLoadingState('updating', false);
+                toast({
+                    variant: 'destructive',
+                    title: 'Error!',
+                    description: errorMessage
+                });
+            }
         }
     };
 
@@ -283,7 +288,7 @@ const LinkComponent = ({
         if (updateLinkSuccess) {
             findAllLinks();
         }
-    }, [isSuccess, duplicateIsSuccess, createLinkSuccess, updateLinkSuccess]);
+    }, [isSuccess, duplicateIsSuccess, createLinkSuccess, updateLinkSuccess, findAllLinks]);
 
     const handleUpdateLink = (data: LinkNameSpace.Link) => {
         dispatch(toggleDropdown());
@@ -311,6 +316,34 @@ const LinkComponent = ({
         handleCloseLoading();
     };
 
+    const alias = 'n2poQbE';
+    useEffect(() => {
+        const fetchAlias = async () => {
+            try {
+                const response = await fetch(
+                    `https://api-dev.shtcut.co/api/v1/shtner/links/visit/shtcut.link/${alias}?apiKey=ShtcutAppKey`
+                );
+
+                console.log('response:::', response);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error:', errorText);
+                } else {
+                    const result = await response.json();
+                    console.log('API Response:', result);
+                }
+            } catch (err: any) {
+                console.error('Fetch error:', err.message);
+            } finally {
+            }
+        };
+
+        if (alias) {
+            fetchAlias();
+        }
+    }, [alias]);
+
     return (
         <section className=" ">
             <div className="flex justify-between  items-center">
@@ -336,6 +369,8 @@ const LinkComponent = ({
                 toggleSection={toggleSection}
                 handleUpdateLink={handleUpdateLink}
                 search={search}
+                pagination={pagination}
+                paginationActions={paginationActions}
             />
             <Modal
                 showModel={showDropdown}

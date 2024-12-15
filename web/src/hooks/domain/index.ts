@@ -2,7 +2,6 @@
 
 import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
 import { Dict } from '@shtcut-ui/react';
-import { Pagination } from '@shtcut/_shared/namespace';
 import { usePagination } from '../usePagination';
 import { useEffect } from 'react';
 import { useAppSelector } from '@shtcut/redux/store';
@@ -15,6 +14,7 @@ import {
     useUpdateDomainMutation
 } from '@shtcut/services/domain';
 import { selectFindAllDomainData } from '@shtcut/redux/selectors/domain';
+import { UsePaginationState } from '@shtcut/types/pagination';
 
 interface UseDomainProps {
     id?: string;
@@ -36,13 +36,13 @@ interface UseDomainReturnsType {
     getDomainResponse: Dict;
     updateDomainResponse: Dict;
     deleteDomainResponse: Dict;
-    pagination: Pagination;
+    pagination: UsePaginationState;
 }
 
 export const useDomain = (props: UseDomainProps): UseDomainReturnsType => {
     const { callDomain = false, search, filter, id } = props;
 
-    const { paginate, pagination } = usePagination({ key: 'findAllDomains' });
+    const { pagination } = usePagination();
     const [createDomain, createDomainResponse] = useCreateDomainMutation();
     const [updateDomain, updateDomainResponse] = useUpdateDomainMutation();
     const [deleteDomain, deleteDomainResponse] = useDeleteDomainMutation();
@@ -50,7 +50,7 @@ export const useDomain = (props: UseDomainProps): UseDomainReturnsType => {
     const [getDomain, getDomainResponse] = useLazyGetDomainQuery();
 
     const params = {
-        ...paginate,
+        ...pagination,
         population: JSON.stringify([{ path: 'user' }, { path: 'qrCode' }]),
         search,
         ...filter

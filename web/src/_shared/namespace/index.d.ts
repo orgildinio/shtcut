@@ -35,6 +35,7 @@ export interface QueryArgs {
     search?: string;
     filter?: Dict;
     all?: boolean;
+    archived?: boolean;
 }
 
 export interface Meta {
