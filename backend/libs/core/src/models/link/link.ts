@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import { Document, Types, Schema as MGSchema } from 'mongoose';
-import { Dict } from 'shtcut/core';
+import { Dict, Tag } from 'shtcut/core';
 
 export type LinkDocument = Link & Document;
 
@@ -101,15 +101,14 @@ export class Link {
   })
   qrCode: any;
 
-  @Prop({
-    type: [
-      {
-        type: MGSchema.Types.ObjectId,
-        ref: 'Tag',
-      },
-    ],
-  })
-  tags: any;
+  @Prop([
+    {
+      type: Types.ObjectId,
+      ref: 'Tag',
+      default: [],
+    },
+  ])
+  tags: string[] | Tag[];
 
   @Prop(
     raw({

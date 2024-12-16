@@ -40,11 +40,10 @@ export class CreateLinkDto {
   @Type(() => CreateQrCodeDto)
   @IsOptional()
   public readonly qrCode?: CreateQrCodeDto;
-  
-  @Type(() => CreateTagDto)
+
   @IsArray()
   @IsOptional()
-  public tags: CreateTagDto[];
+  public tags: string[];
 
   @IsBoolean()
   @IsOptional()

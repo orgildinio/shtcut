@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import lang from 'apps/sht-shtner/lang';
-import { ClientSession } from 'mongodb';
-import { Model } from 'mongoose';
+import { ClientSession, Model } from 'mongoose';
 import {
   AppException,
   CreateLinkDto,
@@ -12,7 +11,6 @@ import {
   Hit,
   HitDocument,
   HtmlMetaService,
-  IpAddressInfo,
   IpService,
   Link,
   LinkDocument,
@@ -165,20 +163,6 @@ export class LinkService extends MongoBaseService {
           obj.metadata = { ...meta, ...og, images };
         }
       }
-      const tags: any[] = [];
-      if (obj.tags && workspace) {
-        for (const t of obj.tags) {
-          const payload = {
-            ...t,
-            user: workspace.user,
-          };
-          const tag = await new this.tagModel({
-            ...payload,
-            publicId: Utils.generateUniqueId('tag'),
-          }).save({ session });
-          tags.push(String(tag._id));
-        }
-      }
       // Create and save associated QR code
       let link = await super.createNewObject({ ..._.omit(obj, ['qrCode', 'tags']) }, session);
       const qrCode = await new this.qrCodeModel({
@@ -195,7 +179,7 @@ export class LinkService extends MongoBaseService {
 
       // Associate QR code and tags with link and save link
       link.qrCode = qrCode._id;
-      link.tags = tags;
+      link.tags.push(obj.tags.map((t) => Utils.toObjectId(t)) ?? []);
       link = await link.save({ session });
 
       await session?.commitTransaction();
@@ -248,6 +232,32 @@ export class LinkService extends MongoBaseService {
       }
       const data = await this.htmlMetaService.getMetadata(url, this.cacheService);
       return data;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  public async updateObject(id: string, obj: Dict, session?: ClientSession) {
+    try {
+      const toFill: string[] = this.entity.config.updateFillables;
+      obj = toFill && toFill.length > 0 ? _.pick(obj, ...toFill) : { ...obj };
+      const condition = Utils.isObjectId(id) ? { _id: id } : { publicId: id };
+      return await this.model.findOneAndUpdate(
+        { ...condition },
+        {
+          $setOnInsert: {
+            publicId: Utils.generateUniqueId(this.defaultConfig.idToken),
+          },
+          ..._.omit(obj, ['tags']),
+          $addToSet: { tags: obj.tags ?? [] },
+        },
+        {
+          upsert: true,
+          new: true,
+          setDefaultsOnInsert: true,
+          session: session ? session : null,
+        },
+      );
     } catch (e) {
       throw e;
     }
