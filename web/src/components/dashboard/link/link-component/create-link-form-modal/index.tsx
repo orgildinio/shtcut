@@ -161,6 +161,7 @@ const CreateLinkForm = ({
                         className=""
                         label="Select Tag"
                         watchLink={watchLink}
+                        singleLink={singleLink}
                     />
                 </div>
             </div>

@@ -127,8 +127,6 @@ const LinkComponent = ({
     const watchTitle = watch('title');
     const watchDescription = watch('description');
 
-    console.log('watchLink', watchLink);
-
     const handleDeleteLink = (id: string) => {
         setLoadingState('deleting', true);
         deleteLink({
@@ -182,7 +180,7 @@ const LinkComponent = ({
 
     const onSubmit = async (data: any) => {
         const isUpdating = Boolean(singleLink);
-        setLoadingState(isUpdating ? 'updating' : 'creating', true);
+        // setLoadingState(isUpdating ? 'updating' : 'creating', true);
         const geoObject = countriesData.reduce((acc, { countryCode, url }) => {
             acc[countryCode] = url;
             return acc;
@@ -211,7 +209,6 @@ const LinkComponent = ({
                 content: data?.content
             }
         };
-        console.log('payload:::', payload);
         try {
             if (isUpdating) {
                 await updateLink({ payload, id: singleLink?._id });
@@ -243,7 +240,6 @@ const LinkComponent = ({
         if (id) {
             try {
                 const response = await updateLinksArchived({ id }).unwrap();
-                console.log('Link archived successfully:', response);
                 setLoadingState('updating', false);
                 handleCloseModal();
                 toast({
@@ -305,7 +301,7 @@ const LinkComponent = ({
             setValue('ios', data?.devices?.ios ?? '');
             setValue('android', data?.devices?.android ?? '');
             setDomain(data?.domain?.slug);
-            setPreview(data?.metadata?.image);
+            setPreview(data?.metadata?.image || data?.metadata?.images[0]?.src);
         }
     };
 

@@ -1,4 +1,5 @@
 import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger } from '@shtcut-ui/react';
+import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import { TagResponse } from '@shtcut/types/tags';
 import React, { useState, KeyboardEvent, ChangeEvent } from 'react';
 
@@ -10,6 +11,7 @@ interface MultiTagsInputProps {
     label?: string;
     selectOptions?: string[];
     watchLink: string;
+    singleLink: LinkNameSpace.Link | undefined;
 }
 
 const colors = [
@@ -33,12 +35,13 @@ const MultiTagsInput = ({
     placeholder = 'Type and press enter',
     className = '',
     label,
-    selectOptions,
-    watchLink
+    watchLink,
+    singleLink
 }: MultiTagsInputProps) => {
-    const isEdit = false;
+    console.log('single', singleLink?.tags);
+    const isEdit = !!singleLink;
     const [tags, setTags] = useState<{ _id: string; text: string; color: string }[]>(
-        isEdit ? initialTags.map((tag) => ({ _id: tag?._id, text: tag.name, color: getRandomColor() })) : []
+        isEdit ? singleLink?.tags?.map((tag) => ({ _id: tag?._id, text: tag.name, color: getRandomColor() })) : []
     );
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
