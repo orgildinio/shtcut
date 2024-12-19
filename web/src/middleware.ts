@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse, userAgent } from 'next/server';
-import { fetchTargetUrl, isIgnoredPath } from './hooks/link_redirect';
+import { fetchTargetUrl, isIgnoredPath } from '@shtcut/hooks';
+import { headers } from 'next/headers';
+import requestIp from 'request-ip';
 
 export async function middleware(request: NextRequest) {
     const url = request.nextUrl;
     const alias = url.pathname.slice(1);
+    const detectedIp = requestIp.getClientIp(request);
+    console.log('requestIp:::', detectedIp )
 
     if (isIgnoredPath(alias)) {
         return NextResponse.next();
