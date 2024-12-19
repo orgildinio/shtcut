@@ -149,14 +149,10 @@ const LinkComponent = ({
         });
     };
 
-    console.log('fetchMetaDataResponse', fetchMetaDataResponse);
-
     useEffect(() => {
         if (fetchMetaDataResponse?.data?.meta) {
             const { title, description } = fetchMetaDataResponse.data.meta;
             const image = fetchMetaDataResponse?.data?.og?.image || fetchMetaDataResponse?.data?.images[0]?.src;
-
-            console.log('Image fetched:', image); // Check value here
             setValue('title', title);
             setValue('description', description);
             setPreview(image);
