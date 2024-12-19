@@ -39,6 +39,7 @@ export class Tag {
   @Prop({
     type: Types.ObjectId,
     ref: 'User',
+    select: false,
   })
   user: any;
 
