@@ -26,6 +26,7 @@ export namespace LinkNameSpace {
         domain: { slug: string; name: string; _id: string };
         enableTracking?: boolean;
         title: string;
+        tags: TagResponse[];
         label?: [];
         geo?: Dict;
         proxy?: boolean;
@@ -105,6 +106,7 @@ export interface LinkComponentType {
     handleCloseLoading: () => void;
     pagination: UsePaginationState;
     paginationActions: UsePaginationActions;
+    params: LinkParams;
 }
 
 export interface SearchType {
@@ -127,7 +129,7 @@ export interface Meta {
 export interface MetaDataInfo {
     meta: MetaData;
     og: OpenGraph;
-    images: string[];
+    images: { src: string }[];
 }
 
 export interface MetaData {

@@ -684,3 +684,17 @@ const getDaySuffix = (day: number): string => {
             return 'th';
     }
 };
+
+export const hexToRgba = (hex: string, alpha: number) => {
+    if (!hex || !/^#?[0-9A-Fa-f]{6}$/.test(hex)) {
+        console.warn(`Invalid hex color: "${hex}". Using default color.`);
+        return `rgba(0, 0, 0, ${alpha})`;
+    }
+
+    hex = hex.startsWith('#') ? hex.slice(1) : hex;
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};

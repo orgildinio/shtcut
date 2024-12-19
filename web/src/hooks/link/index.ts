@@ -28,6 +28,15 @@ interface UseLinkProps {
     all?: boolean;
 }
 
+interface LinkParams {
+    population: string;
+    search?: string;
+    all?: boolean;
+    filter?: Dict;
+    page?: number;
+    pageSize?: number;
+}
+
 interface UseLinkReturnsType {
     createLink: MutationTrigger<any>;
     deleteLink: MutationTrigger<any>;
@@ -50,6 +59,7 @@ interface UseLinkReturnsType {
     setLoadingState: (key: 'duplicating' | 'updating' | 'deleting' | 'finding' | 'creating', value: boolean) => void;
     handleSearchChange: any;
     paginationActions: UsePaginationActions;
+    params: LinkParams;
 }
 
 export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
@@ -93,7 +103,8 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         population: JSON.stringify([
             { path: 'user' },
             { path: 'domain', select: ['slug', 'name'] },
-            { path: 'qrCode' }
+            { path: 'qrCode' },
+            { path: 'tags' }
         ]),
         search: debouncedSearch,
         all,
@@ -152,6 +163,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         fetchMetadata,
         fetchMetaDataResponse,
         fetchMetaLoading,
-        paginationActions
+        paginationActions,
+        params
     };
 };

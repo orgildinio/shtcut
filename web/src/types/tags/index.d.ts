@@ -25,6 +25,7 @@ export interface TagResponse extends AppObject {
     createdAt: string;
     updatedAt: string;
     _id: string;
+    _v: number;
 }
 
 interface CreateTagPayload {
