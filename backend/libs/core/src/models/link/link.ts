@@ -103,9 +103,8 @@ export class Link {
 
   @Prop([
     {
-      type: Types.ObjectId,
+      type: MGSchema.Types.ObjectId,
       ref: 'Tag',
-      default: [],
     },
   ])
   tags: string[] | Tag[];

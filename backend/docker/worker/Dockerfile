@@ -33,6 +33,7 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY backend/package.json ./
 RUN yarn install --frozen-lockfile --production
+COPY --from=builder /usr/src/app/templates ./templates
 COPY --from=builder /usr/src/app/dist/apps/sht-worker ./dist
 
 # Export port for use

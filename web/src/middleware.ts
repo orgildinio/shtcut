@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse, userAgent } from 'next/server';
-import { fetchTargetUrl, isIgnoredPath } from './hooks/link-redirect';
+import { fetchTargetUrl, isIgnoredPath } from '@shtcut/hooks';
 import { headers } from 'next/headers';
 import requestIp from 'request-ip';
 

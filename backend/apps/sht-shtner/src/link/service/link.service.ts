@@ -249,7 +249,7 @@ export class LinkService extends MongoBaseService {
             publicId: Utils.generateUniqueId(this.defaultConfig.idToken),
           },
           ..._.omit(obj, ['tags']),
-          $addToSet: { tags: obj.tags ?? [] },
+          tags: obj?.tags?.map((t) => Utils.toObjectId(t)) || [],
         },
         {
           upsert: true,
