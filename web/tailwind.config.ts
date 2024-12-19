@@ -32,6 +32,10 @@ const config: Config = {
                 handwriting: ['var(--font-handwriting)', ...fontFamily.sans]
             },
             keyframes: {
+                pulseCustom: {
+                    '0%, 100%': { opacity: '1' },
+                    '50%': { opacity: '0.6' }
+                },
                 'border-animate': {
                     '0%': { width: '0%' },
                     '100%': { width: '100%' }
@@ -62,7 +66,10 @@ const config: Config = {
                 'accordion-up': 'accordion-up 0.2s ease-out',
                 'border-animate': 'border-animate 0.3s ease-in-out',
                 marquee: 'marquee var(--duration) linear infinite',
-                'marquee-vertical': 'marquee-vertical var(--duration) linear infinite'
+                'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
+                'pulse-slow': 'pulse 4s ease-out infinite',
+                'pulse-soft': 'pulse 1.5s ease-in infinite',
+                'pulse-custom': 'pulseCustom 2s ease-in-out infinite'
             },
             colors: {
                 primary: {

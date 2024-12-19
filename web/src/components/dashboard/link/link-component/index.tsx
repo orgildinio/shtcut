@@ -28,7 +28,7 @@ import { RootState, useAppDispatch } from '@shtcut/redux/store';
 import { setDropdownState, toggleDropdown } from '@shtcut/redux/slices/ui';
 import { useTags } from '@shtcut/hooks/tags';
 import { useCurrentWorkSpace } from '@shtcut/hooks/current-workspace';
-import { useLazyFindAllLinksQuery, useUpdateArchivedLinkMutation } from '@shtcut/services/link';
+import { useUpdateArchivedLinkMutation } from '@shtcut/services/link';
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -54,22 +54,16 @@ const LinkComponent = ({
     setSearch,
     pagination,
     paginationActions,
-    handleCloseLoading
+    handleCloseLoading,
+    params
 }: LinkComponentType) => {
     const { findAllTagsResponse } = useTags({ callTags: true });
     const [updateLinksArchived, updateLinkResponses] = useUpdateArchivedLinkMutation();
-    const [findAllLinkData, { data, error }] = useLazyFindAllLinksQuery();
-
-    useEffect(() => {
-        findAllLinkData({
-            archived: false,
-            perPage: 5
-        });
-    }, [findAllLinkData]);
 
     const dispatch = useAppDispatch();
     const qrCodeRef = useRef(null);
     const [modalType, setModalType] = useState<ModalType>(null);
+    const [randomAlias, setRandomAlias] = useState('');
     const [showSections, setShowSections] = useState(false);
     const [singleLink, setSingleLink] = useState<LinkNameSpace.Link | null>(null);
     const pathName = usePathname();
@@ -77,7 +71,7 @@ const LinkComponent = ({
     const [domain, setDomain] = useState<string | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [countriesData, setCountriesData] = useState<{ countryCode: string; url: string }[]>([]);
-    const [tags, setTags] = useState<string[]>([]);
+    const [tags, setTags] = useState<string[]>(['']);
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(undefined);
     const currentWorkspace = useCurrentWorkSpace();
     const showDropdown = useSelector((state: RootState) => state.ui.showDropdown);
@@ -89,8 +83,6 @@ const LinkComponent = ({
     const handleSelect = (value: string) => {
         setDomain(value);
     };
-
-    console.log('tagscomponent', tags);
 
     const handleNavigate = (alias: string) => {
         route.push(`${pathName}/analytics/${alias}`);
@@ -135,6 +127,8 @@ const LinkComponent = ({
     const watchTitle = watch('title');
     const watchDescription = watch('description');
 
+    console.log('watchLink', watchLink);
+
     const handleDeleteLink = (id: string) => {
         setLoadingState('deleting', true);
         deleteLink({
@@ -155,13 +149,16 @@ const LinkComponent = ({
         });
     };
 
+    console.log('fetchMetaDataResponse', fetchMetaDataResponse);
+
     useEffect(() => {
         if (fetchMetaDataResponse?.data?.meta) {
             const { title, description } = fetchMetaDataResponse.data.meta;
-            const { image } = fetchMetaDataResponse.data.og;
+            const image = fetchMetaDataResponse?.data?.og?.image || fetchMetaDataResponse?.data?.images[0]?.src;
+
+            console.log('Image fetched:', image); // Check value here
             setValue('title', title);
             setValue('description', description);
-
             setPreview(image);
         }
     }, [fetchMetaDataResponse, setValue]);
@@ -181,6 +178,11 @@ const LinkComponent = ({
         handleCloseLoading();
         setSingleLink(null);
     };
+    const doFind = () => {
+        findAllLinks({
+            ...params
+        });
+    };
 
     const onSubmit = async (data: any) => {
         const isUpdating = Boolean(singleLink);
@@ -189,10 +191,11 @@ const LinkComponent = ({
             acc[countryCode] = url;
             return acc;
         }, {});
+        const aliasString = randomAlias ? randomAlias : data?.alias;
         const payload = {
             title: data?.title,
             target: data?.target,
-            alias: data?.alias,
+            alias: aliasString,
             workspace: currentWorkspace?._id,
             domain: '66059257bcb47c8944881927',
             password: data?.password,
@@ -212,7 +215,7 @@ const LinkComponent = ({
                 content: data?.content
             }
         };
-
+        console.log('payload:::', payload);
         try {
             if (isUpdating) {
                 await updateLink({ payload, id: singleLink?._id });
@@ -223,7 +226,7 @@ const LinkComponent = ({
             setLoadingState(isUpdating ? 'updating' : 'creating', false);
             dispatch(toggleDropdown());
             // setSearch('');
-            findAllLinks();
+            doFind();
             setPreview(null);
         } catch (err) {
             const errorMessage = (err as any)?.data?.message || 'Failed. Please try again.';
@@ -233,6 +236,8 @@ const LinkComponent = ({
                 title: 'Error!',
                 description: errorMessage
             });
+        } finally {
+            route.refresh();
         }
     };
 
@@ -249,7 +254,7 @@ const LinkComponent = ({
                     variant: 'default',
                     title: 'Link Updated'
                 });
-                findAllLinkData({ archived: false });
+                findAllLinks({ archived: false });
             } catch (err) {
                 const errorMessage = (err as any)?.data?.message || 'Failed. Please try again.';
                 setLoadingState('updating', false);
@@ -269,15 +274,15 @@ const LinkComponent = ({
 
     useEffect(() => {
         if (isSuccess) {
-            findAllLinks();
+            doFind();
             handleCloseModal();
         }
         if (duplicateIsSuccess) {
             handleCloseModal();
-            findAllLinks();
+            doFind();
         }
         if (createLinkSuccess) {
-            findAllLinks();
+            doFind();
             handleCloseModal();
             toast({
                 variant: 'default',
@@ -286,7 +291,7 @@ const LinkComponent = ({
             });
         }
         if (updateLinkSuccess) {
-            findAllLinks();
+            doFind();
         }
     }, [isSuccess, duplicateIsSuccess, createLinkSuccess, updateLinkSuccess, findAllLinks]);
 
@@ -316,34 +321,6 @@ const LinkComponent = ({
         handleCloseLoading();
     };
 
-    const alias = 'n2poQbE';
-    useEffect(() => {
-        const fetchAlias = async () => {
-            try {
-                const response = await fetch(
-                    `https://api-dev.shtcut.co/api/v1/shtner/links/visit/shtcut.link/${alias}?apiKey=ShtcutAppKey`
-                );
-
-                console.log('response:::', response);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('API Error:', errorText);
-                } else {
-                    const result = await response.json();
-                    console.log('API Response:', result);
-                }
-            } catch (err: any) {
-                console.error('Fetch error:', err.message);
-            } finally {
-            }
-        };
-
-        if (alias) {
-            fetchAlias();
-        }
-    }, [alias]);
-
     return (
         <section className=" ">
             <div className="flex justify-between  items-center">
@@ -362,6 +339,7 @@ const LinkComponent = ({
             <section>
                 <SearchFilterActions search={search} onSearchChange={onSearchChange} />
             </section>
+
             <LinkDataComponent
                 isLoading={isLoading}
                 findAllLinksResponse={findAllLinksResponse}
@@ -406,6 +384,8 @@ const LinkComponent = ({
                                             watchLink={watchLink}
                                             findAllDomainsResponse={findAllDomainsResponse}
                                             singleLink={singleLink ?? undefined}
+                                            setRandomAlias={setRandomAlias}
+                                            randomAlias={randomAlias}
                                         />
                                     </div>
                                     <div className="px-14  border-t py-7">

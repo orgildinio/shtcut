@@ -1,5 +1,6 @@
 import {
     Card,
+    DropdownMenuTrigger,
     FormControl,
     FormField,
     FormItem,
@@ -11,15 +12,20 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-    Separator
+    Separator,
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger
 } from '@shtcut-ui/react';
-import React from 'react';
-import { Image as ImageIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { Image as ImageIcon, Repeat } from 'lucide-react';
 import Image from 'next/image';
 import MultiTagsInput from '@shtcut/components/form/multi-tag-input';
 import { DomainNameSpace } from '@shtcut/_shared/namespace/domain';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import { TagResponse } from '@shtcut/types/tags';
+import { IconChevronDown } from '@tabler/icons-react';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 const CreateLinkForm = ({
     form,
@@ -31,7 +37,9 @@ const CreateLinkForm = ({
     setTags,
     watchLink,
     findAllDomainsResponse,
-    singleLink
+    singleLink,
+    randomAlias,
+    setRandomAlias
 }: {
     form: any;
     handleSelect: (val: string) => void;
@@ -43,7 +51,15 @@ const CreateLinkForm = ({
     watchLink: string;
     findAllDomainsResponse: DomainNameSpace.Domain[];
     singleLink: LinkNameSpace.Link | undefined;
+    randomAlias: string;
+    setRandomAlias: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+    const generateRandomAlias = () => {
+        if (watchLink) {
+            const alias = Math.random().toString(36).substring(2, 10);
+            setRandomAlias(alias);
+        }
+    };
     const handleTagsChange = (newTags: string[]) => {
         setTags(newTags);
     };
@@ -65,7 +81,24 @@ const CreateLinkForm = ({
                     )}
                 />
                 <div>
-                    <Label className="text-sm ">Short Link</Label>
+                    <section className="flex items-center justify-between">
+                        <Label className="text-sm ">Short Link</Label>
+                        <TooltipProvider>
+                            <Tooltip delayDuration={0}>
+                                <TooltipTrigger asChild>
+                                    <Repeat
+                                        size={16}
+                                        onClick={generateRandomAlias}
+                                        className={`${watchLink ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                                        color="#4d4d4d"
+                                    />
+                                </TooltipTrigger>
+                                <TooltipContent side="right" className="flex items-center gap-4 text-xs">
+                                    Generate an alias by clicking
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </section>
                     <div className="flex items-center mt-2 rounded-md border h-10">
                         <Select onValueChange={handleSelect}>
                             <SelectTrigger
@@ -98,13 +131,18 @@ const CreateLinkForm = ({
                             control={form.control}
                             name="alias"
                             render={({ field }) => (
-                                <FormItem className=" border-none   w-full">
+                                <FormItem className="border-none w-full">
                                     <FormControl>
                                         <Input
                                             placeholder={singleLink ? singleLink?.alias : ''}
-                                            className="h-10 border-none focus-visible:ring-0  shadow-none  w-full"
+                                            className="h-10 border-none focus-visible:ring-0 shadow-none w-full"
                                             {...field}
+                                            onChange={(e) => {
+                                                setRandomAlias('');
+                                                field.onChange(e);
+                                            }}
                                             disabled={!watchLink || Boolean(singleLink)}
+                                            value={randomAlias || field.value}
                                             defaultValue={singleLink ? singleLink?.alias : ''}
                                         />
                                     </FormControl>

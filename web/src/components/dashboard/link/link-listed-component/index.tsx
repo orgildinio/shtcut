@@ -7,7 +7,9 @@ import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import { getApexDomain, truncate } from '@shtcut/_shared/helpers';
 import { formatDate } from '@shtcut/_shared';
 import { CiImageOff } from 'react-icons/ci';
-import { GOOGLE_FAVICON_URL } from '@shtcut/_shared/constant';
+import { GOOGLE_FAVICON_URL, hexToRgba } from '@shtcut/_shared/constant';
+import { TagResponse } from '@shtcut/types/tags';
+import tags from '@shtcut/services/tags';
 
 const LinkListedComponent = ({
     edit,
@@ -32,8 +34,9 @@ const LinkListedComponent = ({
 }) => {
     const { toast } = useToast();
     const apexDomain = getApexDomain(data?.target ?? '');
+
     const handleCopy = () => {
-        const textToCopy = `shtcut.co/${data?.alias}`;
+        const textToCopy = `localhost:3000/${data?.alias}`;
         if (textToCopy) {
             navigator.clipboard
                 .writeText(textToCopy)
@@ -83,7 +86,7 @@ const LinkListedComponent = ({
                                 href={`${data?.domain?.name?.startsWith('http') ? '' : 'http://'}localhost:3000/${data?.alias}`}
                                 className="text-xs text-primary-0 font-normal"
                             >
-                                {data?.domain.name}/{data?.alias}
+                                {data?.domain.name || data?.domain?.slug}/{data?.alias}
                             </a>
 
                             <a href={data?.target} target="_blank" className="text-[#2B2829] text-xs">
@@ -95,10 +98,27 @@ const LinkListedComponent = ({
                             <span className="text-[#726C6C] text-xs font-medium">
                                 {data?.createdAt && formatDate(data?.createdAt ?? '')}
                             </span>
-                            <div className="flex items-center space-x-1 w-[60px] h-6  rounded justify-center border bg-[#ECFFFC] border-[#0B7B69]">
-                                <Tag size={14} color="#0B7B69" />
-                                <span className="text-xs text-[#0B7B69]">Tags</span>
-                            </div>
+                            <section className="flex items-center gap-2">
+                                {data?.tags.map((tg: TagResponse) => {
+                                    const isValidHex = /^#?[0-9A-Fa-f]{6}$/.test(tg.color);
+                                    const color = isValidHex ? tg.color : '#000000'; // Default to black if invalid
+
+                                    return (
+                                        <div
+                                            className="flex items-center space-x-1 w-fit px-2 h-6 rounded justify-center border"
+                                            style={{
+                                                border: `1px solid ${color}`,
+                                                backgroundColor: hexToRgba(color, 0.1)
+                                            }}
+                                        >
+                                            <Tag size={14} color={color} />
+                                            <span style={{ color }} className="text-xs">
+                                                {tg.name}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                            </section>
                         </div>
                     </div>
                 </div>

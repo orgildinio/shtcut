@@ -6,6 +6,8 @@ import { ModalType } from '@shtcut/types/types';
 import PaginationTable from '@shtcut/components/pagination';
 import { PaginationType } from '@shtcut/types';
 import { UsePaginationActions, UsePaginationState } from '@shtcut/types/pagination';
+import CardSkeleton, { skeletonRows } from '@shtcut/components/card-skeleton';
+import { Card } from '@shtcut-ui/react';
 
 interface LinkDataComponentProps {
     isLoading: boolean;
@@ -31,9 +33,7 @@ const LinkDataComponent = ({
     return (
         <>
             {isLoading ? (
-                <div className="flex flex-1 h-[70vh] justify-center items-center">
-                    <StarLoader />
-                </div>
+                <div className="flex flex-col gap-y-[14px] mt-8">{skeletonRows}</div>
             ) : findAllLinksResponse && findAllLinksResponse?.data && findAllLinksResponse?.data.length > 0 ? (
                 <div className="flex flex-col gap-y-[14px] mt-8">
                     {findAllLinksResponse?.data.map((data, index) => (

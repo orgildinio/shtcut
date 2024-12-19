@@ -32,13 +32,15 @@ const LinkContainer = () => {
         updateLinkResponse,
         handleCloseLoading,
         pagination,
-        paginationActions
+        paginationActions,
+        params
     } = useLink({
         callLinks: true,
         search,
         filter: {
             archived: false
-        }
+        },
+        url
     });
 
     const { findAllDomainsResponse } = useDomain({ callDomain: true });
@@ -56,8 +58,6 @@ const LinkContainer = () => {
             handleSearchChange(state as string);
         }
     }, [getParams]);
-
-    console.log('find:::', findAllLinksResponse);
 
     return (
         <LinkComponent
@@ -85,6 +85,7 @@ const LinkContainer = () => {
             handleCloseLoading={handleCloseLoading}
             pagination={pagination}
             paginationActions={paginationActions}
+            params={params}
         />
     );
 };
