@@ -239,7 +239,7 @@ const LinkComponent = ({
         const id = singleLink?._id;
         if (id) {
             try {
-                const response = await updateLinksArchived({ id }).unwrap();
+                await updateLinksArchived({ id }).unwrap();
                 setLoadingState('updating', false);
                 handleCloseModal();
                 toast({
