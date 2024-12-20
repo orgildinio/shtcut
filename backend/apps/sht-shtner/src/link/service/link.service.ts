@@ -164,7 +164,7 @@ export class LinkService extends MongoBaseService {
         }
       }
       // Create and save associated QR code
-      let link = await super.createNewObject({ ..._.omit(obj, ['qrCode', 'tags']) }, session);
+      let link = await super.createNewObject({ ..._.omit(obj, ['qrCode']) }, session);
       const qrCode = await new this.qrCodeModel({
         properties: {
           ...obj.qrCode,
@@ -179,7 +179,6 @@ export class LinkService extends MongoBaseService {
 
       // Associate QR code and tags with link and save link
       link.qrCode = qrCode._id;
-      link.tags.push(obj.tags.map((t) => Utils.toObjectId(t)) ?? []);
       link = await link.save({ session });
 
       await session?.commitTransaction();
