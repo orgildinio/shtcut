@@ -151,6 +151,31 @@ export class EmailService {
     }
   }
 
+  async useResend(options) {
+    try {
+      const resend = new Resend(`${this.config.get('worker.email.resend.apiKey')}`);
+      if (!options.recipients && !options.templateId && !options.template) {
+        throw AppException.INTERNAL_SERVER(lang.get('error').emailError);
+      }
+      const message: any = {
+        to: options.recipients || options.to.email,
+        from: options.from.email || this.config.get('worker.email.resend.fromEmail'),
+        subject: options.subject || this.config.get('app.appName'),
+      };
+
+      if (options.template) {
+        message['html'] = await this.getHtmlFromTemplate(options.content, options.template);
+      }
+      if (options.attachments && options.attachments.length) {
+        message['attachments'] = options.attachments;
+      }
+      return resend.emails.send(message).then((res) => console.log('res:::', res));
+    } catch (e) {
+      Logger.error(`resend-err::${e}`);
+      throw e;
+    }
+  }
+
   /**
    * The function `getHtmlFromTemplate` reads a template file, renders it using EJS with the provided
    * content, and returns the resulting HTML.
