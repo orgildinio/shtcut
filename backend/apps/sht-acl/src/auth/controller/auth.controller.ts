@@ -84,6 +84,34 @@ export class AuthController {
     }
   }
 
+  @Post('/sign-up/test-email')
+  @HttpCode(OK)
+  public async testEmail(
+    @Body() payload: { email },
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
+    try {
+      const queryParser = new QueryParser(Object.assign({}, req.query));
+      const email = await AuthEmail.sendEmail({
+        to: payload.email,
+        from: this.config.get<string>('worker.email.noReply.email'),
+        template: this.config.get<string>('app.templates.email.verify'),
+        code: this.service.getCode(),
+      });
+      const response = await this.service.getResponse({
+        code: OK,
+        email,
+        queryParser,
+        value: !!payload,
+      });
+      return res.status(OK).json(response);
+    } catch (e) {
+      return next(e);
+    }
+  }
+
   @Post('/sign-up')
   @HttpCode(OK)
   public async signUp(
