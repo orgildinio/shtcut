@@ -84,7 +84,7 @@ export class AuthController {
     }
   }
 
-  @Post('/sign-up/test-email')
+  @Post('/test-email')
   @HttpCode(OK)
   public async testEmail(
     @Body() payload: { email },
