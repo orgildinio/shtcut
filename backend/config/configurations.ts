@@ -122,10 +122,10 @@ export const configuration = () => ({
     },
     email: {
       noReply: {
-        email: process.env.NO_REPLY || 'Sam from Shtcut" <no-reply@shtcut.co>',
-        name: process.env.APP_NAME || 'ShtCut',
+        email: process.env.NO_REPLY || 'no-reply@shtcut.co',
+        name: process.env.APP_NAME || 'Shtcut',
       },
-      mailOption: process.env.MAIL_OPTION || 'sendgrid',
+      mailOption: process.env.MAIL_OPTION || 'resend',
       sendgrid: {
         fromEmail: process.env.NO_REPLY || 'no-reply@shtcut.co',
         apiKey: process.env.SENDGRID_API_KEY,
@@ -133,9 +133,13 @@ export const configuration = () => ({
       },
       postmark: {
         username: process.env.POSTMARK_USERNAME || 'John Doe',
-        fromEmail: process.env.NO_REPLY || 'Sam from Shtcut" <no-reply@shtcut.co>',
+        fromEmail: process.env.NO_REPLY || 'no-reply@shtcut.co',
         url: process.env.POSTMARK_URL || '',
         apiKey: process.env.POSTMARK_API_KEY,
+      },
+      resend: {
+        apiKey: process.env.RESEND_API_KEY,
+        url: process.env.RESEND_BASE_URL,
       },
     },
   },

@@ -2,11 +2,13 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import lang from 'apps/sht-worker/lang';
-import { AppException } from 'shtcut/core';
+import { AppException, Dict } from 'shtcut/core';
 import * as sgMail from '@sendgrid/mail';
 import { lastValueFrom } from 'rxjs';
 import * as fs from 'fs';
 import * as ejs from 'ejs';
+import { Resend } from 'resend';
+
 @Injectable()
 export class EmailService {
   constructor(
@@ -15,20 +17,37 @@ export class EmailService {
   ) {}
 
   /**
-   * The function sends an email using either SendGrid or PostMark based on the configuration.
-   * @param options - The `options` parameter is a record (object) that contains various properties for
-   * configuring the email. The specific properties and their values depend on the implementation of
-   * the `useSendGrid` and `usePostMark` methods.
-   * @returns The function `sendEmail` returns the `mailProvider` variable.
+   * The function `sendEmail` checks the environment and sends an email using different providers based
+   * on the configuration.
+   * @param {Dict} options - The `sendEmail` function you provided is an asynchronous function that
+   * sends an email based on the specified `mailOption` in the configuration. If the environment is set
+   * to 'test', the function will return early without sending an email.
+   * @returns The `sendEmail` function returns the `mailProvider` object after using the appropriate
+   * email provider based on the `mailOption` configuration. If the environment is set to 'test', the
+   * function returns early without sending any emails.
    */
-  async sendEmail(options: Record<string, any>) {
+  async sendEmail(options: Dict) {
     if (this.config.get('app.environment') === 'test') {
       return;
     }
     const mailOption = this.config.get('worker.email.mailOption');
-    let mailProvider = this.useSendGrid(options);
-    if (mailOption === 'postmark') {
-      mailProvider = await this.usePostMark(options);
+    let mailProvider = null;
+    switch (mailOption) {
+      case 'postmark':
+        mailProvider = await this.usePostMark(options);
+        break;
+      case 'mailtrap':
+        mailProvider = await this.useMailTrap(options);
+        break;
+      case 'sendgrid':
+        mailProvider = await this.useSendGrid(options);
+        break;
+      case 'resend':
+        mailProvider = await this.useResend(options);
+        break;
+      default:
+        mailProvider = this.useResend(options);
+        return;
     }
     return mailProvider;
   }
@@ -59,6 +78,16 @@ export class EmailService {
     };
     return this.sendEmail(payload);
   }
+
+  /**
+   * The function `useMailTrap` is an asynchronous function in TypeScript that takes options as a
+   * parameter.
+   * @param options - The `options` parameter likely contains configuration settings or data needed to
+   * send an email using MailTrap. This could include information such as the recipient's email
+   * address, the subject of the email, the content of the email, and any other relevant details
+   * required for sending the email through MailTrap.
+   */
+  async useMailTrap(options) {}
 
   /**
    * The function `useSendGrid` is an asynchronous function that sends an email using the SendGrid API,
