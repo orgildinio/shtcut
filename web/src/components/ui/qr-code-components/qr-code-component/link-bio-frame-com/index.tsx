@@ -31,15 +31,25 @@ const LinkBioFrameComponent = ({ linksBio }: { linksBio: LinkBioDataType[] }) =>
                     <p className="text-xs ">{descriptionValue ? (descriptionValue as string) : 'Job title'}</p>
                 </div>
             </div>
-            <section className="flex flex-col mt-4 gap-2">
-                {linksBio &&
-                    linksBio.map((bio) => (
-                        <ReusableComponent
-                            icons={<Image src={bio.image as string} width={14} height={16} alt="" />}
-                            name={bio.title}
-                        />
-                    ))}
-            </section>
+            {linksBio && linksBio.length > 0 ? (
+                <section className="flex flex-col mt-4 gap-2">
+                    {linksBio.map((bio, index) =>
+                        bio ? (
+                            <ReusableComponent
+                                key={index}
+                                icons={
+                                    bio.image ? (
+                                        <Image src={bio.image as string} width={14} height={16} alt="" />
+                                    ) : (
+                                        <LucideImage size={14} color="#B5B3B3" />
+                                    )
+                                }
+                                name={bio.title || 'Untitled'}
+                            />
+                        ) : null
+                    )}
+                </section>
+            ) : null}
         </div>
     );
 };
