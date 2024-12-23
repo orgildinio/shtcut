@@ -11,7 +11,7 @@ interface MultiTagsInputProps {
     label?: string;
     selectOptions?: string[];
     watchLink: string;
-    singleLink: LinkNameSpace.Link | undefined;
+    singleLink?: LinkNameSpace.Link | undefined;
 }
 
 const colors = [

@@ -7,21 +7,31 @@ import QrCodeCardHeader from '@shtcut/components/ui/qr-code-components/qr-code-c
 import QrCodePreviewPhones from '@shtcut/components/ui/qr-code-components/qr-code-create/qr-code-phones';
 import ColorsQrCode from '@shtcut/components/ui/qr-code-components/website-component/actions-tab/colors-component';
 import QrCodeName from '@shtcut/components/ui/qr-code-components/website-component/qr-code-name';
-import { nextStep, prevStep, qrCodeSelectors, setImage, setQrCodeName } from '@shtcut/redux/slices/qr-code';
+import {
+    nextStep,
+    prevStep,
+    qrCodeSelectors,
+    setDescription,
+    setImage,
+    setQrCodeName
+} from '@shtcut/redux/slices/qr-code';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CreateLinkBioComponent = () => {
     const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
-    const [linkImage, setLinkImage] = useState<string | null>(null);
+    const descriptionValue = useSelector(qrCodeSelectors.setDescription);
+    const [linksBio, setLinksBios] = useState<LinkBioDataType[]>([{ id: 1, title: '', url: '', image: null }]);
+
     const dispatch = useDispatch();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const step = useSelector(qrCodeSelectors.selectStep);
-    const [showSections, setShowSections] = useState({
-        header: true,
-        links: true,
-        socialNetworks: true
+    const [showSections, setShowSections] = useState<Record<number, boolean>>({
+        1: true // Default to showing the first section
     });
+
+    console.log('linksBio', linksBio);
+
     const handleNextStep = () => {
         dispatch(nextStep());
     };
@@ -29,27 +39,20 @@ const CreateLinkBioComponent = () => {
     const handlePrevStep = () => {
         dispatch(prevStep());
     };
+
     const handleSave = () => {
         const qrCodeData = {
             step
         };
     };
-    const toggleSection = (section: keyof typeof showSections) => {
+
+    const toggleSection = (id: number) => {
         setShowSections((prev) => ({
             ...prev,
-            [section]: !prev[section]
+            [id]: !prev[id]
         }));
     };
-    const handleImageChangeLink = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setLinkImage(imageUrl);
-        }
-    };
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setQrCodeName(event.target.value));
-    };
+
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -58,9 +61,38 @@ const CreateLinkBioComponent = () => {
             dispatch(setImage(imageUrl));
         }
     };
+
+    const addLinkSection = () => {
+        const newId = linksBio.length + 1;
+        setLinksBios((prevLinks) => [...prevLinks, { id: newId, title: '', url: '', image: null }]);
+        setShowSections((prev) => ({ ...prev, [newId]: true }));
+    };
+
+    const removeLinkSection = (id: number) => {
+        setLinksBios((prevLinks) => prevLinks.filter((link) => link.id !== id));
+        setShowSections((prev) => {
+            const { [id]: _, ...rest } = prev;
+            return rest;
+        });
+    };
+
+    const updateLink = (id, field, value) => {
+        setLinksBios((prevLinks) => prevLinks.map((link) => (link.id === id ? { ...link, [field]: value } : link)));
+    };
+
+    const handleLinkImageChange = (id: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setLinksBios((prevLinks) =>
+                prevLinks.map((link) => (link.id === id ? { ...link, image: imageUrl } : link))
+            );
+        }
+    };
+
     return (
         <section>
-            <div className="flex justify-between  items-center">
+            <div className="flex justify-between items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">Edit Link-in-bio</h1>
                 <div className="flex items-center gap-x-3">
                     {Number(step) > 1 && (
@@ -89,7 +121,7 @@ const CreateLinkBioComponent = () => {
             </div>
             <section className="flex mt-[22px] gap-7">
                 <section className="w-[90%]">
-                    <section className="w-full h-[90px]   bg-white rounded-[10px] shadow-sm border border-gray-100 ">
+                    <section className="w-full h-[90px] bg-white rounded-[10px] shadow-sm border border-gray-100">
                         <Stepper step={step} />
                     </section>
                     {step === 1 && (
@@ -97,37 +129,44 @@ const CreateLinkBioComponent = () => {
                             <QrCodeCardHeader
                                 label="Title"
                                 description="Enter Title and description"
-                                isVisible={showSections.header}
-                                toggleVisibility={() => toggleSection('header')}
+                                isVisible={showSections[0]}
+                                toggleVisibility={() => toggleSection(0)}
                                 titleValue={qrCodeName as string}
-                                descriptionValue={''}
-                                handleTitleChange={handleInputChange}
-                                handleDescriptionChange={() => {}}
+                                descriptionValue={descriptionValue as string}
+                                handleTitleChange={(e) => dispatch(setQrCodeName(e.target.value))}
+                                handleDescriptionChange={(e) => dispatch(setDescription(e.target.value))}
                                 selectedImage={selectedImage}
                                 handleImageChange={handleImageChange}
                             />
-                            <LinksSection
-                                isVisible={showSections.links}
-                                toggleVisibility={() => toggleSection('links')}
-                                linkImage={linkImage}
-                                handleImageChange={handleImageChangeLink}
-                            />
+                            {linksBio.map((link, index) => (
+                                <LinksSection
+                                    key={link.id}
+                                    index={index}
+                                    isVisible={showSections[link.id]}
+                                    toggleVisibility={() => toggleSection(link.id)}
+                                    linkImage={link.image}
+                                    handleImageChange={(e) => handleLinkImageChange(link.id, e)}
+                                    onUpdateLink={(field, value) => updateLink(link.id, field, value)}
+                                    onRemove={() => removeLinkSection(link.id)}
+                                    addLinkSection={addLinkSection}
+                                />
+                            ))}
                         </section>
                     )}
                     {step === 2 && (
-                        <Card className="shadow-sm mt-8 py-4 px-6 border border-gray-100 ">
+                        <Card className="shadow-sm mt-8 py-4 px-6 border border-gray-100">
                             <ColorsQrCode />
                         </Card>
                     )}
                     {step === 3 && (
-                        <section className=" mt-4 shadow-sm border border-gray-100  rounded-[10px] gap-2">
+                        <section className="mt-4 shadow-sm border border-gray-100 rounded-[10px] gap-2">
                             <QrCodeName />
                         </section>
                     )}
                 </section>
-                <div className="bg-white  sticky top-0 shadow-sm border border-gray-100 rounded-[10px] h-[640px] p-[23px]">
-                    <h2 className=" font-semibold ">Preview</h2>
-                    <QrCodePreviewPhones switchTab="edit-link" />
+                <div className="bg-white sticky top-0 shadow-sm border border-gray-100 rounded-[10px] h-[640px] p-[23px]">
+                    <h2 className="font-semibold">Preview</h2>
+                    <QrCodePreviewPhones switchTab="edit-link" linksBio={linksBio} />
                 </div>
             </section>
         </section>
