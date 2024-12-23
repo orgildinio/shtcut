@@ -3,15 +3,16 @@ import { useSelector } from 'react-redux';
 import { qrCodeSelectors } from '@shtcut/redux/slices/qr-code';
 import MultiLinkStep1 from '../../multi-link-components/multi-link-step1';
 import VCardFrame from '../../vcard-component/vcard-frame';
-import EditLinkBio from '../../qr-code-component/edit-link-bio';
 import PdfFrameComponent from '../../pdf-qr-code/pdf-frame-step-1';
 import FrameComponents from '../../frames-component';
+import LinkBioFrameComponent from '../../qr-code-component/link-bio-frame-com';
 
 interface ComponentType {
     switchTab?: string;
+    linksBio?: LinkBioDataType[];
 }
 
-const QrCodePreviewPhones = ({ switchTab }: ComponentType) => {
+const QrCodePreviewPhones = ({ switchTab, linksBio }: ComponentType) => {
     const step = useSelector(qrCodeSelectors.selectStep);
 
     return (
@@ -45,7 +46,7 @@ const QrCodePreviewPhones = ({ switchTab }: ComponentType) => {
                         </>
                     ) : switchTab === 'edit-link' ? (
                         <>
-                            <EditLinkBio />
+                            <LinkBioFrameComponent linksBio={linksBio ?? []} />
                         </>
                     ) : null}{' '}
                 </div>

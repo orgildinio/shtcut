@@ -1,4 +1,3 @@
-// LinksSection.tsx
 import { Button, Card, Input, Label } from '@shtcut-ui/react';
 import { Image as LucideImage, Minus, Plus } from 'lucide-react';
 import React from 'react';
@@ -8,9 +7,24 @@ type LinksSectionProps = {
     toggleVisibility: () => void;
     linkImage?: string | null;
     handleImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onUpdateLink?: (field: string, value: string) => void;
+    onRemove?: () => void;
+    addLinkSection?: () => void;
+    index?: number;
 };
 
-const LinksSection = ({ isVisible, toggleVisibility, linkImage, handleImageChange }: LinksSectionProps) => {
+const LinksSection = ({
+    isVisible,
+    toggleVisibility,
+    linkImage,
+    handleImageChange,
+    onRemove,
+    onUpdateLink,
+    addLinkSection,
+    index
+}: LinksSectionProps) => {
+    const imageInputId = `image-upload-link-${index}`;
+
     return (
         <Card className="shadow-sm mt-4 py-4 px-6 border border-gray-100">
             <section className={`flex ${isVisible ? 'pb-3' : ''} justify-between items-center`}>
@@ -27,11 +41,14 @@ const LinksSection = ({ isVisible, toggleVisibility, linkImage, handleImageChang
             {isVisible && (
                 <section className="border-t pt-3">
                     <section>
-                        <Label>Link 1</Label>
+                        <Label>Link {index && index + 1}</Label>
                     </section>
                     <section className="mt-4 flex flex-col gap-4 border-b pb-4">
-                        <Input className="" placeholder="Enter Link Title" />
-                        <Input className="" placeholder="Enter URL" />
+                        <Input
+                            placeholder="Enter Link Title"
+                            onChange={(e) => onUpdateLink?.('title', e.target.value)}
+                        />
+                        <Input placeholder="Enter URL" onChange={(e) => onUpdateLink?.('url', e.target.value)} />
                     </section>
                     <section className="flex flex-col gap-2 pt-4">
                         <Label>Image (optional)</Label>
@@ -49,22 +66,29 @@ const LinksSection = ({ isVisible, toggleVisibility, linkImage, handleImageChang
                                 )}
                             </section>
                             <label
-                                htmlFor="image-upload-link"
+                                htmlFor={imageInputId} // Use unique ID
                                 className="absolute top-0 right-0 bg-black w-6 h-6 flex justify-center items-center cursor-pointer rounded-full"
                             >
                                 <Plus color="white" size={16} />
                             </label>
                             <input
-                                id="image-upload-link"
+                                id={imageInputId} // Unique ID for the input
                                 type="file"
                                 accept="image/*"
                                 onChange={handleImageChange}
                                 className="hidden"
                             />
                         </section>
-                        <Button variant="outline" className="h-9 w-28 mt-2">
-                            Add Link
-                        </Button>
+                        <section className="flex items-center justify-between">
+                            <Button onClick={addLinkSection} variant="outline" className="h-9 w-28 mt-2">
+                                Add Link
+                            </Button>
+                            {index && index + 1 > 1 && (
+                                <Button onClick={onRemove} variant="destructive" className="h-9 w-28 mt-2">
+                                    Delete
+                                </Button>
+                            )}
+                        </section>
                     </section>
                 </section>
             )}

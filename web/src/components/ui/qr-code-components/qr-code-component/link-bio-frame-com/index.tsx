@@ -3,10 +3,10 @@ import Image from 'next/image';
 import React, { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { Image as LucideImage } from 'lucide-react';
-const EditLinkBio = () => {
+const LinkBioFrameComponent = ({ linksBio }: { linksBio: LinkBioDataType[] }) => {
     const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
     const imageSelected = useSelector(qrCodeSelectors.selectImage);
-
+    const descriptionValue = useSelector(qrCodeSelectors.setDescription);
     const ReusableComponent = ({ icons, name }: { name: string; icons: ReactNode }) => {
         return (
             <section className="flex border-b p-2 gap-2 items-center bg-[#FFE8F0] rounded-md">
@@ -27,21 +27,21 @@ const EditLinkBio = () => {
                         </section>
                     )}
                     <p className="text-sm font-medium mt-2"> {qrCodeName ? String(qrCodeName) : 'Name'}</p>
-                    <p className="text-xs ">Job Title</p>
+
+                    <p className="text-xs ">{descriptionValue ? (descriptionValue as string) : 'Job title'}</p>
                 </div>
             </div>
             <section className="flex flex-col mt-4 gap-2">
-                <ReusableComponent
-                    icons={<Image src={'/logos/skill-icons_instagram.png'} width={12} height={12} alt="" />}
-                    name="Johnsons Limited"
-                />
-                <ReusableComponent
-                    icons={<Image src={'/logos/facebook.png'} width={12} height={12} alt="" />}
-                    name="Johnsons Limited"
-                />
+                {linksBio &&
+                    linksBio.map((bio) => (
+                        <ReusableComponent
+                            icons={<Image src={bio.image as string} width={14} height={16} alt="" />}
+                            name={bio.title}
+                        />
+                    ))}
             </section>
         </div>
     );
 };
 
-export default EditLinkBio;
+export default LinkBioFrameComponent;

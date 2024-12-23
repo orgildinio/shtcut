@@ -14,6 +14,7 @@ interface QrCodeState {
     step: number;
     eyeRadius: EyeRadiusType;
     image: string;
+    description: string;
 }
 
 const initialState: QrCodeState = {
@@ -26,6 +27,7 @@ const initialState: QrCodeState = {
     qrCodeShape: 'squares',
     step: 1,
     image: '',
+    description: '',
     eyeRadius: [
         { outer: 8, inner: 4 },
         { outer: 8, inner: 4 },
@@ -51,6 +53,9 @@ const qrCodeSlice = createSlice({
         },
         setQrCodeName: (state, action: PayloadAction<string>) => {
             state.qrCodeName = action.payload;
+        },
+        setDescription: (state, action: PayloadAction<string>) => {
+            state.description = action.payload;
         },
         setQrCodeLogo: (state, action: PayloadAction<string | undefined>) => {
             state.qrCodeLogo = action.payload;
@@ -84,6 +89,7 @@ export const {
     setBtnColor,
     setBgColor,
     setQrCodeName,
+    setDescription,
     setQrCodeLogo,
     setSelectedFrame,
     setQrCodeShape,
@@ -106,6 +112,7 @@ export const qrCodeSelectors = {
     selectBtnColor: createSelector('btnColor'),
     selectBgColor: createSelector('bgColor'),
     selectQrCodeName: createSelector('qrCodeName'),
+    setDescription: createSelector('description'),
     selectQrCodeLogo: createSelector('qrCodeLogo'),
     selectSelectedFrame: createSelector('selectedFrame'),
     selectQrCodeShape: createSelector('qrCodeShape'),
