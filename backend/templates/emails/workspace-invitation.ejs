@@ -1,43 +1,285 @@
+<!-- @format -->
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invitation to Shtcut</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"
+        rel="stylesheet" />
+    <title>Joing</title>
 </head>
-<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
-<div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-    <div style="text-align: center; padding: 10px 0; border-bottom: 1px solid #eeeeee;">
-        <img src="https://shtcut-stg.s3.amazonaws.com/logo-color.png" alt="Shtcut Logo" style="max-width: 150px;">
-    </div>
-    <div style="padding: 20px;">
-        <h1 style="color: #333333; text-align: center;">You've Been Invited to Join a Workspace on Shtcut!</h1>
-        <p style="color: #555555; text-align: center;">Hey there,</p>
-        <p style="color: #555555; line-height: 1.6; text-align: center;">
-            You have been invited to join their <%= workspace ;%> on Shtcut, the platform where you can streamline your
-            workflow
-            and
-            enhance productivity. We
-            believe you will find it incredibly useful and enjoyable.
-        </p>
-        <p style="color: #555555; line-height: 1.6; text-align: center;">
-            Click the button below to accept your invitation and get started:
-        </p>
-        <div style="text-align: center;margin: 50px;">
-            <a href="[Invitation Link]"
-               style="background-color: #2F64E9; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-size: 16px;">
-                Join Shtcut
-            </a>
-        </div>
-        <p style="color: #555555; line-height: 1.6; text-align: center;">
-            If you have any questions, feel free to reach out to us at
-            <a href="mailto:support@shtcut.link" style="color: #2F64E9;">support@shtcut.co</a>.</p>
-        <p style="color: #555555; line-height: 1.6; text-align: center;">Welcome aboard!</p>
-        <p style="color: #555555; line-height: 1.6; text-align: center;">Best regards,<br>The Shtcut Team</p>
-    </div>
-    <div style="text-align: center; padding: 10px 0; color: #888888; font-size: 12px;">
-        <p>&copy; 2024 Shtcut. All rights reserved.</p>
-    </div>
-</div>
+<style>
+    /** @format */
+
+    body {
+        padding: 0%;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        color: #000000;
+        font-weight: 400;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .container-wrapper {
+        border: 1px solid rgb(218, 216, 216);
+        border-radius: 1rem;
+        width: 600px;
+    }
+
+    @media screen and (max-width: 600px) {
+        .container-wrapper {
+            width: 100%;
+        }
+
+        .container {
+            padding: 6px;
+        }
+    }
+
+    .header-container {
+        background-color: #e0e9ff;
+        height: 80px;
+        display: flex;
+        border-top-right-radius: 1rem;
+        border-top-left-radius: 1rem;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logo {
+        width: 162px;
+    }
+
+    .title {
+        font-weight: 600;
+        text-align: center;
+    }
+
+    p {
+        font-size: 14px;
+        line-height: 22px;
+    }
+
+    .content-container {
+        padding: 0rem 2rem 0rem 2rem;
+        margin-top: 1rem;
+    }
+
+    @media screen and (max-width: 600px) {
+        .content-container {
+            padding: 1rem;
+        }
+    }
+
+    .content-container button {
+        width: 150px;
+        height: 40px;
+        color: white;
+        background-color: #2f64e9;
+        border: none;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+
+    .confirm-message p {
+        margin: 2px;
+    }
+
+    .confirm-message {
+        margin-top: 10px;
+    }
+
+    .link-redirect {
+        font-size: 14px;
+        word-break: break-all;
+        color: #2f64e9;
+    }
+
+    .link-container {
+        width: 210px;
+    }
+
+    .workspace {
+        border: 1px solid #e5e8eb;
+        border-radius: 6px;
+    }
+
+    .workspace-child .workspace-text {
+        color: #5d5e60;
+        margin-top: 10px;
+    }
+
+    .workspace-child button {
+        width: 100%;
+    }
+
+    .workspace-child {
+        border: 1px solid #e5e8eb;
+        width: 70%;
+        margin: auto;
+        border-radius: 6px;
+        padding: 1.5rem;
+    }
+
+    .workspace p {
+        padding: 0;
+        margin: 0%;
+    }
+
+    .workspace-child img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .workspace-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .bottom-text {
+        text-align: center;
+        background-color: #f7f7f7;
+        border-bottom-right-radius: 6px;
+        border-bottom-left-radius: 6px;
+        padding: 0.7rem 0rem 0.7rem 0rem;
+        margin-top: 2rem;
+        color: #717171;
+    }
+
+    .workspace h1 {
+        text-align: center;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0%;
+        padding: 2rem 0rem 2rem 0rem;
+    }
+
+    .workspace-content p {
+        font-weight: 500;
+    }
+
+    .help-section {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .social-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .social-container img {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+    }
+
+    .cheers-section {
+        margin-top: 1.5rem;
+    }
+
+    .help-text {
+        margin-top: 1.5rem;
+    }
+
+    footer {
+        background-color: #e0e9ff;
+        border-bottom-right-radius: 1rem;
+        border-bottom-left-radius: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 0px 10px 0px;
+        margin-top: 1rem;
+    }
+
+    footer p {
+        margin: 2px;
+        text-align: center;
+    }
+
+    footer button {
+        font-weight: 600;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <section class="container">
+        <section class="container-wrapper">
+            <section class="header-container">
+                <img src="/welcome-email/images/logo-shtcut.png" alt="" class="logo" />
+            </section>
+
+            <h1 class="title">Join Your Team on Shtcut</h1>
+            <section class="content-container">
+                <p>Hello <%= name %>,</p>
+                <p>
+                    Amanda Daniels <%= email %> has invited you to collaborate in
+                        Amanda’s workspace on shtcut. Use Shtcut to have your digital
+                        marketing simplified and organized.
+                </p>
+
+                <section class="workspace">
+                    <h1 class="">Amanda Davis Workspace</h1>
+                    <section class="workspace-child">
+                        <section class="workspace-content">
+                            <img src="./img/mingcute_invite-fill.png" alt="" />
+                            <p class="">Amanda Team</p>
+                        </section>
+                        <p class="workspace-text">
+                            Join your teammates to start collaborating in no time
+                        </p>
+                        <button>Accept Invitation</button>
+                    </section>
+                    <section class="bottom-text">
+                        <p>There are <%= members %> team mates on this workspace</p>
+                    </section>
+                </section>
+
+                <p class="help-section">
+                    Need help? We’re here if you need it. Visit the Help Center or
+                    contact us.
+                </p>
+
+                <section class="social-container">
+                    <img src="./img/fb.png" alt="" />
+                    <img src="./img/linkldn.png" alt="" />
+                    <img src="./img/twitter.png" alt="" />
+                    <img src="./img/instagram.png" alt="" />
+                    <img src="./img/youtube.png" alt="" />
+                </section>
+            </section>
+            <footer class="">
+                <p>
+                    You're receiving this email because you are a subscriber of
+                    <a href="shtcut.co">shtcut.co</a>
+                </p>
+                <p>
+                    If you feel you received it by mistake or wish to unsubscribe,
+                    <a href="shtcut.co"><button>click here</button></a>
+                </p>
+            </footer>
+        </section>
+    </section>
 </body>
+
 </html>
