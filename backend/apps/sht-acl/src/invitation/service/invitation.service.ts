@@ -81,7 +81,7 @@ export class InvitationService extends MongoBaseService {
         await this.workspaceModel.findOne({ ...Utils.conditionWithDelete({ _id: workspace, active: true }) }),
       ]);
 
-      savedInvites.forEach((invitation) => {
+      savedInvites.forEach((invitation: any) => {
         const { email, token, _id } = invitation;
         const link = `${obj.redirectLink}?email=${email}&workspace=${workspace}&token=${token}`;
         inviteeWorkspace.members.push(_id);
