@@ -15,4 +15,5 @@ export interface ResponseOption {
   filterQuery?: Record<string, any>;
   email?: MailOption;
   sms?: SmsOption;
+  notification?: SmsOption;
 }

@@ -199,6 +199,9 @@ export class AuthService extends MongoBaseService {
     if (option.sms) {
       // todo work on queue for sms
     }
+    if (option.notification) {
+      // todo work on queue for notification
+    }
     return super.getResponse(option);
   }
 
