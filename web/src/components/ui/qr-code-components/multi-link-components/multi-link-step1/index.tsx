@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { qrCodeSelectors } from '@shtcut/redux/slices/qr-code';
 import Image from 'next/image';
 const MultiLinkStep1 = () => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
+    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
     const imageSelected = useSelector(qrCodeSelectors.selectImage);
     return (
         <div className="pt-6">

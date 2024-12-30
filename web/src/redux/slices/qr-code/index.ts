@@ -7,7 +7,7 @@ interface QrCodeState {
     selectedColor: string | null;
     btnColor: string;
     bgColor: string;
-    qrCodeName: string;
+    title: string;
     qrCodeLogo?: string;
     selectedFrame: number;
     qrCodeShape: QrCodeShape;
@@ -21,7 +21,7 @@ const initialState: QrCodeState = {
     selectedColor: '#000000',
     btnColor: '#000000',
     bgColor: '#000000',
-    qrCodeName: '',
+    title: '',
     qrCodeLogo: undefined,
     selectedFrame: 1,
     qrCodeShape: 'squares',
@@ -51,8 +51,8 @@ const qrCodeSlice = createSlice({
         setBgColor: (state, action: PayloadAction<string>) => {
             state.bgColor = action.payload;
         },
-        setQrCodeName: (state, action: PayloadAction<string>) => {
-            state.qrCodeName = action.payload;
+        setTitle: (state, action: PayloadAction<string>) => {
+            state.title = action.payload;
         },
         setDescription: (state, action: PayloadAction<string>) => {
             state.description = action.payload;
@@ -88,7 +88,7 @@ export const {
     setSelectedColor,
     setBtnColor,
     setBgColor,
-    setQrCodeName,
+    setTitle,
     setDescription,
     setQrCodeLogo,
     setSelectedFrame,
@@ -111,7 +111,7 @@ export const qrCodeSelectors = {
     selectSelectedColor: createSelector('selectedColor'),
     selectBtnColor: createSelector('btnColor'),
     selectBgColor: createSelector('bgColor'),
-    selectQrCodeName: createSelector('qrCodeName'),
+    selectTitle: createSelector('title'),
     setDescription: createSelector('description'),
     selectQrCodeLogo: createSelector('qrCodeLogo'),
     selectSelectedFrame: createSelector('selectedFrame'),

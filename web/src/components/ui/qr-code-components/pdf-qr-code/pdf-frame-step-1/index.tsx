@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 const PdfFrameComponent = () => {
     const imageSelected = useSelector(qrCodeSelectors.selectImage);
-    const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
+    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
     return (
         <div className="flex flex-col gap-5 items-center mt-8">
             <p className="text-center font-medium">PDF File</p>

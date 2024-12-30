@@ -6,7 +6,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@shtcut-ui/react';
-import { Download } from 'lucide-react';
 import React, { useState } from 'react';
 import { toJpeg, toPng } from 'html-to-image';
 import { saveAs } from 'file-saver';

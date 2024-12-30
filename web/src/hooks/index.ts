@@ -5,6 +5,6 @@ export * from './useNav';
 export * from './user';
 export * from './workspace';
 export * from './usePagination';
-export * from './qr-code-color';
+export * from './code-color';
 export * from './responsive-hook';
 export * from './link-redirect';

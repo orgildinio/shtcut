@@ -1,17 +1,20 @@
-import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 import { BsTelephoneFill, BsEnvelope } from 'react-icons/bs';
 import { FaGlobeAfrica } from 'react-icons/fa';
 import Template_1 from './template_1';
 import Template_2 from './template_2';
 import Template_3 from './template_3';
+import { useAppDispatch } from '@shtcut/redux/store';
+import { setSelectedTemplate } from '@shtcut/redux/slices/selects';
+import useGeneralState from '@shtcut/hooks/general-state';
 
 const TemplatesComponent = () => {
-    const [activeTemplate, setActiveTemplate] = useState('template_1');
-
-    const handleSelectTemplate = (tem: string) => {
-        setActiveTemplate(tem);
+    const dispatch = useAppDispatch();
+    const { activeTemplateString, presetColorString } = useGeneralState();
+    const handleSelectTemplate = (template: string) => {
+        dispatch(setSelectedTemplate(template));
     };
+
     const contactActions = [
         {
             name: 'Phone',
@@ -34,17 +37,20 @@ const TemplatesComponent = () => {
                 <Template_1
                     handleSelectTemplate={handleSelectTemplate}
                     contactActions={contactActions}
-                    activeTemplate={activeTemplate}
+                    activeTemplate={activeTemplateString ?? ''}
+                    presetColor={presetColorString}
                 />
                 <Template_2
-                    contactActions={contactActions}
                     handleSelectTemplate={handleSelectTemplate}
-                    activeTemplate={activeTemplate}
+                    contactActions={contactActions}
+                    activeTemplate={activeTemplateString ?? ''}
+                    presetColor={presetColorString}
                 />
                 <Template_3
-                    contactActions={contactActions}
                     handleSelectTemplate={handleSelectTemplate}
-                    activeTemplate={activeTemplate}
+                    contactActions={contactActions}
+                    activeTemplate={activeTemplateString ?? ''}
+                    presetColor={presetColorString}
                 />
             </section>
         </div>

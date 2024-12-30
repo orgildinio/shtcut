@@ -4,13 +4,13 @@ import { Image as LucideImage, Minus, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import SocialMediaCard from '../social-network-card';
 import { useDispatch, useSelector } from 'react-redux';
-import { qrCodeSelectors, setImage, setQrCodeName } from '@shtcut/redux/slices/qr-code';
+import { qrCodeSelectors, setImage, setTitle } from '@shtcut/redux/slices/qr-code';
 import QrCodeCardHeader from '../../qr-code-component/qr-code-tab-header';
 import SocialNetworksCard from '../../social-media-component';
 import LinksSection from '../link-sections';
 
 const QrCodeHeadersComponent = () => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
+    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
     const dispatch = useDispatch();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [linkImage, setLinkImage] = useState<string | null>(null);
@@ -21,7 +21,7 @@ const QrCodeHeadersComponent = () => {
     });
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setQrCodeName(event.target.value));
+        dispatch(setTitle(event.target.value));
     };
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];

@@ -58,8 +58,7 @@ const LinkComponent = ({
     params
 }: LinkComponentType) => {
     const { findAllTagsResponse } = useTags({ callTags: true });
-    const [updateLinksArchived, updateLinkResponses] = useUpdateArchivedLinkMutation();
-
+    const [updateLinksArchived] = useUpdateArchivedLinkMutation();
     const dispatch = useAppDispatch();
     const qrCodeRef = useRef(null);
     const [modalType, setModalType] = useState<ModalType>(null);

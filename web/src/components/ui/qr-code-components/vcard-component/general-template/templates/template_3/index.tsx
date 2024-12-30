@@ -8,16 +8,18 @@ import { PiEnvelopeLight } from 'react-icons/pi';
 const Template_3 = ({
     contactActions,
     handleSelectTemplate,
-    activeTemplate
+    activeTemplate,
+    presetColor
 }: {
     contactActions: ContactActions[];
     handleSelectTemplate: (val: string) => void;
-    activeTemplate: string;
+    activeTemplate: string | undefined;
+    presetColor?: string;
 }) => {
     const ReusableComponent = ({ icons, name, title }: { name: string; icons: ReactNode; title: string }) => {
         return (
             <section className="flex bg-white px-2 rounded-md shadow-sm  gap-2 items-center">
-                <div className="text-[#0D2C7A]"> {icons}</div>
+                <div style={{ color: presetColor }}> {icons}</div>
                 <div>
                     <p className="text-[8px] text-[#898384] font-medium">{title}</p>
                     <p className="text-[8px] font-medium">{name}</p>
@@ -27,6 +29,7 @@ const Template_3 = ({
     };
     return (
         <div
+            style={{ border: `3px solid ${activeTemplate === 'template_3' ? presetColor : '#DCE5FB'}` }}
             className={` h-80   w-full cursor-pointer border-[3px] flex items-center justify-center px-4 rounded-md ${activeTemplate === 'template_3' ? 'border-[#2F64E9]' : 'border-[#DCE5FB]'} `}
             onClick={() => handleSelectTemplate('template_3')}
         >
@@ -42,7 +45,10 @@ const Template_3 = ({
                         priority
                     />
                 </div>
-                <section className="relative h-full bg-[#092059] flex-1 rounded-t-xl  bottom-8">
+                <section
+                    style={{ backgroundColor: presetColor }}
+                    className="relative h-full  flex-1 rounded-t-xl  bottom-8"
+                >
                     <section className="rounded-t-2xl  overflow-y-auto  flex flex-col gap-2 z-40 p-2">
                         <div className="flex flex-col items-center ">
                             <p className="text-white text-[10px] font-semibold">Samantha Daniels</p>
@@ -51,10 +57,11 @@ const Template_3 = ({
                         <section className="flex  gap-2 w-full ">
                             {contactActions.map((_c) => (
                                 <Card
-                                    className="bg-white  py-1 shadow-sm w-8 h-8  gap-1 flex flex-col items-center justify-center border-[#092059] rounded-full"
+                                    style={{ border: `1px solid ${presetColor}` }}
+                                    className="bg-white  py-1 shadow-sm w-8 h-8  gap-1 flex flex-col items-center justify-center  rounded-full"
                                     key={_c.name}
                                 >
-                                    <div className="text-[#2F64E9]">{_c.icon}</div>
+                                    <div style={{ color: presetColor }}>{_c.icon}</div>
                                 </Card>
                             ))}
                         </section>
