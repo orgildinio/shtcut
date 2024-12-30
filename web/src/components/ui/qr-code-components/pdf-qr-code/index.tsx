@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import QrCodeCardHeader from '../qr-code-component/qr-code-tab-header';
 import { useDispatch, useSelector } from 'react-redux';
-import { qrCodeSelectors, setImage, setQrCodeName } from '@shtcut/redux/slices/qr-code';
+import { qrCodeSelectors, setImage, setTitle } from '@shtcut/redux/slices/qr-code';
 import Stepper from '@shtcut/components/stepper/horizontal-stepper';
 import ActionQrCodeTab from '../website-component/actions-tab';
 import QrCodeName from '../website-component/qr-code-name';
 import PdfCardComponent from './pdf-upload-review';
 
 const PdfQrCodeComponent = ({ step }: { step: number }) => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
+    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const dispatch = useDispatch();
     const [showSections, setShowSections] = useState({
@@ -23,7 +23,7 @@ const PdfQrCodeComponent = ({ step }: { step: number }) => {
         }));
     };
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setQrCodeName(event.target.value));
+        dispatch(setTitle(event.target.value));
     };
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];

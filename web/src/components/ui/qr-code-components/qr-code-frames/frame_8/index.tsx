@@ -10,7 +10,7 @@ const Frame_8 = () => {
     const qrCodeShape = useSelector(qrCodeSelectors.selectQrCodeShape);
     const bgColor = useSelector(qrCodeSelectors.selectBgColor);
     const btnColor = useSelector(qrCodeSelectors.selectBtnColor);
-    const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
+    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
     const eyeRadius = useSelector(qrCodeSelectors.selectEyeRadius);
 
     return (

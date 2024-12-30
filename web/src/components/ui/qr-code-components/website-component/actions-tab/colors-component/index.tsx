@@ -1,40 +1,43 @@
 import { Button } from '@shtcut-ui/react';
 import { colors } from '@shtcut/_shared/data';
-import useQrCodeColorHooks from '@shtcut/hooks/qr-code-color';
-import { qrCodeSelectors, setBgColor, setBtnColor, setSelectedColor } from '@shtcut/redux/slices/qr-code';
+import useQrCodeColorHooks from '@shtcut/hooks/code-color';
 import { useSearchParams } from 'next/navigation';
-
 import React, { useState } from 'react';
 import ColorPicker from 'react-pick-color';
-import { useDispatch, useSelector } from 'react-redux';
-import TemplatesComponent from '../../../vcard-component/templates';
+import { useDispatch } from 'react-redux';
+import TemplatesComponent from '../../../vcard-component/general-template/templates';
+import { setBgColor, setBtnColor, setPresetColor } from '@shtcut/redux/slices/selects';
+import useGeneralState from '@shtcut/hooks/general-state';
 
 const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
     const dispatch = useDispatch();
     const getParams = useSearchParams();
     const tabParams = getParams.get('tabs');
-    const bgColor = useSelector(qrCodeSelectors.selectBgColor);
-    const btnColor = useSelector(qrCodeSelectors.selectBtnColor);
+    const { bgColor, btnColor } = useGeneralState();
     const { action, state, refs } = useQrCodeColorHooks();
     const [isTransparent, setIsTransparent] = useState(bgColor === 'transparent');
+    const [previousColor, setPreviousColor] = useState(bgColor !== 'transparent' ? bgColor : '#FFFFFF');
     const urlSectionTab = tabParams === 'vCard' && selectedTabIndex !== 4;
+
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const checked = event.target.checked;
         setIsTransparent(checked);
-        if (bgColor) {
-            setBgColor(checked ? 'transparent' : String(bgColor));
+        if (checked) {
+            setPreviousColor(bgColor);
+            dispatch(setBgColor('transparent'));
         } else {
-            setBgColor('transparent');
+            dispatch(setBgColor(previousColor as string));
         }
     };
 
     const handleBgColorChange = (color: string) => {
         if (!isTransparent) {
             dispatch(setBgColor(color));
+            setPreviousColor(color);
         }
     };
     const handleColorSelect = (color: string) => {
-        dispatch(setSelectedColor(color));
+        dispatch(setPresetColor(color));
     };
     const handleBtnColorChange = (color: string) => {
         dispatch(setBtnColor(color));
@@ -63,13 +66,14 @@ const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
                 <div className="bg-white mt-4 flex justify-between p-4 lg:p-7">
                     <div className="relative">
                         <p className="text-sm font-medium">{urlSectionTab ? 'Text color' : 'Button color'} </p>
-                        <div className="flex border items-center w-52 rounded px-4 h-[42px] justify-between mt-6">
+                        <div
+                            className="flex border cursor-pointer items-center w-52 rounded px-4 h-[42px] justify-between mt-6"
+                            onClick={action.toggleColorPicker}
+                        >
                             <div>{String(btnColor)}</div>
-
                             <div
-                                className="w-6 h-6 rounded-[4px] cursor-pointer"
+                                className="w-6 h-6 border rounded-[4px] "
                                 style={{ backgroundColor: String(btnColor) }}
-                                onClick={action.toggleColorPicker}
                             />
                         </div>
                         {state.showColorPicker && (
@@ -85,10 +89,13 @@ const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
                         <p className="text-sm font-medium">{urlSectionTab ? 'Frame Color' : 'Background color'} </p>
                         <div
                             onClick={action.toggleBgColorPicker}
-                            className="flex border items-center w-52 rounded px-4 h-[42px] justify-between mt-6"
+                            className="flex border cursor-pointer items-center w-52 rounded px-4 h-[42px] justify-between mt-6"
                         >
                             <div>{String(bgColor)}</div>
-                            <div className="w-6 h-6 rounded-[4px]" style={{ backgroundColor: String(bgColor) }} />
+                            <div
+                                className="w-6 h-6 rounded-[4px] border"
+                                style={{ backgroundColor: String(bgColor) }}
+                            />
                         </div>
                         {state.showBgColorPicker && (
                             <div className="absolute z-10 bottom-16" ref={refs.bgColorPickerRef}>

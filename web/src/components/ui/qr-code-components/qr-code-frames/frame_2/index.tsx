@@ -5,7 +5,7 @@ import { QRCode } from 'react-qrcode-logo';
 import { useSelector } from 'react-redux';
 
 const Frame_2 = () => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
+    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
     const selectedColor = useSelector(qrCodeSelectors.selectSelectedColor);
     const qrCodeLogo = useSelector(qrCodeSelectors.selectQrCodeLogo);
     const qrCodeShape = useSelector(qrCodeSelectors.selectQrCodeShape);

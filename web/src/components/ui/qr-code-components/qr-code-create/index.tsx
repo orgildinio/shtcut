@@ -7,15 +7,14 @@ import { Link, List } from 'lucide-react';
 import { PiFilePdfDuotone, PiIdentificationCard } from 'react-icons/pi';
 import { useSelector } from 'react-redux';
 import { nextStep, prevStep, qrCodeSelectors, resetState } from '@shtcut/redux/slices/qr-code';
-
 import MultiLinksComponent from '../multi-link-components';
-import QrCodePreviewPhones from './qr-code-phones';
 import { useDispatch } from 'react-redux';
 import PdfQrCodeComponent from '../pdf-qr-code';
 import VCardComponent from '../vcard-component';
 import { useRouter, useSearchParams } from 'next/navigation';
 import FrameComponents from '../frames-component';
 import WebsiteComponent from '../website-component';
+import PreviewPhone from '../../../dashboard/preview-phone';
 
 const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => {
     const dispatch = useDispatch();
@@ -26,7 +25,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     const selectedColor = useSelector(qrCodeSelectors.selectSelectedColor);
     const btnColor = useSelector(qrCodeSelectors.selectBtnColor);
     const bgColor = useSelector(qrCodeSelectors.selectBgColor);
-    const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
+    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
     const qrCodeLogo = useSelector(qrCodeSelectors.selectQrCodeLogo);
     const selectedFrame = useSelector(qrCodeSelectors.selectSelectedFrame);
     const qrCodeShape = useSelector(qrCodeSelectors.selectQrCodeShape);
@@ -171,7 +170,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                 </div>
                 <div className="bg-white w-1/2 sticky top-0 shadow-sm border border-gray-100 rounded-[10px] h-[640px] p-[23px]">
                     <h2 className=" font-semibold ">Preview</h2>
-                    <QrCodePreviewPhones switchTab={switchTab} />
+                    <PreviewPhone switchTab={switchTab} />
                 </div>
             </div>
             <Modal

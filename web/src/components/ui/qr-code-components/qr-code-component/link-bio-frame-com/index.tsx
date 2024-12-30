@@ -1,12 +1,12 @@
-import { qrCodeSelectors } from '@shtcut/redux/slices/qr-code';
 import Image from 'next/image';
 import React, { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { Image as LucideImage } from 'lucide-react';
+import { generalStateSelectors } from '@shtcut/redux/slices/selects';
 const LinkBioFrameComponent = ({ linksBio }: { linksBio: LinkBioDataType[] }) => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
-    const imageSelected = useSelector(qrCodeSelectors.selectImage);
-    const descriptionValue = useSelector(qrCodeSelectors.setDescription);
+    const qrCodeName = useSelector(generalStateSelectors.selectTitle);
+    const imageSelected = useSelector(generalStateSelectors.selectImage);
+    const descriptionValue = useSelector(generalStateSelectors.setDescription);
     const ReusableComponent = ({ icons, name }: { name: string; icons: ReactNode }) => {
         return (
             <section className="flex border-b p-2 gap-2 items-center bg-[#FFE8F0] rounded-md">
@@ -16,7 +16,7 @@ const LinkBioFrameComponent = ({ linksBio }: { linksBio: LinkBioDataType[] }) =>
         );
     };
     return (
-        <div className=" mt-4 w-full">
+        <div className=" mt-4 w-full p-4">
             <div className="bg-[#FFE8F0] rounded-md h-40 w-full">
                 <div className="flex flex-col h-full justify-center items-center">
                     {imageSelected ? (

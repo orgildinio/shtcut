@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 
-import { qrCodeSelectors, setImage, setQrCodeName } from '@shtcut/redux/slices/qr-code';
+import { qrCodeSelectors, setImage, setTitle } from '@shtcut/redux/slices/qr-code';
 import { useDispatch, useSelector } from 'react-redux';
 import QrCodeCardHeader from '../../qr-code-component/qr-code-tab-header';
 import QrCodeContactInfo from '../qrcode-contact-info';
@@ -10,7 +10,7 @@ import QrCodeCompanyInfo from '../qr-code-company-info';
 import { logos } from '@shtcut/_shared/data';
 import SocialNetworksCard from '../../social-media-component';
 const PersonalInfoVCard = () => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectQrCodeName);
+    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
     const dispatch = useDispatch();
     const [showSections, setShowSections] = useState({
         header: true,
@@ -20,7 +20,7 @@ const PersonalInfoVCard = () => {
     });
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setQrCodeName(event.target.value));
+        dispatch(setTitle(event.target.value));
     };
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];

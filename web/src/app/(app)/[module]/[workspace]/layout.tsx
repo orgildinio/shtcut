@@ -79,7 +79,6 @@ const WorkspaceLayout = ({ children }: any) => {
         });
     }
 
-    console.log('sideNav', sideNav);
     const currentNav = sideNav.find((nav) => nav.workspace === workspace);
 
     const title = currentNav ? currentNav.title : '';
