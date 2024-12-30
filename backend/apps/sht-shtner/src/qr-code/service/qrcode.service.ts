@@ -90,7 +90,6 @@ export class QrCodeService extends MongoBaseService {
     }
   }
 
-
   /**
    * The function checks if a domain is verified and throws an exception if it is not.
    * @param domain - The "domain" parameter is an object that represents a domain. It likely contains
