@@ -14,3 +14,4 @@ export * from './app.schema';
 export * from './subscription';
 export * from './invitation';
 export * from './tag';
+export * from './link-bio';
