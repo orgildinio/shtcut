@@ -1,24 +1,21 @@
 import { Button } from '@shtcut-ui/react';
 import { colors } from '@shtcut/_shared/data';
 import useQrCodeColorHooks from '@shtcut/hooks/code-color';
-import { useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 import ColorPicker from 'react-pick-color';
 import { useDispatch } from 'react-redux';
 import TemplatesComponent from '../../../vcard-component/general-template/templates';
-import { setBgColor, setBtnColor, setPresetColor } from '@shtcut/redux/slices/selects';
+import { setBgColor, setBorderColor, setBtnColor, setPresetColor } from '@shtcut/redux/slices/selects';
 import useGeneralState from '@shtcut/hooks/general-state';
+import { setQrCodePresetColor } from '@shtcut/redux/slices/qr-code';
 
 const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
     const dispatch = useDispatch();
-    const getParams = useSearchParams();
-    const tabParams = getParams.get('tabs');
-    const { bgColor, btnColor } = useGeneralState();
+    const { bgColor, btnColorString, tabParams, selectedTab, borderColor } = useGeneralState();
     const { action, state, refs } = useQrCodeColorHooks();
     const [isTransparent, setIsTransparent] = useState(bgColor === 'transparent');
     const [previousColor, setPreviousColor] = useState(bgColor !== 'transparent' ? bgColor : '#FFFFFF');
     const urlSectionTab = tabParams === 'vCard' && selectedTabIndex !== 4;
-
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const checked = event.target.checked;
         setIsTransparent(checked);
@@ -29,25 +26,34 @@ const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
             dispatch(setBgColor(previousColor as string));
         }
     };
-
     const handleBgColorChange = (color: string) => {
         if (!isTransparent) {
             dispatch(setBgColor(color));
             setPreviousColor(color);
         }
     };
+
     const handleColorSelect = (color: string) => {
-        dispatch(setPresetColor(color));
+        if (selectedTabIndex === 4) {
+            dispatch(setQrCodePresetColor(color));
+        } else dispatch(setPresetColor(color));
     };
     const handleBtnColorChange = (color: string) => {
-        dispatch(setBtnColor(color));
+        if (selectedTabIndex === 4) {
+            dispatch(setBorderColor(color));
+        }
+        if (tabParams === 'website') {
+            dispatch(setBorderColor(color));
+        } else dispatch(setBtnColor(color));
     };
 
     return (
         <div>
-            <section>
-                <TemplatesComponent />
-            </section>
+            {tabParams === 'website' || (tabParams === 'multi' && selectedTabIndex === 4) ? null : (
+                <section>
+                    <TemplatesComponent />
+                </section>
+            )}
             <p className="my-4 font-medium">Presets</p>
             <div className="grid grid-cols-6 gap-x-10 w-1/2 gap-y-3">
                 {colors.map((color) => (
@@ -65,21 +71,27 @@ const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
                 <h2 className=" font-medium">Border and background color</h2>
                 <div className="bg-white mt-4 flex justify-between p-4 lg:p-7">
                     <div className="relative">
-                        <p className="text-sm font-medium">{urlSectionTab ? 'Text color' : 'Button color'} </p>
+                        <p className="text-sm font-medium">
+                            {urlSectionTab
+                                ? 'Text color'
+                                : (selectedTab === 4 && tabParams === 'multi') || tabParams === 'website'
+                                  ? 'Border Color'
+                                  : 'Button color'}{' '}
+                        </p>
                         <div
                             className="flex border cursor-pointer items-center w-52 rounded px-4 h-[42px] justify-between mt-6"
                             onClick={action.toggleColorPicker}
                         >
-                            <div>{String(btnColor)}</div>
+                            <div>{selectedTab === 0 ? btnColorString : borderColor}</div>
                             <div
                                 className="w-6 h-6 border rounded-[4px] "
-                                style={{ backgroundColor: String(btnColor) }}
+                                style={{ backgroundColor: btnColorString }}
                             />
                         </div>
                         {state.showColorPicker && (
                             <div className="absolute z-10 bottom-16" ref={refs.colorPickerRef}>
                                 <ColorPicker
-                                    color={String(btnColor)}
+                                    color={btnColorString}
                                     onChange={(color) => handleBtnColorChange(color.hex)}
                                 />
                             </div>

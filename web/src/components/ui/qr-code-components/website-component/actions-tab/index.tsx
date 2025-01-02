@@ -7,20 +7,15 @@ import FramesSelector from '../../qr-code-frames/frame-selector';
 import QrCodeShapes from './qrcode-shape';
 import PresetTab from '../preset-tab';
 import { Card } from '@shtcut-ui/react';
-import { useSearchParams } from 'next/navigation';
+import { LinksTab } from '@shtcut/types/link';
+import { useAppDispatch } from '@shtcut/redux/store';
+import { setSelectedTab } from '@shtcut/redux/slices/selects';
+import useGeneralState from '@shtcut/hooks/general-state';
 
-const ActionQrCodeTab = () => {
-    const getParams = useSearchParams();
-    const tabParams = getParams.get('tabs');
-    const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-
+const ActionQrCodeTab = ({ initialTabs }: { switchTab?: string; initialTabs: LinksTab[] }) => {
+    const dispatch = useAppDispatch();
+    const { selectedTab, tabParams } = useGeneralState();
     // Initialize the tabs
-    const initialTabs = [
-        { id: 'frame', label: 'Frame' },
-        { id: 'shape', label: 'Shape' },
-        { id: 'logo', label: 'Logo' },
-        { id: 'colors', label: 'Colors' }
-    ];
 
     const [tabs, setTabs] = useState(initialTabs);
 
@@ -28,12 +23,12 @@ const ActionQrCodeTab = () => {
         if (tabParams === 'vCard') {
             const newTabs = [{ id: 'vCard', label: 'vCard' }, ...initialTabs];
             setTabs(newTabs);
-            setSelectedTabIndex(0);
+            dispatch(setSelectedTab(0));
         }
     }, [tabParams]);
 
     const handleTabClick = (index: number) => {
-        setSelectedTabIndex(index);
+        dispatch(setSelectedTab(index));
     };
 
     return (
@@ -45,26 +40,35 @@ const ActionQrCodeTab = () => {
             <div className="w-80 mt-4">
                 <PresetTab
                     tabs={tabs}
-                    selectedTabIndex={selectedTabIndex}
+                    selectedTabIndex={selectedTab as number}
                     onTabClick={handleTabClick}
                     activeTextClassName="text-white"
                 />
             </div>
             {tabParams === 'vCard' && (
                 <div className="pt-10">
-                    {selectedTabIndex === 0 && <ColorsQrCode />}
-                    {selectedTabIndex === 1 && <FramesSelector />}
-                    {selectedTabIndex === 2 && <QrCodeShapes />}
-                    {selectedTabIndex === 3 && <LogosQrCode />}
-                    {selectedTabIndex === 4 && <ColorsQrCode selectedTabIndex={selectedTabIndex} />}
+                    {selectedTab === 0 && <ColorsQrCode />}
+                    {selectedTab === 1 && <FramesSelector />}
+                    {selectedTab === 2 && <QrCodeShapes />}
+                    {selectedTab === 3 && <LogosQrCode />}
+                    {selectedTab === 4 && <ColorsQrCode selectedTabIndex={selectedTab} />}
                 </div>
             )}
-            {tabParams !== 'vCard' && (
+            {tabParams === 'website' && (
                 <div className="pt-10">
-                    {selectedTabIndex === 0 && <FramesSelector />}
-                    {selectedTabIndex === 1 && <QrCodeShapes />}
-                    {selectedTabIndex === 2 && <LogosQrCode />}
-                    {selectedTabIndex === 3 && <ColorsQrCode />}
+                    {selectedTab === 0 && <FramesSelector />}
+                    {selectedTab === 1 && <QrCodeShapes />}
+                    {selectedTab === 2 && <LogosQrCode />}
+                    {selectedTab === 3 && <ColorsQrCode />}
+                </div>
+            )}
+
+            {tabParams === 'multi' && (
+                <div className="pt-10">
+                    {selectedTab === 0 && <ColorsQrCode />} {selectedTab === 1 && <FramesSelector />}
+                    {selectedTab === 2 && <QrCodeShapes />}
+                    {selectedTab === 3 && <LogosQrCode />}
+                    {selectedTab === 4 && <ColorsQrCode selectedTabIndex={selectedTab} />}
                 </div>
             )}
         </Card>

@@ -74,6 +74,8 @@ interface QrCodeInterface {
     saveModal?: boolean;
     setSaveModal?: Dispatch<SetStateAction<boolean>>;
     handleTabChange?: Dispatch<SetStateAction<string>>;
+    switchTab?: string;
+    register?: UseFormRegister<any>;
 }
 
 export interface PropsColor extends QrCodeInterface {

@@ -10,6 +10,8 @@ interface GeneralState {
     bgColor: string;
     presetColor: string;
     btnColor: string;
+    selectedTab: number;
+    borderColor: string | undefined;
 }
 
 const initialState: GeneralState = {
@@ -20,14 +22,16 @@ const initialState: GeneralState = {
     template: 'template_1',
     bgColor: '#ffffff',
     presetColor: '#0D2C7A',
-    btnColor: '#ffffff'
+    btnColor: '#ffffff',
+    selectedTab: 0,
+    borderColor: '#000'
 };
 
 const generalSelectSlice = createSlice({
     name: 'select',
     initialState,
     reducers: {
-        resetState: (state) => {
+        resetGeneralState: (state) => {
             return initialState;
         },
         setTitle: (state, action: PayloadAction<string>) => {
@@ -59,6 +63,12 @@ const generalSelectSlice = createSlice({
         },
         setBtnColor: (state, action: PayloadAction<string>) => {
             state.btnColor = action.payload;
+        },
+        setSelectedTab: (state, action: PayloadAction<number>) => {
+            state.selectedTab = action.payload;
+        },
+        setBorderColor: (state, action: PayloadAction<string>) => {
+            state.borderColor = action.payload;
         }
     }
 });
@@ -69,12 +79,14 @@ export const {
     setStep,
     nextStep,
     prevStep,
-    resetState,
+    resetGeneralState,
     setImage,
     setSelectedTemplate,
     setBgColor,
     setPresetColor,
-    setBtnColor
+    setBtnColor,
+    setSelectedTab,
+    setBorderColor
 } = generalSelectSlice.actions;
 
 export default generalSelectSlice.reducer;
@@ -91,5 +103,7 @@ export const generalStateSelectors = {
     selectSelectedTemplate: createSelector('template'),
     selectBgColor: createSelector('bgColor'),
     selectPresetColor: createSelector<string>('presetColor'),
-    selectBtnColor: createSelector<string>('btnColor')
+    selectBtnColor: createSelector<string>('btnColor'),
+    setSelectedTab: createSelector<number>('selectedTab'),
+    setBorderColor: createSelector<string>('borderColor')
 };

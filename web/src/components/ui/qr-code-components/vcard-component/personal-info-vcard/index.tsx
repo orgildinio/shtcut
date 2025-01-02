@@ -1,16 +1,16 @@
 'use client';
 import React, { useState } from 'react';
-
-import { qrCodeSelectors, setImage, setTitle } from '@shtcut/redux/slices/qr-code';
-import { useDispatch, useSelector } from 'react-redux';
-import QrCodeCardHeader from '../../qr-code-component/qr-code-tab-header';
+import { setImage } from '@shtcut/redux/slices/qr-code';
+import { useDispatch } from 'react-redux';
+import QrCodeCardHeader from '../../../../dashboard/link-header';
 import QrCodeContactInfo from '../qrcode-contact-info';
 import QrCodeCompanyInfo from '../qr-code-company-info';
-// import SocialNetworksCard from '../../social-media-component';
 import { logos } from '@shtcut/_shared/data';
 import SocialNetworksCard from '../../social-media-component';
+import useGeneralState from '@shtcut/hooks/general-state';
+import { setTitle } from '@shtcut/redux/slices/selects';
 const PersonalInfoVCard = () => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
+    const { title } = useGeneralState();
     const dispatch = useDispatch();
     const [showSections, setShowSections] = useState({
         header: true,
@@ -44,7 +44,7 @@ const PersonalInfoVCard = () => {
                 description="Enter Name and title"
                 isVisible={showSections.header}
                 toggleVisibility={() => toggleSection('header')}
-                titleValue={qrCodeName as string}
+                titleValue={title as string}
                 descriptionValue={''}
                 handleTitleChange={handleInputChange}
                 handleDescriptionChange={() => {}}

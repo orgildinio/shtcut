@@ -3,7 +3,7 @@ import { QrCodeHeaderTypes } from '@shtcut/types/types';
 import { Image as LucideImage, Minus, Plus } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
-const QrCodeCardHeader = ({
+const LinkHeader = ({
     label,
     description,
     isVisible,
@@ -86,4 +86,4 @@ const QrCodeCardHeader = ({
     );
 };
 
-export default QrCodeCardHeader;
+export default LinkHeader;

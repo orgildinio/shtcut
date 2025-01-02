@@ -1,14 +1,14 @@
 import { Input } from '@shtcut-ui/react';
-import { qrCodeSelectors, setTitle } from '@shtcut/redux/slices/qr-code';
+import useQrCodeState from '@shtcut/hooks/qrcode/index.';
+import { setQrTitle } from '@shtcut/redux/slices/qr-code';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const QrCodeName = () => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
-
+    const { state } = useQrCodeState();
     const dispatch = useDispatch();
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setTitle(event.target.value));
+        dispatch(setQrTitle(event.target.value));
     };
     return (
         <div className="bg-white p-[23px] rounded-[10px]">
@@ -18,9 +18,9 @@ const QrCodeName = () => {
                 <Input
                     className=""
                     placeholder="QR Code"
-                    value={qrCodeName as string}
+                    value={state?.title as string}
                     onChange={handleInputChange}
-                    maxLength={12}
+                    maxLength={9}
                 />
             </div>
         </div>

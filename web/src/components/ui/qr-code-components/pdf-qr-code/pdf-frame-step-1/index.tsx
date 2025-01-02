@@ -1,3 +1,4 @@
+import useGeneralState from '@shtcut/hooks/general-state';
 import { qrCodeSelectors } from '@shtcut/redux/slices/qr-code';
 import { LucideImage } from 'lucide-react';
 import Image from 'next/image';
@@ -6,7 +7,7 @@ import { useSelector } from 'react-redux';
 
 const PdfFrameComponent = () => {
     const imageSelected = useSelector(qrCodeSelectors.selectImage);
-    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
+    const { title } = useGeneralState();
     return (
         <div className="flex flex-col gap-5 items-center mt-8">
             <p className="text-center font-medium">PDF File</p>
@@ -17,7 +18,7 @@ const PdfFrameComponent = () => {
                     <LucideImage color="#B5B3B3" size={28} />
                 )}
                 <div>
-                    <p className="text-xs font-medium">{qrCodeName ? String(qrCodeName) : 'Title'}</p>
+                    <p className="text-xs font-medium">{title ? String(title) : 'Title'}</p>
                     <p className="text-xs text-[#0A0A0B]">Description</p>
                 </div>
             </section>

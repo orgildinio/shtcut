@@ -5,6 +5,7 @@ import PhoneTemplate_1 from './phone-templates/template-1';
 import PhoneTemplate_2 from './phone-templates/template-2';
 import PhoneTemplate_3 from './phone-templates/template-3';
 import useGeneralState from '@shtcut/hooks/general-state';
+import { LinkBioDataType } from '@shtcut/types/link';
 const GeneralTemplate = ({ linksBio }: { linksBio?: LinkBioDataType[] }) => {
     const { activeTemplateString, title, profileImage, bgColor, description, presetColorString, btnColorString } =
         useGeneralState();
@@ -23,6 +24,8 @@ const GeneralTemplate = ({ linksBio }: { linksBio?: LinkBioDataType[] }) => {
             icon: <FaGlobeAfrica size={14} />
         }
     ];
+
+    console.log('linksBio', linksBio);
 
     return (
         <div

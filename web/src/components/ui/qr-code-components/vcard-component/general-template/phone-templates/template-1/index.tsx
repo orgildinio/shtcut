@@ -3,6 +3,7 @@ import React from 'react';
 import { Image as LucideImage } from 'lucide-react';
 import ReusableComponent from '../reusable-component';
 import { Card } from '@shtcut-ui/react';
+import { PhoneTemplateProps } from '@shtcut/types/link';
 
 const PhoneTemplate_1 = ({
     contactActions,

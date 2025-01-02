@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import QrCodeCardHeader from '../qr-code-component/qr-code-tab-header';
-import { useDispatch, useSelector } from 'react-redux';
-import { qrCodeSelectors, setImage, setTitle } from '@shtcut/redux/slices/qr-code';
+import QrCodeCardHeader from '../../../dashboard/link-header';
+import { useDispatch } from 'react-redux';
+import { setImage } from '@shtcut/redux/slices/qr-code';
 import Stepper from '@shtcut/components/stepper/horizontal-stepper';
 import ActionQrCodeTab from '../website-component/actions-tab';
 import QrCodeName from '../website-component/qr-code-name';
 import PdfCardComponent from './pdf-upload-review';
+import useGeneralState from '@shtcut/hooks/general-state';
+import { setTitle } from '@shtcut/redux/slices/selects';
+import { linksTab } from '@shtcut/_shared/data';
 
 const PdfQrCodeComponent = ({ step }: { step: number }) => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
+    const { title } = useGeneralState();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const dispatch = useDispatch();
     const [showSections, setShowSections] = useState({
@@ -45,7 +48,7 @@ const PdfQrCodeComponent = ({ step }: { step: number }) => {
                         description="Enter Title and description"
                         isVisible={showSections.header}
                         toggleVisibility={() => toggleSection('header')}
-                        titleValue={qrCodeName as string}
+                        titleValue={title as string}
                         descriptionValue={''}
                         handleTitleChange={handleInputChange}
                         handleDescriptionChange={() => {}}
@@ -56,7 +59,7 @@ const PdfQrCodeComponent = ({ step }: { step: number }) => {
                 </section>
             )}
 
-            {step === 2 && <ActionQrCodeTab />}
+            {step === 2 && <ActionQrCodeTab initialTabs={linksTab} />}
             {step === 3 && (
                 <section className=" mt-4 shadow-sm border border-gray-100  rounded-[10px] gap-2">
                     <QrCodeName />

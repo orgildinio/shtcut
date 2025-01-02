@@ -14,6 +14,7 @@ import FramesSelector9 from './frame_selector_9';
 const FramesSelector = () => {
     const dispatch = useDispatch();
     const selectedFrame = useSelector(qrCodeSelectors.selectSelectedFrame) as number | undefined;
+    console.log('selectedFrame', selectedFrame);
 
     const handleFrameSelect = (frame: number) => {
         dispatch(setSelectedFrame(frame));
