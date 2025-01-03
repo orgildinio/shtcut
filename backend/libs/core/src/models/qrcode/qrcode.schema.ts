@@ -21,6 +21,12 @@ export class QrCode {
   publicId: string;
 
   @Prop({
+    type: String,
+    default: 'link',
+  })
+  type: string;
+
+  @Prop({
     type: Types.ObjectId,
     ref: 'User',
   })
