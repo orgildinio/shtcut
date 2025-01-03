@@ -187,6 +187,7 @@ HitSchema.statics.searchQuery = (q: string) => {
     { 'browser.name': { $regex: regex, $options: 'i' } },
     { 'browser.version': { $regex: regex, $options: 'i' } },
     { 'OS.name': { $regex: regex, $options: 'i' } },
+    { 'OS.postal': { $regex: regex, $options: 'i' } },
     { 'OS.version': { $regex: regex, $options: 'i' } },
   ];
 };

@@ -12,6 +12,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './_shard';
 import { QrCodeModule } from './qr-code';
+import { LinkBioModule } from './link-bio';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { QrCodeModule } from './qr-code';
     TerminusModule,
     DomainModule,
     LinkModule,
+    LinkBioModule,
     QrCodeModule,
     PassportModule,
     PassportModule,
