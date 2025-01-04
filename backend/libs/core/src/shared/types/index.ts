@@ -1,7 +1,6 @@
 import { Request as ExpressRequest } from 'express';
 import { ExecutionContext } from '@nestjs/common';
-import { LimiterInfo } from 'ratelimiter';
-import { LimiterOption } from 'ratelimiter';
+import { LimiterInfo, LimiterOption } from 'ratelimiter';
 
 export type Dict<T = any> = Record<string, T>;
 export type Nullable<T> = T | null;
@@ -14,11 +13,10 @@ export type GetIdFn = (context: ExecutionContext) => string | Promise<string>;
 export type CreateErrorBodyFn = (limit: LimiterInfo) => unknown;
 
 export type RateLimiterParams = Pick<LimiterOption, 'max' | 'duration'> & {
-  createErrorBody?: CreateErrorBodyFn
-} & ({ getId: GetIdFn } | { id: string } | {});
+  createErrorBody?: CreateErrorBodyFn;
+} & ({ getId: GetIdFn } | { id: string } | {}) ;
 
 export type RateLimiterModuleParams = Partial<RateLimiterParams> & Pick<LimiterOption, 'db'>;
-
 
 export type CacheKeyValue = {
   key: CacheKeyArgument;
