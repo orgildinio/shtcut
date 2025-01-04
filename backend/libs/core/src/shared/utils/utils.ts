@@ -223,12 +223,4 @@ export abstract class Utils {
   public static mongoDefaultUpdateProps(obj = {}) {
     return { upsert: true, new: true, ...obj };
   }
-
-  /**
-   * @param params This is the rate limiter params
-   * @returns {Boolean}
-   */
-  public static isTurnedOff(params: RateLimiterParams[] | [false] | undefined): params is [false] {
-    return !!params && params.length === 1 && params[0] === false;
-  }
 }
