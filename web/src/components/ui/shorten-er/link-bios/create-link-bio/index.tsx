@@ -35,6 +35,7 @@ const CreateLinkBioComponent = () => {
         bgColor,
         btnColor,
         presetColor,
+        contactInfo,
         handleNextStep,
         handlePrevStep
     } = useGeneralState();

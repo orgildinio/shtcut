@@ -34,7 +34,11 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
         selectedTab,
         description,
         profileImage,
-        activeTemplateString
+        activeTemplateString,
+        socialMediaLinks,
+        companyInfo,
+        contactInfo,
+        fileInfo
     } = useGeneralState();
     const { state: linkState, actions } = useLinksManager();
     const { state } = useQrCodeState();
@@ -69,7 +73,6 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     };
     const handleSave = () => {
         // setSaveModal(true);
-
         //website
         // const qrCodeData = {
         //     url: urlValue,
@@ -82,18 +85,62 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
         //     qrStyle: state?.qrStyle,
         //     eyeRadius: state?.eyeRadius
         // };
+        //multi link
+        // const payload = {
+        // title,
+        // description,
+        // profileImage,
+        // links: linkState?.links,
+        // bgColor,
+        //     socialMedia: socialMediaLinks,
+        // template: {
+        //     template: activeTemplateString,
+        //     presetColor,
+        //     btnColor
+        // },
+        // qrCode: {
+        //     frame: state?.selectedFrame,
+        //     qrStyle: state?.qrStyle,
+        //     eyeRadius: state?.eyeRadius,
+        //     logo: state?.logo,
+        //     borderColor,
+        //     qrCodePresetColor: state?.presetColor,
+        //     title: state?.title
+        // }
+        // };
+        // vcard
+        // const payload = {
+        // title,
+        // description,
+        // profileImage,
+        //     address: contactInfo,
+        //     company: companyInfo,
+        //     socialMedia: socialMediaLinks,
+        //     bgColor,
+        // qrCode: {
+        //     frame: state?.selectedFrame,
+        //     qrStyle: state?.qrStyle,
+        //     eyeRadius: state?.eyeRadius,
+        //     logo: state?.logo,
+        //     borderColor,
+        //     qrCodePresetColor: state?.presetColor,
+        //     title: state?.title
+        // },
+        //     template: {
+        //         template: activeTemplateString,
+        //         presetColor,
+        //         btnColor
+        //     }
+        // };
 
+        //pdf
         const payload = {
+            type: 'pdf',
             title,
             description,
             profileImage,
-            links: linkState?.links,
+            file: fileInfo,
             bgColor,
-            template: {
-                template: activeTemplateString,
-                presetColor,
-                btnColor
-            },
             qrCode: {
                 frame: state?.selectedFrame,
                 qrStyle: state?.qrStyle,
@@ -104,9 +151,9 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                 title: state?.title
             }
         };
-
         console.log('payload', payload);
     };
+
     const tabData = [
         {
             value: 'website',
@@ -141,9 +188,6 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     const onSubmit = (data: { url: string }) => {
         console.log('Title:', data.url);
     };
-
-    console.log('urlValue', urlValue);
-    console.log('step', step);
 
     return (
         <div className=" ">
@@ -222,7 +266,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                                         />
                                     </TabsContent>
                                     <TabsContent value="pdf">
-                                        <PdfQrCodeComponent step={Number(step)} />
+                                        <PdfQrCodeComponent step={Number(step)} actions={actions} />
                                     </TabsContent>
                                     <TabsContent value="vCard">
                                         <VCardComponent step={step} />

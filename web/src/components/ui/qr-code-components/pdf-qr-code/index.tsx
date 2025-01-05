@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import QrCodeCardHeader from '../../../dashboard/link-header';
 import { useDispatch } from 'react-redux';
-import { setImage } from '@shtcut/redux/slices/qr-code';
 import Stepper from '@shtcut/components/stepper/horizontal-stepper';
 import ActionQrCodeTab from '../website-component/actions-tab';
 import QrCodeName from '../website-component/qr-code-name';
 import PdfCardComponent from './pdf-upload-review';
 import useGeneralState from '@shtcut/hooks/general-state';
-import { setTitle } from '@shtcut/redux/slices/selects';
+import { setDescription, setTitle } from '@shtcut/redux/slices/selects';
 import { linksTab } from '@shtcut/_shared/data';
+import LinkHeader from '../../../dashboard/link-header';
+import { UseLinksManagerActions } from '@shtcut/types/link';
 
-const PdfQrCodeComponent = ({ step }: { step: number }) => {
-    const { title } = useGeneralState();
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+const PdfQrCodeComponent = ({ step, actions }: { step: number; actions: UseLinksManagerActions }) => {
+    const { title, description, profileImage } = useGeneralState();
     const dispatch = useDispatch();
     const [showSections, setShowSections] = useState({
         header: true,
@@ -28,14 +27,7 @@ const PdfQrCodeComponent = ({ step }: { step: number }) => {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(setTitle(event.target.value));
     };
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl);
-            dispatch(setImage(imageUrl));
-        }
-    };
+
     return (
         <div>
             <section className="w-full h-24  bg-white rounded-[10px] shadow-sm border border-gray-100 ">
@@ -43,17 +35,17 @@ const PdfQrCodeComponent = ({ step }: { step: number }) => {
             </section>
             {step === 1 && (
                 <section>
-                    <QrCodeCardHeader
+                    <LinkHeader
                         label="Header"
                         description="Enter Title and description"
                         isVisible={showSections.header}
                         toggleVisibility={() => toggleSection('header')}
                         titleValue={title as string}
-                        descriptionValue={''}
+                        descriptionValue={description as string}
                         handleTitleChange={handleInputChange}
-                        handleDescriptionChange={() => {}}
-                        selectedImage={selectedImage}
-                        handleImageChange={handleImageChange}
+                        handleDescriptionChange={(e) => dispatch(setDescription(e.target.value))}
+                        selectedImage={profileImage ?? ''}
+                        handleImageChange={actions?.handleImageChange}
                     />
                     <PdfCardComponent toggleVisibility={() => toggleSection('pdf')} isVisible={showSections.pdf} />
                 </section>

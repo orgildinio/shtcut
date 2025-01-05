@@ -15,7 +15,6 @@ import useGeneralState from '@shtcut/hooks/general-state';
 const ActionQrCodeTab = ({ initialTabs }: { switchTab?: string; initialTabs: LinksTab[] }) => {
     const dispatch = useAppDispatch();
     const { selectedTab, tabParams } = useGeneralState();
-    // Initialize the tabs
 
     const [tabs, setTabs] = useState(initialTabs);
 
@@ -69,6 +68,14 @@ const ActionQrCodeTab = ({ initialTabs }: { switchTab?: string; initialTabs: Lin
                     {selectedTab === 2 && <QrCodeShapes />}
                     {selectedTab === 3 && <LogosQrCode />}
                     {selectedTab === 4 && <ColorsQrCode selectedTabIndex={selectedTab} />}
+                </div>
+            )}
+            {tabParams === 'pdf' && (
+                <div className="pt-10">
+                    {selectedTab === 0 && <FramesSelector />}
+                    {selectedTab === 1 && <QrCodeShapes />}
+                    {selectedTab === 2 && <LogosQrCode />}
+                    {selectedTab === 3 && <ColorsQrCode />}
                 </div>
             )}
         </Card>

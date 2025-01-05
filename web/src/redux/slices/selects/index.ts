@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@shtcut/redux/store';
+import { CompanyInfo, ContactInfo } from '@shtcut/types/types';
 
 interface GeneralState {
     title: string;
@@ -12,7 +13,15 @@ interface GeneralState {
     btnColor: string;
     selectedTab: number;
     borderColor: string | undefined;
+    socialLinks: { [key: string]: string };
+    contactInfo: ContactInfo;
+    company: CompanyInfo;
+    file: File | null;
 }
+type UpdateFieldPayload = {
+    key: keyof ContactInfo | keyof CompanyInfo;
+    value: string;
+};
 
 const initialState: GeneralState = {
     title: '',
@@ -24,7 +33,23 @@ const initialState: GeneralState = {
     presetColor: '#0D2C7A',
     btnColor: '#ffffff',
     selectedTab: 0,
-    borderColor: '#000'
+    borderColor: '#000',
+    socialLinks: {},
+    file: null,
+    contactInfo: {
+        phoneNumber: '',
+        email: '',
+        websiteUrl: '',
+        streetAddress: '',
+        country: '',
+        state: '',
+        zipCode: '',
+        city: ''
+    },
+    company: {
+        name: '',
+        department: ''
+    }
 };
 
 const generalSelectSlice = createSlice({
@@ -69,6 +94,34 @@ const generalSelectSlice = createSlice({
         },
         setBorderColor: (state, action: PayloadAction<string>) => {
             state.borderColor = action.payload;
+        },
+        setSocialLinks: (state, action: PayloadAction<{ [key: string]: string }>) => {
+            state.socialLinks = action.payload;
+        },
+        updateSocialLink: (state, action: PayloadAction<{ platform: string; url: string }>) => {
+            const { platform, url } = action.payload;
+            state.socialLinks[platform] = url;
+        },
+        setContactInfo: (state, action: PayloadAction<ContactInfo>) => {
+            state.contactInfo = action.payload;
+        },
+        updateContactField(state, action: PayloadAction<UpdateFieldPayload>) {
+            const { key, value } = action.payload;
+            if (state.contactInfo) {
+                state.contactInfo[key] = value;
+            }
+        },
+        setCompany: (state, action: PayloadAction<CompanyInfo>) => {
+            state.company = action.payload;
+        },
+        setFile: (state, action: PayloadAction<File | null>) => {
+            state.file = action.payload;
+        },
+        updateCompanyField(state, action: PayloadAction<UpdateFieldPayload>) {
+            const { key, value } = action.payload;
+            if (state.company) {
+                state.company[key] = value;
+            }
         }
     }
 });
@@ -86,7 +139,14 @@ export const {
     setPresetColor,
     setBtnColor,
     setSelectedTab,
-    setBorderColor
+    setBorderColor,
+    setSocialLinks,
+    updateSocialLink,
+    setContactInfo,
+    updateContactField,
+    setCompany,
+    updateCompanyField,
+    setFile
 } = generalSelectSlice.actions;
 
 export default generalSelectSlice.reducer;
@@ -105,5 +165,9 @@ export const generalStateSelectors = {
     selectPresetColor: createSelector<string>('presetColor'),
     selectBtnColor: createSelector<string>('btnColor'),
     setSelectedTab: createSelector<number>('selectedTab'),
-    setBorderColor: createSelector<string>('borderColor')
+    setBorderColor: createSelector<string>('borderColor'),
+    selectSocialLinks: createSelector('socialLinks'),
+    selectContactInfo: createSelector('contactInfo'),
+    selectCompany: createSelector('company'),
+    selectFile: createSelector('file')
 };

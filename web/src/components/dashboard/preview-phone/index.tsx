@@ -36,15 +36,15 @@ const PreviewPhone = ({ switchTab, links, selectedTab }: ComponentType) => {
                         <div
                             className={`w-full h-full ${selectedTab && selectedTab > 0 ? ' flex justify-center items-center' : ''} `}
                         >
-                            {step === 1 && <GeneralTemplate linksBio={links ?? []} />}
-                            {step === 2 && selectedTab === 0 && <GeneralTemplate linksBio={links ?? []} />}
+                            {step === 1 && <GeneralTemplate links={links ?? []} />}
+                            {step === 2 && selectedTab === 0 && <GeneralTemplate links={links ?? []} />}
                             {typeof step === 'number' && step > 1 && selectedTab !== 0 && <FrameComponents />}
                         </div>
                     )}
 
                     {/* PDF Tab */}
                     {switchTab === 'pdf' && (
-                        <div className={`w-full ${step === 1 ? 'p-4' : ''}`}>
+                        <div className={`w-full h-full ${step === 1 ? 'p-4' : 'flex justify-center'}`}>
                             {step === 1 && <PdfFrameComponent />}
                             {typeof step === 'number' && step > 1 && <FrameComponents />}
                         </div>
@@ -52,9 +52,12 @@ const PreviewPhone = ({ switchTab, links, selectedTab }: ComponentType) => {
 
                     {/* VCard Tab */}
                     {switchTab === 'vCard' && (
-                        <div className="w-full h-full">
+                        <div
+                            className={`w-full h-full ${selectedTab && selectedTab > 0 ? ' flex justify-center items-center' : ''} `}
+                        >
                             {step === 1 && <GeneralTemplate />}
-                            {typeof step === 'number' && step > 1 && <FrameComponents />}
+                            {step === 2 && selectedTab === 0 && <GeneralTemplate />}
+                            {typeof step === 'number' && step > 1 && selectedTab !== 0 && <FrameComponents />}
                         </div>
                     )}
 
@@ -62,7 +65,7 @@ const PreviewPhone = ({ switchTab, links, selectedTab }: ComponentType) => {
                     {switchTab === 'edit-link' && (
                         <div className="w-full h-full">
                             {/* {step === 1 && <LinkBioFrameComponent linksBio={linksBio ?? []} />} */}
-                            <GeneralTemplate linksBio={links ?? []} />
+                            <GeneralTemplate links={links ?? []} />
                         </div>
                     )}
                 </div>

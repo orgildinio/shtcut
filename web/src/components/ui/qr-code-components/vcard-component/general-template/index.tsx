@@ -6,7 +6,7 @@ import PhoneTemplate_2 from './phone-templates/template-2';
 import PhoneTemplate_3 from './phone-templates/template-3';
 import useGeneralState from '@shtcut/hooks/general-state';
 import { LinkBioDataType } from '@shtcut/types/link';
-const GeneralTemplate = ({ linksBio }: { linksBio?: LinkBioDataType[] }) => {
+const GeneralTemplate = ({ links }: { links?: LinkBioDataType[] }) => {
     const { activeTemplateString, title, profileImage, bgColor, description, presetColorString, btnColorString } =
         useGeneralState();
 
@@ -25,8 +25,6 @@ const GeneralTemplate = ({ linksBio }: { linksBio?: LinkBioDataType[] }) => {
         }
     ];
 
-    console.log('linksBio', linksBio);
-
     return (
         <div
             style={{ backgroundColor: activeTemplateString === 'template_3' ? '#092059' : `${bgColor}` }}
@@ -37,7 +35,7 @@ const GeneralTemplate = ({ linksBio }: { linksBio?: LinkBioDataType[] }) => {
                     contactActions={contactActions}
                     imageSelected={profileImage as string}
                     title={title as string}
-                    linksBio={linksBio}
+                    linksBio={links}
                     description={String(description)}
                     presetColor={presetColorString}
                     btnColor={btnColorString}
@@ -48,7 +46,7 @@ const GeneralTemplate = ({ linksBio }: { linksBio?: LinkBioDataType[] }) => {
                 <PhoneTemplate_2
                     contactActions={contactActions}
                     title={title as string}
-                    linksBio={linksBio}
+                    linksBio={links}
                     description={String(description)}
                     imageSelected={profileImage as string}
                     presetColor={presetColorString}
@@ -60,7 +58,7 @@ const GeneralTemplate = ({ linksBio }: { linksBio?: LinkBioDataType[] }) => {
                 <PhoneTemplate_3
                     contactActions={contactActions}
                     title={title as string}
-                    linksBio={linksBio}
+                    linksBio={links}
                     description={String(description)}
                     imageSelected={profileImage as string}
                     presetColor={presetColorString}

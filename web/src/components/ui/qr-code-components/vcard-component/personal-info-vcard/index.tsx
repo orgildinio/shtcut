@@ -1,16 +1,16 @@
 'use client';
 import React, { useState } from 'react';
-import { setImage } from '@shtcut/redux/slices/qr-code';
 import { useDispatch } from 'react-redux';
-import QrCodeCardHeader from '../../../../dashboard/link-header';
-import QrCodeContactInfo from '../qrcode-contact-info';
 import QrCodeCompanyInfo from '../qr-code-company-info';
 import { logos } from '@shtcut/_shared/data';
 import SocialNetworksCard from '../../social-media-component';
 import useGeneralState from '@shtcut/hooks/general-state';
-import { setTitle } from '@shtcut/redux/slices/selects';
+import { setDescription, setTitle } from '@shtcut/redux/slices/selects';
+import LinkHeader from '../../../../dashboard/link-header';
+import { useLinksManager } from '@shtcut/hooks/use-links-manager';
+import ContactInfo from '../../../../dashboard/contact-info';
 const PersonalInfoVCard = () => {
-    const { title } = useGeneralState();
+    const { title, description, profileImage } = useGeneralState();
     const dispatch = useDispatch();
     const [showSections, setShowSections] = useState({
         header: true,
@@ -18,18 +18,7 @@ const PersonalInfoVCard = () => {
         company: true,
         socialNetworks: true
     });
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setTitle(event.target.value));
-    };
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl);
-            dispatch(setImage(imageUrl));
-        }
-    };
+    const { state, actions } = useLinksManager();
 
     const toggleSection = (section: keyof typeof showSections) => {
         setShowSections((prev) => ({
@@ -39,19 +28,19 @@ const PersonalInfoVCard = () => {
     };
     return (
         <div>
-            <QrCodeCardHeader
+            <LinkHeader
                 label="Basic Information"
                 description="Enter Name and title"
-                isVisible={showSections.header}
-                toggleVisibility={() => toggleSection('header')}
+                isVisible={state?.showSections[0]}
+                toggleVisibility={() => actions?.toggleSection(0)}
                 titleValue={title as string}
-                descriptionValue={''}
-                handleTitleChange={handleInputChange}
-                handleDescriptionChange={() => {}}
-                selectedImage={selectedImage}
-                handleImageChange={handleImageChange}
+                descriptionValue={description as string}
+                handleTitleChange={(e) => dispatch(setTitle(e.target.value))}
+                handleDescriptionChange={(e) => dispatch(setDescription(e.target.value))}
+                selectedImage={profileImage as string}
+                handleImageChange={actions?.handleImageChange}
             />
-            <QrCodeContactInfo isVisible={showSections.contact} toggleVisibility={() => toggleSection('contact')} />
+            <ContactInfo isVisible={showSections.contact} toggleVisibility={() => toggleSection('contact')} />
             <QrCodeCompanyInfo isVisible={showSections.company} toggleVisibility={() => toggleSection('company')} />
             <SocialNetworksCard
                 logos={logos}

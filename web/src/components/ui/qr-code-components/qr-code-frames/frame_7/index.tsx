@@ -15,7 +15,7 @@ const Frame_7 = () => {
                     removeQrCodeBehindLogo={true}
                     ecLevel="L"
                     bgColor="white"
-                    fgColor={tabParams === 'multi' ? state?.presetColor : presetColorString}
+                    fgColor={tabParams !== 'website' ? state?.presetColor : presetColorString}
                     size={90}
                     logoWidth={30}
                     logoHeight={30}

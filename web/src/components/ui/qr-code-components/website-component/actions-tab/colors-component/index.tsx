@@ -1,5 +1,5 @@
 import { Button } from '@shtcut-ui/react';
-import { colors } from '@shtcut/_shared/data';
+import { colors, tabs } from '@shtcut/_shared/data';
 import useQrCodeColorHooks from '@shtcut/hooks/code-color';
 import React, { useState } from 'react';
 import ColorPicker from 'react-pick-color';
@@ -15,7 +15,7 @@ const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
     const { action, state, refs } = useQrCodeColorHooks();
     const [isTransparent, setIsTransparent] = useState(bgColor === 'transparent');
     const [previousColor, setPreviousColor] = useState(bgColor !== 'transparent' ? bgColor : '#FFFFFF');
-    const urlSectionTab = tabParams === 'vCard' && selectedTabIndex !== 4;
+    // const urlSectionTab = tabParams === 'vCard' && selectedTabIndex !== 4;
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const checked = event.target.checked;
         setIsTransparent(checked);
@@ -36,20 +36,24 @@ const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
     const handleColorSelect = (color: string) => {
         if (selectedTabIndex === 4) {
             dispatch(setQrCodePresetColor(color));
+        } else if (tabParams === 'pdf') {
+            dispatch(setQrCodePresetColor(color));
         } else dispatch(setPresetColor(color));
     };
+
     const handleBtnColorChange = (color: string) => {
         if (selectedTabIndex === 4) {
             dispatch(setBorderColor(color));
-        }
-        if (tabParams === 'website') {
+        } else if (tabParams === 'website') {
+            dispatch(setBorderColor(color));
+        } else if (tabParams === 'pdf') {
             dispatch(setBorderColor(color));
         } else dispatch(setBtnColor(color));
     };
 
     return (
         <div>
-            {tabParams === 'website' || (tabParams === 'multi' && selectedTabIndex === 4) ? null : (
+            {tabParams === 'website' || selectedTabIndex === 4 || tabParams === 'pdf' ? null : (
                 <section>
                     <TemplatesComponent />
                 </section>
@@ -72,11 +76,9 @@ const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
                 <div className="bg-white mt-4 flex justify-between p-4 lg:p-7">
                     <div className="relative">
                         <p className="text-sm font-medium">
-                            {urlSectionTab
-                                ? 'Text color'
-                                : (selectedTab === 4 && tabParams === 'multi') || tabParams === 'website'
-                                  ? 'Border Color'
-                                  : 'Button color'}{' '}
+                            {selectedTab === 4 || tabParams === 'website' || tabParams === 'pdf'
+                                ? 'Border Color'
+                                : 'Button color'}{' '}
                         </p>
                         <div
                             className="flex border cursor-pointer items-center w-52 rounded px-4 h-[42px] justify-between mt-6"
@@ -98,7 +100,7 @@ const ColorsQrCode = ({ selectedTabIndex }: { selectedTabIndex?: number }) => {
                         )}
                     </div>
                     <div className="relative">
-                        <p className="text-sm font-medium">{urlSectionTab ? 'Frame Color' : 'Background color'} </p>
+                        <p className="text-sm font-medium">Background color</p>
                         <div
                             onClick={action.toggleBgColorPicker}
                             className="flex border cursor-pointer items-center w-52 rounded px-4 h-[42px] justify-between mt-6"

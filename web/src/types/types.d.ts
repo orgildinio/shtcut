@@ -246,3 +246,19 @@ interface GeneralResponse {
     id: string;
     __v: number;
 }
+
+interface ContactInfo {
+    phoneNumber?: string;
+    email: string;
+    websiteUrl: string;
+    streetAddress: string;
+    country: string;
+    state: string;
+    zipCode: string;
+    city: string;
+}
+
+interface CompanyInfo {
+    name: string;
+    department: string;
+}
