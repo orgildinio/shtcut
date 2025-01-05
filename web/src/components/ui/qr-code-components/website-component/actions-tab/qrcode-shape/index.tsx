@@ -4,7 +4,7 @@ import AllShapes from './all-shapes';
 import { QRCode } from 'react-qrcode-logo';
 import { QrCodeShape } from '@shtcut/types/types';
 import { useDispatch } from 'react-redux';
-import { setQrCodeShape } from '@shtcut/redux/slices/qr-code';
+import { selectQrCodeStyle } from '@shtcut/redux/slices/qr-code';
 
 const QrCodeShapes = () => {
     const dispatch = useDispatch();
@@ -27,7 +27,7 @@ const QrCodeShapes = () => {
     }, [showColorPicker]);
 
     const handleShapeChange = (shape: QrCodeShape) => {
-        dispatch(setQrCodeShape(shape));
+        dispatch(selectQrCodeStyle(shape));
     };
     return (
         <div>

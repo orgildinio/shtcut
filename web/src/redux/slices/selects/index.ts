@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@shtcut/redux/store';
+import { CompanyInfo, ContactInfo } from '@shtcut/types/types';
 
 interface GeneralState {
     title: string;
@@ -10,7 +11,17 @@ interface GeneralState {
     bgColor: string;
     presetColor: string;
     btnColor: string;
+    selectedTab: number;
+    borderColor: string | undefined;
+    socialLinks: { [key: string]: string };
+    contactInfo: ContactInfo;
+    company: CompanyInfo;
+    file: File | null;
 }
+type UpdateFieldPayload = {
+    key: keyof ContactInfo | keyof CompanyInfo;
+    value: string;
+};
 
 const initialState: GeneralState = {
     title: '',
@@ -20,14 +31,32 @@ const initialState: GeneralState = {
     template: 'template_1',
     bgColor: '#ffffff',
     presetColor: '#0D2C7A',
-    btnColor: '#ffffff'
+    btnColor: '#ffffff',
+    selectedTab: 0,
+    borderColor: '#000',
+    socialLinks: {},
+    file: null,
+    contactInfo: {
+        phoneNumber: '',
+        email: '',
+        websiteUrl: '',
+        streetAddress: '',
+        country: '',
+        state: '',
+        zipCode: '',
+        city: ''
+    },
+    company: {
+        name: '',
+        department: ''
+    }
 };
 
 const generalSelectSlice = createSlice({
     name: 'select',
     initialState,
     reducers: {
-        resetState: (state) => {
+        resetGeneralState: (state) => {
             return initialState;
         },
         setTitle: (state, action: PayloadAction<string>) => {
@@ -59,6 +88,40 @@ const generalSelectSlice = createSlice({
         },
         setBtnColor: (state, action: PayloadAction<string>) => {
             state.btnColor = action.payload;
+        },
+        setSelectedTab: (state, action: PayloadAction<number>) => {
+            state.selectedTab = action.payload;
+        },
+        setBorderColor: (state, action: PayloadAction<string>) => {
+            state.borderColor = action.payload;
+        },
+        setSocialLinks: (state, action: PayloadAction<{ [key: string]: string }>) => {
+            state.socialLinks = action.payload;
+        },
+        updateSocialLink: (state, action: PayloadAction<{ platform: string; url: string }>) => {
+            const { platform, url } = action.payload;
+            state.socialLinks[platform] = url;
+        },
+        setContactInfo: (state, action: PayloadAction<ContactInfo>) => {
+            state.contactInfo = action.payload;
+        },
+        updateContactField(state, action: PayloadAction<UpdateFieldPayload>) {
+            const { key, value } = action.payload;
+            if (state.contactInfo) {
+                state.contactInfo[key] = value;
+            }
+        },
+        setCompany: (state, action: PayloadAction<CompanyInfo>) => {
+            state.company = action.payload;
+        },
+        setFile: (state, action: PayloadAction<File | null>) => {
+            state.file = action.payload;
+        },
+        updateCompanyField(state, action: PayloadAction<UpdateFieldPayload>) {
+            const { key, value } = action.payload;
+            if (state.company) {
+                state.company[key] = value;
+            }
         }
     }
 });
@@ -69,12 +132,21 @@ export const {
     setStep,
     nextStep,
     prevStep,
-    resetState,
+    resetGeneralState,
     setImage,
     setSelectedTemplate,
     setBgColor,
     setPresetColor,
-    setBtnColor
+    setBtnColor,
+    setSelectedTab,
+    setBorderColor,
+    setSocialLinks,
+    updateSocialLink,
+    setContactInfo,
+    updateContactField,
+    setCompany,
+    updateCompanyField,
+    setFile
 } = generalSelectSlice.actions;
 
 export default generalSelectSlice.reducer;
@@ -91,5 +163,11 @@ export const generalStateSelectors = {
     selectSelectedTemplate: createSelector('template'),
     selectBgColor: createSelector('bgColor'),
     selectPresetColor: createSelector<string>('presetColor'),
-    selectBtnColor: createSelector<string>('btnColor')
+    selectBtnColor: createSelector<string>('btnColor'),
+    setSelectedTab: createSelector<number>('selectedTab'),
+    setBorderColor: createSelector<string>('borderColor'),
+    selectSocialLinks: createSelector('socialLinks'),
+    selectContactInfo: createSelector('contactInfo'),
+    selectCompany: createSelector('company'),
+    selectFile: createSelector('file')
 };

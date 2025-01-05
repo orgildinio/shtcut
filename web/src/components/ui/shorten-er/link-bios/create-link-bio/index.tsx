@@ -4,11 +4,9 @@ import { Button, Card, Input, Modal } from '@shtcut-ui/react';
 import Tabs from '@shtcut/components/_shared/Tabs';
 import Stepper from '@shtcut/components/stepper/horizontal-stepper';
 import LinksSection from '@shtcut/components/ui/qr-code-components/multi-link-components/link-sections';
-import QrCodeCardHeader from '@shtcut/components/ui/qr-code-components/qr-code-component/qr-code-tab-header';
-
 import ColorsQrCode from '@shtcut/components/ui/qr-code-components/website-component/actions-tab/colors-component';
 import useGeneralState from '@shtcut/hooks/general-state';
-import { setDescription, setImage, setTitle } from '@shtcut/redux/slices/selects';
+import { setDescription, setTitle } from '@shtcut/redux/slices/selects';
 import React, { useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
@@ -18,17 +16,15 @@ import { LoadingButton } from '@shtcut/components/_shared/loading-button';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import PreviewPhone from '@shtcut/components/dashboard/preview-phone';
+import LinkHeader from '@shtcut/components/dashboard/link-header';
+import { useLinksManager } from '@shtcut/hooks/use-links-manager';
 
 const CreateLinkBioComponent = () => {
     const router = useRouter();
-    const [linksBio, setLinksBios] = useState<LinkBioDataType[]>([{ id: 1, title: '', url: '', image: null }]);
+    const { state, actions } = useLinksManager();
     const dispatch = useDispatch();
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
-    const [showInputModal, setShowInputModal] = useState(true);
-    const [showSections, setShowSections] = useState<Record<number, boolean>>({
-        1: true
-    });
+    const [showInputModal, setShowInputModal] = useState(false);
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
     const {
         title,
@@ -39,6 +35,7 @@ const CreateLinkBioComponent = () => {
         bgColor,
         btnColor,
         presetColor,
+        contactInfo,
         handleNextStep,
         handlePrevStep
     } = useGeneralState();
@@ -46,8 +43,6 @@ const CreateLinkBioComponent = () => {
         register,
         handleSubmit: onSubmit,
         formState: { errors, isValid },
-        setValue,
-        reset,
         watch
     } = useForm({
         mode: 'onChange',
@@ -56,51 +51,6 @@ const CreateLinkBioComponent = () => {
         }
     });
     const uniqueNameValue = watch('uniqueName');
-
-    const toggleSection = (id: number) => {
-        setShowSections((prev) => ({
-            ...prev,
-            [id]: !prev[id]
-        }));
-    };
-
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl);
-            dispatch(setImage(imageUrl));
-        }
-    };
-
-    const addLinkSection = () => {
-        const newId = linksBio.length + 1;
-        setLinksBios((prevLinks) => [...prevLinks, { id: newId, title: '', url: '', image: null }]);
-        setShowSections((prev) => ({ ...prev, [newId]: true }));
-    };
-
-    const removeLinkSection = (id: number) => {
-        setLinksBios((prevLinks) => prevLinks.filter((link) => link.id !== id));
-        setShowSections((prev) => {
-            const { [id]: _, ...rest } = prev;
-            return rest;
-        });
-    };
-
-    const updateLink = (id, field, value) => {
-        setLinksBios((prevLinks) => prevLinks.map((link) => (link.id === id ? { ...link, [field]: value } : link)));
-    };
-
-    const handleLinkImageChange = (id: number, event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setLinksBios((prevLinks) =>
-                prevLinks.map((link) => (link.id === id ? { ...link, image: imageUrl } : link))
-            );
-        }
-    };
-
     const handleTabClick = (index: number) => {
         setSelectedTabIndex(index);
     };
@@ -114,8 +64,8 @@ const CreateLinkBioComponent = () => {
         },
         title,
         description,
-        profileImage: profileImage,
-        links: linksBio,
+        profileImage,
+        links: state?.links,
         template: activeTemplateString
     };
 
@@ -169,29 +119,29 @@ const CreateLinkBioComponent = () => {
                     </section>
                     {step === 1 && (
                         <section>
-                            <QrCodeCardHeader
+                            <LinkHeader
                                 label="Title"
                                 description="Enter Title and description"
-                                isVisible={showSections[0]}
-                                toggleVisibility={() => toggleSection(0)}
+                                isVisible={state?.showSections[0]}
+                                toggleVisibility={() => actions?.toggleSection(0)}
                                 titleValue={title as string}
                                 descriptionValue={description as string}
                                 handleTitleChange={(e) => dispatch(setTitle(e.target.value))}
                                 handleDescriptionChange={(e) => dispatch(setDescription(e.target.value))}
-                                selectedImage={selectedImage}
-                                handleImageChange={handleImageChange}
+                                selectedImage={profileImage as string}
+                                handleImageChange={actions?.handleImageChange}
                             />
-                            {linksBio.map((link, index) => (
+                            {state?.links.map((link, index) => (
                                 <LinksSection
                                     key={link.id}
                                     index={index + 1}
-                                    isVisible={showSections[link.id]}
-                                    toggleVisibility={() => toggleSection(link.id)}
+                                    isVisible={state?.showSections[link.id]}
+                                    toggleVisibility={() => actions?.toggleSection(link.id)}
                                     linkImage={link.image}
-                                    handleImageChange={(e) => handleLinkImageChange(link.id, e)}
-                                    onUpdateLink={(field, value) => updateLink(link.id, field, value)}
-                                    onRemove={() => removeLinkSection(link.id)}
-                                    addLinkSection={addLinkSection}
+                                    handleImageChange={(e) => actions?.handleLinkImageChange(link.id, e)}
+                                    onUpdateLink={(field, value) => actions?.updateLink(link.id, field, value)}
+                                    onRemove={() => actions?.removeLink(link.id)}
+                                    addLinkSection={actions?.addLink}
                                 />
                             ))}
                         </section>
@@ -204,7 +154,7 @@ const CreateLinkBioComponent = () => {
                 </section>
                 <div className="bg-white sticky top-0 shadow-sm border border-gray-100 rounded-[10px] h-[640px] p-[23px]">
                     <h2 className="font-semibold">Preview</h2>
-                    <PreviewPhone switchTab="edit-link" linksBio={linksBio} />
+                    <PreviewPhone switchTab="edit-link" links={state?.links} />
                 </div>
             </section>
             <Modal showModel={showModal} setShowModal={setShowModal} onClose={() => setShowModal(false)}>

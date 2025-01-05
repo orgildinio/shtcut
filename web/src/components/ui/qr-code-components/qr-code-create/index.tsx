@@ -5,62 +5,155 @@ import Image from 'next/image';
 import DownloadBtn from './download-btn';
 import { Link, List } from 'lucide-react';
 import { PiFilePdfDuotone, PiIdentificationCard } from 'react-icons/pi';
-import { useSelector } from 'react-redux';
-import { nextStep, prevStep, qrCodeSelectors, resetState } from '@shtcut/redux/slices/qr-code';
+import { resetState } from '@shtcut/redux/slices/qr-code';
 import MultiLinksComponent from '../multi-link-components';
-import { useDispatch } from 'react-redux';
 import PdfQrCodeComponent from '../pdf-qr-code';
 import VCardComponent from '../vcard-component';
 import { useRouter, useSearchParams } from 'next/navigation';
 import FrameComponents from '../frames-component';
 import WebsiteComponent from '../website-component';
 import PreviewPhone from '../../../dashboard/preview-phone';
+import { useForm } from 'react-hook-form';
+import useGeneralState from '@shtcut/hooks/general-state';
+import useQrCodeState from '@shtcut/hooks/qrcode/index.';
+import { resetGeneralState } from '@shtcut/redux/slices/selects';
+import { useLinksManager } from '@shtcut/hooks/use-links-manager';
+import { useAppDispatch } from '@shtcut/redux/store';
 
 const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
+    const {
+        step,
+        bgColor,
+        borderColor,
+        presetColor,
+        btnColor,
+        handleNextStep,
+        handlePrevStep,
+        title,
+        selectedTab,
+        description,
+        profileImage,
+        activeTemplateString,
+        socialMediaLinks,
+        companyInfo,
+        contactInfo,
+        fileInfo
+    } = useGeneralState();
+    const { state: linkState, actions } = useLinksManager();
+    const { state } = useQrCodeState();
     const router = useRouter();
     const getParams = useSearchParams();
     const tabParams = getParams.get('tabs');
-    const step = useSelector(qrCodeSelectors.selectStep);
-    const selectedColor = useSelector(qrCodeSelectors.selectSelectedColor);
-    const btnColor = useSelector(qrCodeSelectors.selectBtnColor);
-    const bgColor = useSelector(qrCodeSelectors.selectBgColor);
-    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
-    const qrCodeLogo = useSelector(qrCodeSelectors.selectQrCodeLogo);
-    const selectedFrame = useSelector(qrCodeSelectors.selectSelectedFrame);
-    const qrCodeShape = useSelector(qrCodeSelectors.selectQrCodeShape);
-    const eyeRadius = useSelector(qrCodeSelectors.selectEyeRadius);
-    const image = useSelector(qrCodeSelectors.selectImage);
     const initialTab = tabParams ? (tabParams as string) : 'website';
     const [switchTab, setSwitchTab] = useState<string>(initialTab);
     const qrCodeRef = useRef(null);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isValid },
+        watch
+    } = useForm({
+        mode: 'onChange',
+        defaultValues: {
+            url: ''
+        }
+    });
+    const urlValue = watch('url');
+
     const handleTabChange = (tabs: string) => {
         setSwitchTab(tabs);
+        // dispatch(resetState());
+        // dispatch(resetGeneralState());
+    };
+    const generalReset = () => {
         dispatch(resetState());
-    };
-
-    const handleNextStep = () => {
-        dispatch(nextStep());
-    };
-
-    const handlePrevStep = () => {
-        dispatch(prevStep());
+        dispatch(resetGeneralState());
     };
     const handleSave = () => {
-        setSaveModal(true);
-        const qrCodeData = {
-            step,
-            selectedColor,
-            btnColor,
+        // setSaveModal(true);
+        //website
+        // const qrCodeData = {
+        //     url: urlValue,
+        //     selectedFrame: state?.selectedFrame,
+        //     preset: presetColor,
+        //     logo: state?.logo,
+        //     borderColor,
+        //     bgColor,
+        //     title,
+        //     qrStyle: state?.qrStyle,
+        //     eyeRadius: state?.eyeRadius
+        // };
+        //multi link
+        // const payload = {
+        // title,
+        // description,
+        // profileImage,
+        // links: linkState?.links,
+        // bgColor,
+        //     socialMedia: socialMediaLinks,
+        // template: {
+        //     template: activeTemplateString,
+        //     presetColor,
+        //     btnColor
+        // },
+        // qrCode: {
+        //     frame: state?.selectedFrame,
+        //     qrStyle: state?.qrStyle,
+        //     eyeRadius: state?.eyeRadius,
+        //     logo: state?.logo,
+        //     borderColor,
+        //     qrCodePresetColor: state?.presetColor,
+        //     title: state?.title
+        // }
+        // };
+        // vcard
+        // const payload = {
+        // title,
+        // description,
+        // profileImage,
+        //     address: contactInfo,
+        //     company: companyInfo,
+        //     socialMedia: socialMediaLinks,
+        //     bgColor,
+        // qrCode: {
+        //     frame: state?.selectedFrame,
+        //     qrStyle: state?.qrStyle,
+        //     eyeRadius: state?.eyeRadius,
+        //     logo: state?.logo,
+        //     borderColor,
+        //     qrCodePresetColor: state?.presetColor,
+        //     title: state?.title
+        // },
+        //     template: {
+        //         template: activeTemplateString,
+        //         presetColor,
+        //         btnColor
+        //     }
+        // };
+
+        //pdf
+        const payload = {
+            type: 'pdf',
+            title,
+            description,
+            profileImage,
+            file: fileInfo,
             bgColor,
-            qrCodeName,
-            qrCodeLogo,
-            selectedFrame,
-            qrCodeShape,
-            eyeRadius,
-            image
+            qrCode: {
+                frame: state?.selectedFrame,
+                qrStyle: state?.qrStyle,
+                eyeRadius: state?.eyeRadius,
+                logo: state?.logo,
+                borderColor,
+                qrCodePresetColor: state?.presetColor,
+                title: state?.title
+            }
         };
+        console.log('payload', payload);
     };
+
     const tabData = [
         {
             value: 'website',
@@ -92,6 +185,10 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
         }
     }, [switchTab]);
 
+    const onSubmit = (data: { url: string }) => {
+        console.log('Title:', data.url);
+    };
+
     return (
         <div className=" ">
             <div className="flex justify-between  items-center">
@@ -113,8 +210,10 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                                 handleSave();
                             } else if (handleNextStep) {
                                 handleNextStep();
+                                handleSave();
                             }
                         }}
+                        type={step && Number(step) > 2 ? 'submit' : 'submit'}
                         className="bg-primary-0 flex justify-center w-28 h-8 text-xs rounded items-center gap-x-2"
                     >
                         {step && Number(step) > 2 ? 'Save' : ' Next'}
@@ -130,6 +229,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                                 className="w-full"
                                 onValueChange={(value) => {
                                     setSwitchTab(value);
+                                    generalReset();
                                 }}
                             >
                                 <TabsList className="block border-none bg-transparent gap-0 m-0 p-0">
@@ -150,27 +250,35 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                                         </section>
                                     </section>
                                 </TabsList>
-                                <div className="mt-32">
+                                <form className="mt-32" onSubmit={handleSubmit(onSubmit)}>
                                     <TabsContent value="website">
-                                        <WebsiteComponent step={Number(step)} />
+                                        <WebsiteComponent
+                                            step={Number(step)}
+                                            switchTab={switchTab}
+                                            register={register}
+                                        />
                                     </TabsContent>
                                     <TabsContent value="multi">
-                                        <MultiLinksComponent step={step} />
+                                        <MultiLinksComponent
+                                            step={step as number}
+                                            actions={actions}
+                                            linkState={linkState}
+                                        />
                                     </TabsContent>
                                     <TabsContent value="pdf">
-                                        <PdfQrCodeComponent step={Number(step)} />
+                                        <PdfQrCodeComponent step={Number(step)} actions={actions} />
                                     </TabsContent>
                                     <TabsContent value="vCard">
                                         <VCardComponent step={step} />
                                     </TabsContent>
-                                </div>
+                                </form>
                             </Tabs>
                         </div>
                     </div>
                 </div>
                 <div className="bg-white w-1/2 sticky top-0 shadow-sm border border-gray-100 rounded-[10px] h-[640px] p-[23px]">
                     <h2 className=" font-semibold ">Preview</h2>
-                    <PreviewPhone switchTab={switchTab} />
+                    <PreviewPhone switchTab={switchTab} links={linkState?.links} selectedTab={Number(selectedTab)} />
                 </div>
             </div>
             <Modal
@@ -181,7 +289,9 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
             >
                 <div className="flex flex-col gap-4 items-center">
                     <div className="flex flex-col items-center gap-2">
-                        {qrCodeLogo ? <Image src={qrCodeLogo as string} width={50} height={50} alt="qr-code" /> : null}
+                        {state?.logo ? (
+                            <Image src={state?.logo as string} width={50} height={50} alt="qr-code" />
+                        ) : null}
                         <p className="font-semibold ">Download QR Code</p>
                     </div>
                     <div className="w-fit h-40" ref={qrCodeRef}>

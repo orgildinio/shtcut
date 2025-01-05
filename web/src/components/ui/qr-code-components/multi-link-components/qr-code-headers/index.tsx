@@ -1,20 +1,23 @@
-import { Button, Card, Input, Label } from '@shtcut-ui/react';
 import { logos } from '@shtcut/_shared/data';
-import { Image as LucideImage, Minus, Plus } from 'lucide-react';
 import React, { useState } from 'react';
-import SocialMediaCard from '../social-network-card';
-import { useDispatch, useSelector } from 'react-redux';
-import { qrCodeSelectors, setImage, setTitle } from '@shtcut/redux/slices/qr-code';
-import QrCodeCardHeader from '../../qr-code-component/qr-code-tab-header';
+import { useDispatch } from 'react-redux';
 import SocialNetworksCard from '../../social-media-component';
 import LinksSection from '../link-sections';
+import useGeneralState from '@shtcut/hooks/general-state';
+import { setDescription, setTitle } from '@shtcut/redux/slices/selects';
+import LinkHeader from '../../../../dashboard/link-header';
+import { UseLinksManagerActions, UseLinksManagerState } from '@shtcut/types/link';
 
-const QrCodeHeadersComponent = () => {
-    const qrCodeName = useSelector(qrCodeSelectors.selectTitle);
+const QrCodeHeadersComponent = ({
+    actions,
+    linkState
+}: {
+    actions: UseLinksManagerActions;
+    linkState: UseLinksManagerState;
+}) => {
+    const { title, description, profileImage } = useGeneralState();
     const dispatch = useDispatch();
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [linkImage, setLinkImage] = useState<string | null>(null);
-    const [showSections, setShowSections] = useState({
+    const [show, setShow] = useState({
         header: true,
         links: true,
         socialNetworks: true
@@ -23,25 +26,9 @@ const QrCodeHeadersComponent = () => {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(setTitle(event.target.value));
     };
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl);
-            dispatch(setImage(imageUrl));
-        }
-    };
 
-    const handleImageChangeLink = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setLinkImage(imageUrl);
-        }
-    };
-
-    const toggleSection = (section: keyof typeof showSections) => {
-        setShowSections((prev) => ({
+    const toggleSection = (section: keyof typeof show) => {
+        setShow((prev) => ({
             ...prev,
             [section]: !prev[section]
         }));
@@ -50,30 +37,37 @@ const QrCodeHeadersComponent = () => {
     return (
         <div>
             {/* Header Section */}
-            <QrCodeCardHeader
+            <LinkHeader
                 label="Header"
                 description="Enter Title and description"
-                isVisible={showSections.header}
+                isVisible={show.header}
                 toggleVisibility={() => toggleSection('header')}
-                titleValue={qrCodeName as string}
-                descriptionValue={''}
+                titleValue={title as string}
+                descriptionValue={description as string}
                 handleTitleChange={handleInputChange}
-                handleDescriptionChange={() => {}}
-                selectedImage={selectedImage}
-                handleImageChange={handleImageChange}
+                handleDescriptionChange={(e) => dispatch(setDescription(e.target.value))}
+                selectedImage={profileImage ?? ''}
+                handleImageChange={actions?.handleImageChange}
             />
 
             {/* Links Section */}
-            <LinksSection
-                isVisible={showSections.links}
-                toggleVisibility={() => toggleSection('links')}
-                linkImage={linkImage}
-                handleImageChange={handleImageChangeLink}
-            />
+            {linkState?.links.map((link, index) => (
+                <LinksSection
+                    key={link.id}
+                    index={index + 1}
+                    isVisible={linkState?.showSections[link.id]}
+                    toggleVisibility={() => actions?.toggleSection(link.id)}
+                    linkImage={link.image}
+                    handleImageChange={(e) => actions?.handleLinkImageChange(link.id, e)}
+                    onUpdateLink={(field, value) => actions?.updateLink(link.id, field, value)}
+                    onRemove={() => actions?.removeLink(link.id)}
+                    addLinkSection={actions?.addLink}
+                />
+            ))}
 
             <SocialNetworksCard
                 logos={logos}
-                showSection={showSections.socialNetworks}
+                showSection={show.socialNetworks}
                 toggleSection={() => toggleSection('socialNetworks')}
             />
         </div>

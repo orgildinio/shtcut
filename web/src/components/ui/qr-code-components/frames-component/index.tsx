@@ -1,13 +1,11 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { qrCodeSelectors } from '@shtcut/redux/slices/qr-code';
 import { Frame_1, Frame_2, Frame_3, Frame_4, Frame_5, Frame_6, Frame_7, Frame_8, Frame_9 } from '../qr-code-frames';
+import useQrCodeState from '@shtcut/hooks/qrcode/index.';
 
 const FrameComponents = () => {
-    const selectedFrame = useSelector(qrCodeSelectors.selectSelectedFrame);
-
+    const { state } = useQrCodeState();
     const FrameComponents = () => {
-        switch (selectedFrame) {
+        switch (state?.selectedFrame) {
             case 1:
                 return <Frame_1 />;
             case 2:

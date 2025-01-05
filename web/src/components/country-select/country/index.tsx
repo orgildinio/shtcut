@@ -59,17 +59,16 @@ const CountryStateSelectors = () => {
         }
     }, [selectedState, selectedCountry]);
 
-    // Modify these handlers to accept the `value` (string)
     const handleCountryChange = (value: string) => {
         const selectedOption = countryOptions.find((option) => option.value === value) || null;
         setSelectedCountry(selectedOption);
+        return selectedOption ? selectedOption.label : '';
     };
-
     const handleStateChange = (value: string) => {
         const selectedOption = stateOptions.find((option) => option.value === value) || null;
         setSelectedState(selectedOption);
+        return selectedOption ? selectedOption.label : '';
     };
-
     return {
         stateOptions,
         countryOptions,

@@ -4,35 +4,29 @@ import { RootState } from '@shtcut/redux/store';
 import { EyeRadiusType, QrCodeShape } from '@shtcut/types/types';
 
 interface QrCodeState {
-    selectedColor: string | null;
-    btnColor: string;
-    bgColor: string;
-    title: string;
     qrCodeLogo?: string;
     selectedFrame: number;
-    qrCodeShape: QrCodeShape;
-    step: number;
+    qrStyle: QrCodeShape;
     eyeRadius: EyeRadiusType;
     image: string;
     description: string;
+    qrCodePresetColor: string;
+    qrTitle: string;
 }
 
 const initialState: QrCodeState = {
-    selectedColor: '#000000',
-    btnColor: '#000000',
-    bgColor: '#000000',
-    title: '',
     qrCodeLogo: undefined,
     selectedFrame: 1,
-    qrCodeShape: 'squares',
-    step: 1,
+    qrStyle: 'squares',
     image: '',
     description: '',
+    qrCodePresetColor: '#0D2C7A',
     eyeRadius: [
         { outer: 8, inner: 4 },
         { outer: 8, inner: 4 },
         { outer: 8, inner: 4 }
-    ]
+    ],
+    qrTitle: ''
 };
 
 const qrCodeSlice = createSlice({
@@ -42,18 +36,7 @@ const qrCodeSlice = createSlice({
         resetState: (state) => {
             return initialState;
         },
-        setSelectedColor: (state, action: PayloadAction<string>) => {
-            state.selectedColor = action.payload;
-        },
-        setBtnColor: (state, action: PayloadAction<string>) => {
-            state.btnColor = action.payload;
-        },
-        setBgColor: (state, action: PayloadAction<string>) => {
-            state.bgColor = action.payload;
-        },
-        setTitle: (state, action: PayloadAction<string>) => {
-            state.title = action.payload;
-        },
+
         setDescription: (state, action: PayloadAction<string>) => {
             state.description = action.payload;
         },
@@ -63,42 +46,35 @@ const qrCodeSlice = createSlice({
         setSelectedFrame: (state, action: PayloadAction<number>) => {
             state.selectedFrame = action.payload;
         },
-        setQrCodeShape: (state, action: PayloadAction<QrCodeShape>) => {
-            state.qrCodeShape = action.payload;
+        selectQrCodeStyle: (state, action: PayloadAction<QrCodeShape>) => {
+            state.qrStyle = action.payload;
         },
         setImage: (state, action: PayloadAction<string>) => {
             state.image = action.payload;
         },
-        setStep: (state, action: PayloadAction<number>) => {
-            state.step = action.payload;
-        },
-        nextStep: (state) => {
-            state.step += 1;
-        },
-        prevStep: (state) => {
-            state.step = Math.max(state.step - 1, 1);
-        },
+
         setEyeRadius: (state, action: PayloadAction<EyeRadiusType>) => {
             state.eyeRadius = action.payload;
+        },
+        setQrCodePresetColor: (state, action: PayloadAction<string>) => {
+            state.qrCodePresetColor = action.payload;
+        },
+        setQrTitle: (state, action: PayloadAction<string>) => {
+            state.qrTitle = action.payload;
         }
     }
 });
 
 export const {
-    setSelectedColor,
-    setBtnColor,
-    setBgColor,
-    setTitle,
     setDescription,
     setQrCodeLogo,
     setSelectedFrame,
-    setQrCodeShape,
+    selectQrCodeStyle,
     setEyeRadius,
-    setStep,
-    nextStep,
-    prevStep,
     resetState,
-    setImage
+    setImage,
+    setQrCodePresetColor,
+    setQrTitle
 } = qrCodeSlice.actions;
 
 export default qrCodeSlice.reducer;
@@ -108,15 +84,12 @@ const createSelector =
         state.qrCode[key];
 
 export const qrCodeSelectors = {
-    selectSelectedColor: createSelector('selectedColor'),
-    selectBtnColor: createSelector('btnColor'),
-    selectBgColor: createSelector('bgColor'),
-    selectTitle: createSelector('title'),
+    selectQrCodeTitle: createSelector('qrTitle'),
     setDescription: createSelector('description'),
     selectQrCodeLogo: createSelector('qrCodeLogo'),
     selectSelectedFrame: createSelector('selectedFrame'),
-    selectQrCodeShape: createSelector('qrCodeShape'),
-    selectStep: createSelector('step'),
+    selectQrCodeStyle: createSelector('qrStyle'),
     selectEyeRadius: createSelector('eyeRadius'),
-    selectImage: createSelector('image')
+    selectImage: createSelector('image'),
+    selectPresetColor: createSelector<string>('qrCodePresetColor')
 };

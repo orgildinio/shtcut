@@ -1223,3 +1223,17 @@ export const chatConversations: ChatConversation[] = [
         ]
     }
 ];
+
+export const multiLinksTab = [
+    { id: 'template', label: 'Template' },
+    { id: 'frame', label: 'Frame' },
+    { id: 'shape', label: 'Shape' },
+    { id: 'logo', label: 'Logo' },
+    { id: 'colors', label: 'Colors' }
+];
+export const linksTab = [
+    { id: 'frame', label: 'Frame' },
+    { id: 'shape', label: 'Shape' },
+    { id: 'logo', label: 'Logo' },
+    { id: 'colors', label: 'Colors' }
+];
