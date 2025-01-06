@@ -4,7 +4,7 @@ import { LinkBioService } from '../service/link-bio.service';
 import { ConfigService } from '@nestjs/config';
 
 @UseGuards(JwtAuthGuard)
-@Controller('shtner/link-bios')
+@Controller('link-bios')
 export class LinkBioController extends AppController {
   constructor(
     protected service: LinkBioService,
