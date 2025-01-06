@@ -3,6 +3,7 @@ import ReusableComponent from '../reusable-component';
 import { Image as LucideImage } from 'lucide-react';
 import { Card } from '@shtcut-ui/react';
 import Image from 'next/image';
+import { PhoneTemplateProps } from '@shtcut/types/link';
 
 const PhoneTemplate_2 = ({
     contactActions,
@@ -60,7 +61,7 @@ const PhoneTemplate_2 = ({
                                             <LucideImage size={14} color="#B5B3B3" />
                                         )
                                     }
-                                    name={bio.title || 'Untitled'}
+                                    name={bio.label || 'Untitled'}
                                     btnColor={btnColor}
                                 />
                             ) : null
