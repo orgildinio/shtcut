@@ -6,6 +6,7 @@ import { AUTH_TOKEN_KEY, SECOND_LEVEL_DOMAINS, SPECIAL_APEX_DOMAINS, ccTLDs } fr
 import * as Yup from 'yup';
 import { ObjectShape } from 'yup';
 import ms from 'ms';
+import { toast } from '@shtcut-ui/react';
 
 type AuthTokenReturnsProps = {
     isLoggedIn: boolean;
@@ -123,3 +124,22 @@ export const isValidURL = (url: string) => {
 
 export const truncate = (input: string, length = 0) =>
     input.length > length ? `${input.substring(0, length)}` : input;
+
+interface HandleErrorProps {
+    error: any;
+    defaultMessage?: string;
+    title?: string;
+}
+
+export const handleError = ({
+    error,
+    defaultMessage = 'Failed. Please try again.',
+    title = 'Error!'
+}: HandleErrorProps) => {
+    const errorMessage = error?.error?.message || error?.data?.message || defaultMessage;
+    toast({
+        variant: 'destructive',
+        title: title,
+        description: errorMessage
+    });
+};

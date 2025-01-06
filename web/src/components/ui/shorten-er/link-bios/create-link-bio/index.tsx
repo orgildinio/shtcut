@@ -1,12 +1,12 @@
 'use client';
 
-import { Button, Card, Input, Modal } from '@shtcut-ui/react';
+import { Button, Card, Input, Modal, toast } from '@shtcut-ui/react';
 import Tabs from '@shtcut/components/_shared/Tabs';
 import Stepper from '@shtcut/components/stepper/horizontal-stepper';
 import LinksSection from '@shtcut/components/ui/qr-code-components/multi-link-components/link-sections';
 import ColorsQrCode from '@shtcut/components/ui/qr-code-components/website-component/actions-tab/colors-component';
 import useGeneralState from '@shtcut/hooks/general-state';
-import { setDescription, setTitle } from '@shtcut/redux/slices/selects';
+import { resetGeneralState, setDescription, setTitle } from '@shtcut/redux/slices/selects';
 import React, { useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
@@ -18,9 +18,20 @@ import { useRouter } from 'next/navigation';
 import PreviewPhone from '@shtcut/components/dashboard/preview-phone';
 import LinkHeader from '@shtcut/components/dashboard/link-header';
 import { useLinksManager } from '@shtcut/hooks/use-links-manager';
+import QrCodeName from '@shtcut/components/ui/qr-code-components/website-component/qr-code-name';
+import { useCurrentWorkSpace } from '@shtcut/hooks/current-workspace';
+import { getImagePreview, handleError } from '@shtcut/_shared';
+import { LinkBioActions, LinkBioStateType } from '@shtcut/types/link-bio';
 
-const CreateLinkBioComponent = () => {
+const CreateLinkBioComponent = ({
+    linkBioActions,
+    linkBiosState
+}: {
+    linkBioActions: LinkBioActions;
+    linkBiosState: LinkBioStateType;
+}) => {
     const router = useRouter();
+    const currentWorkspace = useCurrentWorkSpace();
     const { state, actions } = useLinksManager();
     const dispatch = useDispatch();
     const [showModal, setShowModal] = useState(false);
@@ -55,27 +66,84 @@ const CreateLinkBioComponent = () => {
         setSelectedTabIndex(index);
     };
 
-    const payload = {
-        uniqueName: uniqueNameValue,
-        colors: {
-            presetColor,
-            btnColor,
-            bgColor
-        },
-        title,
-        description,
-        profileImage,
-        links: state?.links,
-        template: activeTemplateString
+    const handleSubmit = async () => {
+        const payload = {
+            workspace: currentWorkspace?._id,
+            name: title,
+            title,
+            description,
+            template: activeTemplateString,
+            colors: {
+                presetColor,
+                btnColor,
+                background: bgColor
+            },
+            links: state?.links,
+            profileImage: profileImage
+        };
+
+        if (step === 1) {
+            if (!title) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Missing Title',
+                    description: 'Please provide a title before proceeding.'
+                });
+                return;
+            }
+            if (state?.imgError) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Large Image',
+                    description: state?.imgError
+                });
+                return;
+            }
+            const hasValidLink = state?.links?.every((link) => link.label.trim() !== '' && link.url.trim() !== '');
+            if (!hasValidLink) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Invalid Links',
+                    description: 'Please ensure all links have a title and URL filled in.'
+                });
+                return;
+            }
+
+            handleNextStep();
+            return;
+        }
+        if (step === 2) {
+            handleNextStep();
+            return;
+        }
+        if (step === 3) {
+            linkBioActions.setLoadingState('creating', true);
+            try {
+                const res = await linkBioActions?.createLinkBio({ payload });
+                toast({
+                    title: 'Success',
+                    description: res?.meta?.message || 'Link-bio created'
+                });
+                setShowModal(true);
+                dispatch(resetGeneralState());
+            } catch (err) {
+                handleError({ error: err });
+            } finally {
+                linkBioActions.setLoadingState('creating', false);
+            }
+
+            console.log('Payload:', payload);
+        }
     };
 
-    const handleSubmit = () => {
-        console.log('payload', payload);
-        setShowModal(true);
-    };
     const onSubmitTitle = (data: { uniqueName: string }) => {
         console.log('Title:', data.uniqueName);
-        setShowInputModal(false);
+        // setShowInputModal(false);
+    };
+
+    const handleCloseCreateLinkBio = () => {
+        setShowModal(false);
+        router.back();
     };
 
     const tabs = [
@@ -98,18 +166,14 @@ const CreateLinkBioComponent = () => {
                         </Button>
                     )}
 
-                    <Button
-                        onClick={() => {
-                            if (step && Number(step) === 2) {
-                                handleSubmit();
-                            } else if (handleNextStep) {
-                                handleNextStep();
-                            }
-                        }}
+                    <LoadingButton
+                        onClick={handleSubmit}
                         className="bg-primary-0 flex justify-center w-28 h-8 text-xs rounded items-center gap-x-2"
+                        loading={linkBiosState?.isLoadingState}
+                        disabled={linkBiosState?.isLoadingState}
                     >
                         {step && Number(step) > 2 ? 'Save Update' : ' Next'}
-                    </Button>
+                    </LoadingButton>
                 </div>
             </div>
             <section className="flex mt-[22px] gap-7">
@@ -137,7 +201,7 @@ const CreateLinkBioComponent = () => {
                                     index={index + 1}
                                     isVisible={state?.showSections[link.id]}
                                     toggleVisibility={() => actions?.toggleSection(link.id)}
-                                    linkImage={link.image}
+                                    linkImage={getImagePreview(link?.image)}
                                     handleImageChange={(e) => actions?.handleLinkImageChange(link.id, e)}
                                     onUpdateLink={(field, value) => actions?.updateLink(link.id, field, value)}
                                     onRemove={() => actions?.removeLink(link.id)}
@@ -146,10 +210,15 @@ const CreateLinkBioComponent = () => {
                             ))}
                         </section>
                     )}
-                    {(step === 2 || step === 3) && (
+                    {step === 2 && (
                         <Card className="shadow-sm mt-8 py-4 px-6 border border-gray-100">
                             <ColorsQrCode />
                         </Card>
+                    )}
+                    {step === 3 && (
+                        <section className="  shadow-sm border border-gray-100  rounded-[10px] gap-2">
+                            <QrCodeName />
+                        </section>
                     )}
                 </section>
                 <div className="bg-white sticky top-0 shadow-sm border border-gray-100 rounded-[10px] h-[640px] p-[23px]">
@@ -157,11 +226,11 @@ const CreateLinkBioComponent = () => {
                     <PreviewPhone switchTab="edit-link" links={state?.links} />
                 </div>
             </section>
-            <Modal showModel={showModal} setShowModal={setShowModal} onClose={() => setShowModal(false)}>
+            <Modal showModel={showModal} setShowModal={setShowModal} onClose={handleCloseCreateLinkBio}>
                 <section className="">
                     <section className="flex p-4 border-b items-center justify-between">
                         <h1 className="font-medium">Share your Link</h1>
-                        <MdClose className="cursor-pointer " onClick={() => setShowModal(false)} />
+                        <MdClose className="cursor-pointer " onClick={handleCloseCreateLinkBio} />
                     </section>
                     <section className="p-6">
                         <Tabs
@@ -170,8 +239,19 @@ const CreateLinkBioComponent = () => {
                             tabs={tabs}
                             classNames="mt-4"
                         />
-                        {selectedTabIndex === 0 && <UrlLink uniqueName={uniqueNameValue} />}
-                        {selectedTabIndex === 1 && <QRCode uniqueName={uniqueNameValue} />}
+                        {selectedTabIndex === 0 && (
+                            <UrlLink
+                                uniqueName={uniqueNameValue}
+                                url={`https://beta.shtcut.co/link-bio/${linkBiosState?.createLinkBioResponse?.slug}`}
+                            />
+                        )}
+                        {selectedTabIndex === 1 && (
+                            <QRCode
+                                uniqueName={uniqueNameValue}
+                                url={`https://beta.shtcut.co/link-bio/${linkBiosState?.createLinkBioResponse?.slug}`}
+                                id={linkBiosState?.createLinkBioResponse?.id}
+                            />
+                        )}
                     </section>
                 </section>
             </Modal>

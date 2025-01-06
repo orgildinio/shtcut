@@ -1,6 +1,6 @@
 type LinkBioDataType = {
     id: number;
-    title: string;
+    label: string;
     url: string;
     image?: string | null;
 };

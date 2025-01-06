@@ -47,6 +47,21 @@ export namespace LinkNameSpace {
         };
     }
 
+    export interface LinkBioData {
+        colors: {
+            bgColor?: string;
+            btnColor?: string;
+            presetColor?: string;
+        };
+        description: string;
+        links: LinkBioDataType[];
+        name: string;
+        profileImage: string;
+        template: string;
+        title: string;
+        workspace: string;
+    }
+
     export interface LinkRequest extends ApiRequest {
         params?: QueryArgs;
         payload?: {
