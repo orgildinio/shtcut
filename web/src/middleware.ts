@@ -29,3 +29,15 @@ export async function middleware(request: NextRequest) {
     }
     return NextResponse.next();
 }
+
+export const config = {
+    unstable_allowDynamic: [
+        '/node_modules/lodash/_root.js',
+        '/node_modules/lodash/_cloneBuffer.js',
+        '/node_modules/lodash/_baseClone.js',
+        '/node_modules/lodash/omit.js',
+        '/src/redux/selectors/user/index.ts',
+        '/src/hooks/user/index.ts',
+        '/src/hooks/index.ts'
+    ]
+};

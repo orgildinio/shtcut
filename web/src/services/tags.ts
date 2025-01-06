@@ -2,6 +2,7 @@
 export const loggedInUserTag = 'logged_in_user';
 export const workspaceTag = 'workspace-tag';
 export const linkTag = 'link-tag';
+export const linkBio = 'link-bio';
 export const domainTag = 'domain-tag';
 export const members = 'member-invite';
 

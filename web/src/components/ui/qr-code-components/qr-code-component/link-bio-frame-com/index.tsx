@@ -43,7 +43,7 @@ const LinkBioFrameComponent = ({ linksBio }: { linksBio: LinkBioDataType[] }) =>
                                         <LucideImage size={14} color="#B5B3B3" />
                                     )
                                 }
-                                name={bio.title || 'Untitled'}
+                                name={bio.label || 'Untitled'}
                             />
                         ) : null
                     )}

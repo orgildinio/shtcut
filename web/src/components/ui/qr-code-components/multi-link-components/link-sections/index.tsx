@@ -24,7 +24,6 @@ const LinksSection = ({
     index
 }: LinksSectionProps) => {
     const imageInputId = `image-upload-link-${index}`;
-    console.log('index', index);
     return (
         <Card className="shadow-sm mt-4 py-4 px-6 border border-gray-100">
             <section className={`flex ${isVisible ? 'pb-3' : ''} justify-between items-center`}>
@@ -48,7 +47,7 @@ const LinksSection = ({
                     <section className="mt-4 flex flex-col gap-4 border-b pb-4">
                         <Input
                             placeholder="Enter Link Title"
-                            onChange={(e) => onUpdateLink?.('title', e.target.value)}
+                            onChange={(e) => onUpdateLink?.('label', e.target.value)}
                         />
                         <Input
                             placeholder="Enter URL"

@@ -36,7 +36,7 @@ const LinkListedComponent = ({
     const apexDomain = getApexDomain(data?.target ?? '');
 
     const handleCopy = () => {
-        const textToCopy = `localhost:3000/${data?.alias}`;
+        const textToCopy = `https://beta.shtcut.co/${data?.alias}`;
         if (textToCopy) {
             navigator.clipboard
                 .writeText(textToCopy)

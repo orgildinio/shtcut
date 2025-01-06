@@ -69,3 +69,7 @@ export default async function getCroppedImg(imageSrc: string, pixelCrop: Area) {
         };
     });
 }
+
+export const getImagePreview = (base64: string | null | undefined): string => {
+    return base64 ?? ''; // If base64 is null or undefined, return an empty string
+};

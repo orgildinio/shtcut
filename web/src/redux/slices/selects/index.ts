@@ -68,6 +68,7 @@ const generalSelectSlice = createSlice({
         setImage: (state, action: PayloadAction<string>) => {
             state.image = action.payload;
         },
+
         setStep: (state, action: PayloadAction<number>) => {
             state.step = action.payload;
         },

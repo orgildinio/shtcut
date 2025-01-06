@@ -29,6 +29,7 @@ import { setDropdownState, toggleDropdown } from '@shtcut/redux/slices/ui';
 import { useTags } from '@shtcut/hooks/tags';
 import { useCurrentWorkSpace } from '@shtcut/hooks/current-workspace';
 import { useUpdateArchivedLinkMutation } from '@shtcut/services/link';
+import { handleError } from '@shtcut/_shared';
 
 const LinkComponent = ({
     findAllLinksResponse,
@@ -179,7 +180,7 @@ const LinkComponent = ({
 
     const onSubmit = async (data: any) => {
         const isUpdating = Boolean(singleLink);
-        // setLoadingState(isUpdating ? 'updating' : 'creating', true);
+        setLoadingState(isUpdating ? 'updating' : 'creating', true);
         const geoObject = countriesData.reduce((acc, { countryCode, url }) => {
             acc[countryCode] = url;
             return acc;
@@ -221,13 +222,8 @@ const LinkComponent = ({
             doFind();
             setPreview(null);
         } catch (err) {
-            const errorMessage = (err as any)?.data?.message || 'Failed. Please try again.';
+            handleError({ error: err });
             setLoadingState(isUpdating ? 'updating' : 'creating', false);
-            toast({
-                variant: 'destructive',
-                title: 'Error!',
-                description: errorMessage
-            });
         } finally {
             route.refresh();
         }

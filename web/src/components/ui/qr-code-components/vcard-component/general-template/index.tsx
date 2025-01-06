@@ -10,6 +10,8 @@ const GeneralTemplate = ({ links }: { links?: LinkBioDataType[] }) => {
     const { activeTemplateString, title, profileImage, bgColor, description, presetColorString, btnColorString } =
         useGeneralState();
 
+    console.log('profileImage', profileImage);
+
     const contactActions = [
         {
             name: 'Phone',
