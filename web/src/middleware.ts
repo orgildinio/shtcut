@@ -31,5 +31,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    unstable_allowDynamic: ['**/node_modules/function-bind/**']
+    // runtime: 'edge',
+    unstable_allowDynamic: ['**/node_modules/lodash/_root.js']
 };
