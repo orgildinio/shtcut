@@ -48,6 +48,18 @@ export class LinkBio {
   template: string;
 
   @Prop({
+    type: MG.Types.ObjectId,
+    ref: 'Workspace',
+  })
+  workspace: any;
+
+  @Prop({
+    type: MG.Types.ObjectId,
+    ref: 'Domain',
+  })
+  domain: any;
+
+  @Prop({
     type: String,
   })
   profileImage: string;
@@ -85,9 +97,9 @@ LinkBioSchema.virtual('id').get(function () {
 LinkBioSchema.statics.config = () => {
   return {
     idToken: 'lnk-bio',
-    slugify: 'slug',
-    uniques: ['name'],
-    fillables: ['name', 'slug', 'description', 'template', 'profileImage', 'colors', 'links'],
+    slugify: 'title',
+    uniques: ['title'],
+    fillables: ['name', 'title', 'slug', 'description', 'template', 'profileImage', 'colors', 'links', 'workspace'],
     updateFillables: ['name', 'slug', 'description', 'template', 'profileImage', 'colors', 'links'],
     hiddenFields: ['deleted'],
   };

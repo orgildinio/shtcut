@@ -23,6 +23,7 @@ export const AclEndpoints = [
 export const ShtnerEndpoints = [
   { path: '/shtner/domains*', method: RequestMethod.ALL },
   { path: '/shtner/links*', method: RequestMethod.ALL },
+  { path: '/shtner/link-bios*', method: RequestMethod.ALL },
 ];
 
 export const WorkerEndpoints = [

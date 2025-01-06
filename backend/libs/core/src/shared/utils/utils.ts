@@ -4,7 +4,7 @@ import { startOfDay, endOfDay, parseISO } from 'date-fns';
 import { Between } from 'typeorm';
 import * as _ from 'lodash';
 import slugify from 'slugify';
-import { Dict, RateLimiterParams } from '../types';
+import { Dict } from '../types';
 
 export abstract class Utils {
   /**

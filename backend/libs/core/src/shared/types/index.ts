@@ -12,12 +12,6 @@ export type CacheValueArgument = string | Buffer;
 export type GetIdFn = (context: ExecutionContext) => string | Promise<string>;
 export type CreateErrorBodyFn = (limit: LimiterInfo) => unknown;
 
-export type RateLimiterParams = Pick<LimiterOption, 'max' | 'duration'> & {
-  createErrorBody?: CreateErrorBodyFn;
-} & ({ getId: GetIdFn } | { id: string } | {}) ;
-
-export type RateLimiterModuleParams = Partial<RateLimiterParams> & Pick<LimiterOption, 'db'>;
-
 export type CacheKeyValue = {
   key: CacheKeyArgument;
   value: CacheValueArgument | CacheKeyArgument[];
