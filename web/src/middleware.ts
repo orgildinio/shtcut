@@ -32,6 +32,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     unstable_allowDynamic: [
+        '**/node_modules/function-bind/**',
         '/node_modules/lodash/_root.js',
         '/node_modules/lodash/_cloneBuffer.js',
         '/node_modules/lodash/_baseClone.js',
