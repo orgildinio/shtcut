@@ -268,9 +268,6 @@ export class LinkService extends MongoBaseService {
       const domain = await this.domainModel.findOne({ ...Utils.conditionWithDelete({ slug }) });
       this.ensureDomainExists(domain);
 
-      // todo check if the domain is verified
-
-      // Find link by alias and domain
       const link = await this.model.findOne({ alias, domain: domain._id }).populate(['domain']);
       if (!link) {
         return null;
