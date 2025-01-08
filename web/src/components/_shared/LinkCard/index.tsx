@@ -1,12 +1,11 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Dict, cn, toast } from '@shtcut-ui/react';
+import { Dict, cn } from '@shtcut-ui/react';
 import { getApexDomain, timeAgo } from '@shtcut/_shared';
 import { GripVertical, Copy, BarChart } from 'lucide-react';
 import Image from 'next/image';
 import { GOOGLE_FAVICON_URL } from '@shtcut/_shared/constant';
 import Link from 'next/link';
-import { useState } from 'react';
 import { PopoverMenu } from '../Popover';
 import useCopyToClipboard from '@shtcut/hooks/useCopyToClipboard';
 
@@ -37,8 +36,6 @@ export const LinkCard = (props: LinkCardProp) => {
         domain: { slug }
     } = props;
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
-
-    const [copiedClipboard, setCopiedClipboard] = useState(false);
 
     const style = {
         transform: CSS.Transform.toString(transform),
