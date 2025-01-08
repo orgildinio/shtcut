@@ -64,6 +64,7 @@ const CreateLinkBioComponent = ({
     const handleTabClick = (index: number) => {
         setSelectedTabIndex(index);
     };
+    console.log('linkBiosState', linkBiosState?.createLinkBioResponse);
 
     const handleSubmit = async () => {
         const payload = {
@@ -248,7 +249,7 @@ const CreateLinkBioComponent = ({
                             <QRCode
                                 uniqueName={uniqueNameValue}
                                 url={`https://beta.shtcut.co/link-bio/${linkBiosState?.createLinkBioResponse?.slug}`}
-                                id={linkBiosState?.createLinkBioResponse?.id}
+                                id={linkBiosState?.createLinkBioResponse?.id ?? ''}
                             />
                         )}
                     </section>

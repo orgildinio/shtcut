@@ -424,6 +424,8 @@ const LinkComponent = ({
                         isLoadingState={isLoadingState}
                         handleDelete={() => handleDeleteLink(singleLink._id)}
                         handleClose={handleCloseModal}
+                        description="Deleting this link will redirect it to the shtcut erro page and can not be undone."
+                        title="link"
                     />
                 )}
                 {modalType === 'duplicateModal' && singleLink && (

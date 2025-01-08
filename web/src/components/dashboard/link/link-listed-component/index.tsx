@@ -9,7 +9,6 @@ import { formatDate } from '@shtcut/_shared';
 import { CiImageOff } from 'react-icons/ci';
 import { GOOGLE_FAVICON_URL, hexToRgba } from '@shtcut/_shared/constant';
 import { TagResponse } from '@shtcut/types/tags';
-import tags from '@shtcut/services/tags';
 
 const LinkListedComponent = ({
     edit,

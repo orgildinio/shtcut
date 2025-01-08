@@ -1,15 +1,15 @@
 import { FetchArgs } from '@reduxjs/toolkit/query';
 import { api } from '@shtcut/_shared/api/app.api';
-import { GET, POST, PUT, SHTNER } from '@shtcut/_shared/constant';
+import { DELETE, GET, POST, PUT, SHTNER } from '@shtcut/_shared/constant';
 import { linkBio } from '../tags';
 import { Dict } from '@shtcut-ui/react';
 
-import { ApiResponse } from '@shtcut/_shared/namespace';
-import { LinkBioDataPayload, LinkBioResponse } from '../auth/auth';
+import { ApiResponse, QueryArgs } from '@shtcut/_shared/namespace';
+import { LinkBioDataPayload, LinkBioDataResponse, LinkBioApiResponse } from '@shtcut/types/link-bio';
 
 export const linkBioApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        createLinkBio: builder.mutation<ApiResponse<LinkBioResponse | undefined>, LinkBioDataPayload>({
+        createLinkBio: builder.mutation<ApiResponse<LinkBioDataResponse | undefined>, LinkBioDataPayload>({
             query: ({ payload }) => {
                 return {
                     url: SHTNER.linksBio,
@@ -18,11 +18,28 @@ export const linkBioApi = api.injectEndpoints({
                 };
             },
             invalidatesTags: [linkBio]
+        }),
+        findAllLinkBio: builder.query<LinkBioApiResponse, QueryArgs>({
+            query: (params: QueryArgs) =>
+                ({
+                    url: SHTNER.linksBio,
+                    params
+                }) as unknown as FetchArgs,
+            providesTags: [linkBio]
+        }),
+        deleteLinkBio: builder.mutation<Dict, { payload: { id: string } }>({
+            query: ({ payload }) => ({
+                url: `${SHTNER.linksBio}/${payload.id}`,
+                method: DELETE
+            }),
+            invalidatesTags: [linkBio]
         })
     })
 });
 
 export const {
     useCreateLinkBioMutation,
-    endpoints: { createLinkBio }
+    useLazyFindAllLinkBioQuery,
+    useDeleteLinkBioMutation,
+    endpoints: { createLinkBio, findAllLinkBio, deleteLinkBio }
 } = linkBioApi;
