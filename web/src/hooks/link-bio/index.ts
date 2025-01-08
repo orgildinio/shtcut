@@ -1,31 +1,29 @@
 'use client';
 
 import { Dict } from '@shtcut-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePagination } from '../usePagination';
-import { useCreateLinkBioMutation } from '@shtcut/services/link-bios';
-import { LinkBioActions, LinkBioStateType } from '@shtcut/types/link-bio';
-import { LinkBioDataPayload } from '@shtcut/services/auth/auth';
-
-interface UseTagsProps {
-    id?: string;
-    key?: string;
-    callTags?: boolean;
-    search?: string;
-    filter?: Dict;
-    url?: string;
-    all?: boolean;
-}
+import {
+    useCreateLinkBioMutation,
+    useDeleteLinkBioMutation,
+    useLazyFindAllLinkBioQuery
+} from '@shtcut/services/link-bios';
+import { LinkBioActions, LinkBioDataPayload, LinkBioStateType, UseLinkBioProps } from '@shtcut/types/link-bio';
 
 interface UseTagsReturnsType {
     linkBiosState: LinkBioStateType;
     linkBioActions: LinkBioActions;
 }
 
-export const useLinkBios = (props: UseTagsProps): UseTagsReturnsType => {
-    const { callTags = false, search = '', filter, all } = props;
-    const { pagination } = usePagination();
+export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
+    const { callLinkbio = false, search = '', filter, all } = props;
+    const { paginationActions, pagination } = usePagination();
+    const [loaded, setLoaded] = useState(false);
+
     const [createLinkBioTrigger, { data }] = useCreateLinkBioMutation();
+    const [findAllLinkBio, { isLoading: findLinkBioLoading, data: findAllLinkBioResponse }] =
+        useLazyFindAllLinkBioQuery();
+    const [deleteLinkBio, deleteLinkBioResponse] = useDeleteLinkBioMutation();
     const [debouncedSearch, setDebouncedSearch] = useState(search);
     const [loading, setLoading] = useState({
         creating: false,
@@ -42,20 +40,38 @@ export const useLinkBios = (props: UseTagsProps): UseTagsReturnsType => {
         all,
         ...filter
     };
+
+    console.log('params', params?.page);
     const createLinkBio = async (payload: LinkBioDataPayload): Promise<any> => {
         const result = await createLinkBioTrigger(payload).unwrap();
         return result;
     };
     const createLinkBioResponse = data?.data ?? undefined;
+    useEffect(() => {
+        if (callLinkbio) {
+            findAllLinkBio({
+                ...params
+            });
+            setLoaded(true);
+        }
+    }, [callLinkbio, debouncedSearch, findAllLinkBio, pagination, loaded]);
 
     return {
         linkBiosState: {
             isLoadingState,
-            createLinkBioResponse
+            createLinkBioResponse,
+            findAllLinkBioResponse,
+            findLinkBioLoading,
+            pagination,
+            deleteLinkBioResponse,
+            params
         },
         linkBioActions: {
             createLinkBio,
-            setLoadingState
+            setLoadingState,
+            findAllLinkBio,
+            paginationActions,
+            deleteLinkBio
         }
     };
 };

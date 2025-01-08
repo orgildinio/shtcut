@@ -1,11 +1,17 @@
-import { Card, Checkbox } from '@shtcut-ui/react';
-import { Calendar } from 'lucide-react';
+import { Card, Checkbox, Modal } from '@shtcut-ui/react';
+import { Calendar, Link } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import LinkBioCardActions from '../link-card-actions';
 import { PiChartBar } from 'react-icons/pi';
+import { LinkBioDataResponse } from '@shtcut/types/link-bio';
+import { formatDate } from '@shtcut/_shared';
+import { capitalizeFirstLetter } from '@shtcut/_shared/constant';
+import useCopyToClipboard from '@shtcut/hooks/useCopyToClipboard';
 
-const LinkBioCard = () => {
+const LinkBioCard = ({ data, handleShowDelete }: { data: LinkBioDataResponse; handleShowDelete: () => void }) => {
+    const { handleCopy } = useCopyToClipboard();
+
     return (
         <Card className=" cursor-pointer border border-gray-200 shadow-sm  rounded-[10px] p-4  ">
             <div className="flex justify-between items-center">
@@ -15,17 +21,23 @@ const LinkBioCard = () => {
                     </div>
 
                     <div className="shadow border border-gray-50 w-[50px] h-[50px] rounded-[10px] flex justify-center items-center">
-                        <Image src={'/images/figma.png'} width={18} height={18} alt="figma" />
+                        {data?.profileImage ? (
+                            <Image src={data?.profileImage} width={30} height={30} alt={data?.title} />
+                        ) : (
+                            <Link />
+                        )}
                     </div>
                     <div className="">
                         <div>
-                            <h1 className="font-semibold text-sm text-[#151314]">Figma</h1>
-                            <p className="text-xs text-primary-0 font-normal">shrtcutdribble/34567f</p>
-                            <p className="text-[#2B2829] text-xs">5 Links</p>
+                            <h1 className="font-semibold text-sm text-[#151314]">
+                                {capitalizeFirstLetter(data?.title)}
+                            </h1>
+                            <p className="text-xs cursor-pointer text-primary-0 font-normal">shtcut.co/{data?.slug}</p>
+                            <p className="text-[#2B2829] text-xs">{data?.links?.length} Links</p>
                         </div>
                         <div className="flex items-center gap-x-2 mt-2">
                             <Calendar size={14} color="#2B2829" />
-                            <span className="text-[#726C6C] text-xs font-medium">Oct 15, 2024</span>
+                            <span className="text-[#726C6C] text-xs font-medium">{formatDate(data?.createdAt)}</span>
                         </div>
                     </div>
                 </div>
@@ -33,9 +45,12 @@ const LinkBioCard = () => {
                     <div
                         className={`text-xs cursor-pointer flex mx-auto items-center w-[83px] justify-center text-primary-0 rounded h-8 bg-[#F4F7FF]  font-semibold border gap-x-1 border-primary-0`}
                     >
-                        <PiChartBar size={16} /> <span>30 Clicks</span>
+                        <PiChartBar size={16} /> <span>0 Clicks</span>
                     </div>
-                    <LinkBioCardActions />
+                    <LinkBioCardActions
+                        onDeleteShowModal={handleShowDelete}
+                        handleCopy={() => handleCopy(`shtcut.co/${data?.slug}`)}
+                    />
                 </div>
             </div>
         </Card>

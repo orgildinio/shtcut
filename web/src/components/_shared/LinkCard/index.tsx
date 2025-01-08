@@ -1,13 +1,13 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Dict, cn, toast } from '@shtcut-ui/react';
+import { Dict, cn } from '@shtcut-ui/react';
 import { getApexDomain, timeAgo } from '@shtcut/_shared';
 import { GripVertical, Copy, BarChart } from 'lucide-react';
 import Image from 'next/image';
 import { GOOGLE_FAVICON_URL } from '@shtcut/_shared/constant';
 import Link from 'next/link';
-import { useState } from 'react';
 import { PopoverMenu } from '../Popover';
+import useCopyToClipboard from '@shtcut/hooks/useCopyToClipboard';
 
 interface LinkCardProp {
     id: string;
@@ -37,22 +37,13 @@ export const LinkCard = (props: LinkCardProp) => {
     } = props;
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
-    const [copiedClipboard, setCopiedClipboard] = useState(false);
-
     const style = {
         transform: CSS.Transform.toString(transform),
         transition
     };
 
     const apexDomain = getApexDomain(target);
-
-    const handleCopyLink = () => {
-        setCopiedClipboard(copiedClipboard);
-        navigator.clipboard.writeText(`${slug}/${alias}`);
-        toast({
-            description: 'Copied URL to clipboard!'
-        });
-    };
+    const { handleCopy } = useCopyToClipboard();
 
     return (
         <>
@@ -87,7 +78,8 @@ export const LinkCard = (props: LinkCardProp) => {
                                             <a
                                                 href={`https://${slug}/${alias}`}
                                                 target="_blank"
-                                                className="text-blue-600" rel="noreferrer"
+                                                className="text-blue-600"
+                                                rel="noreferrer"
                                             >
                                                 {`${slug}/${alias}`}
                                             </a>
@@ -96,7 +88,7 @@ export const LinkCard = (props: LinkCardProp) => {
                                         <div className="flex justify-between items-start">
                                             <div className="flex flex-wrap gap-2">
                                                 <Link
-                                                    onClick={handleCopyLink}
+                                                    onClick={() => handleCopy(`${slug}/${alias}`)}
                                                     href="#"
                                                     className="group rounded-full bg-gray-100 p-1.5 transition-all duration-75 hover:scale-105 hover:bg-blue-100 active:scale-95"
                                                 >
@@ -123,7 +115,8 @@ export const LinkCard = (props: LinkCardProp) => {
                                         <a
                                             target="_blank"
                                             href={`https://${slug}/${alias}`}
-                                            className="flex items-center max-w-full rounded-[2px] outline-offset-2 outline-2" rel="noreferrer"
+                                            className="flex items-center max-w-full rounded-[2px] outline-offset-2 outline-2"
+                                            rel="noreferrer"
                                         >
                                             <p className="text-gray-500 w-[200px] text-sm lg:w-[320px] whitespace-nowrap overflow-hidden font-semibold text-ellipsis">
                                                 {title && <span>{title}: </span>}

@@ -3,7 +3,13 @@ import { PencilLine, Trash2 } from 'lucide-react';
 import React from 'react';
 import { IoCopyOutline, IoEllipsisVerticalSharp } from 'react-icons/io5';
 
-const LinkBioCardActions = () => {
+const LinkBioCardActions = ({
+    onDeleteShowModal,
+    handleCopy
+}: {
+    onDeleteShowModal: () => void;
+    handleCopy: () => void;
+}) => {
     return (
         <div>
             <DropdownMenu>
@@ -17,11 +23,17 @@ const LinkBioCardActions = () => {
                         <PencilLine size={16} /> Edit Link
                     </DropdownMenuCheckboxItem>
 
-                    <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2 cursor-pointer">
+                    <DropdownMenuCheckboxItem
+                        onClick={handleCopy}
+                        className="p-2 flex text-xs items-center gap-x-2 cursor-pointer"
+                    >
                         <IoCopyOutline size={16} /> Copy
                     </DropdownMenuCheckboxItem>
 
-                    <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2 cursor-pointer">
+                    <DropdownMenuCheckboxItem
+                        onClick={onDeleteShowModal}
+                        className="p-2 flex text-xs items-center gap-x-2 cursor-pointer"
+                    >
                         <Trash2 size={16} /> Delete
                     </DropdownMenuCheckboxItem>
                 </DropdownMenuContent>

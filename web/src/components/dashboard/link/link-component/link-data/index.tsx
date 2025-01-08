@@ -4,10 +4,8 @@ import LinkListedComponent from '../../link-listed-component';
 import { FindAllLinkResresponseType, LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import { ModalType } from '@shtcut/types/types';
 import PaginationTable from '@shtcut/components/pagination';
-import { PaginationType } from '@shtcut/types';
 import { UsePaginationActions, UsePaginationState } from '@shtcut/types/pagination';
-import CardSkeleton, { skeletonRows } from '@shtcut/components/card-skeleton';
-import { Card } from '@shtcut-ui/react';
+import { skeletonRows } from '@shtcut/components/card-skeleton';
 
 interface LinkDataComponentProps {
     isLoading: boolean;

@@ -2,11 +2,11 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Dict, toast } from '@shtcut-ui/react';
 import { timeAgo } from '@shtcut/_shared';
-import { GripVertical, Copy, BarChart} from 'lucide-react';
+import { GripVertical, Copy, BarChart } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
 import { PopoverMenu } from '../Popover';
 import { QRCode } from 'react-qrcode-logo';
+import useCopyToClipboard from '@shtcut/hooks/useCopyToClipboard';
 
 interface QRCodeProp {
     id: string;
@@ -36,22 +36,11 @@ export const QRCodeCard = (props: QRCodeProp) => {
     } = props;
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
-    const [copiedClipboard, setCopiedClipboard] = useState(false);
-
+    const { handleCopy } = useCopyToClipboard();
     const style = {
         transform: CSS.Transform.toString(transform),
         transition
     };
-
-
-    const handleCopyLink = () => {
-        setCopiedClipboard(copiedClipboard);
-        navigator.clipboard.writeText(`${slug}/${alias}`);
-        toast({
-            description: 'Copied URL to clipboard!'
-        });
-    };
-
     return (
         <>
             <div
@@ -77,7 +66,7 @@ export const QRCodeCard = (props: QRCodeProp) => {
                         aspectRatio: '192/192',
                         objectFit: 'cover',
                         width: 20,
-                        height: 20,
+                        height: 20
                     }}
                 />
                 <div className="flex-1 p-2 h-full relative">
@@ -90,7 +79,8 @@ export const QRCodeCard = (props: QRCodeProp) => {
                                             <a
                                                 href={`https://${slug}/${alias}`}
                                                 target="_blank"
-                                                className="text-blue-600" rel="noreferrer"
+                                                className="text-blue-600"
+                                                rel="noreferrer"
                                             >
                                                 {`${slug}/${alias}`}
                                             </a>
@@ -99,7 +89,7 @@ export const QRCodeCard = (props: QRCodeProp) => {
                                         <div className="flex justify-between items-start">
                                             <div className="flex flex-wrap gap-2">
                                                 <Link
-                                                    onClick={handleCopyLink}
+                                                    onClick={() => handleCopy(`${slug}/${alias}`)}
                                                     href="#"
                                                     className="group rounded-full bg-gray-100 p-1.5 transition-all duration-75 hover:scale-105 hover:bg-blue-100 active:scale-95"
                                                 >
@@ -126,7 +116,8 @@ export const QRCodeCard = (props: QRCodeProp) => {
                                         <a
                                             target="_blank"
                                             href={`https://${slug}/${alias}`}
-                                            className="flex items-center max-w-full rounded-[2px] outline-offset-2 outline-2" rel="noreferrer"
+                                            className="flex items-center max-w-full rounded-[2px] outline-offset-2 outline-2"
+                                            rel="noreferrer"
                                         >
                                             <p className="text-gray-500 w-[200px] text-sm lg:w-[320px] whitespace-nowrap overflow-hidden font-semibold text-ellipsis">
                                                 <span>{title}: </span>

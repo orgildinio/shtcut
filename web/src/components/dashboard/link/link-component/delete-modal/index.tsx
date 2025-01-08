@@ -6,21 +6,23 @@ import React from 'react';
 const DeleteComponent = ({
     isLoadingState,
     handleDelete,
-    handleClose
+    handleClose,
+    description,
+    title
 }: {
     isLoadingState: boolean;
     handleDelete: () => void;
     handleClose: () => void;
+    description: string;
+    title: string;
 }) => {
     return (
         <div>
             <section className="flex flex-col p-4 items-center gap-4">
                 <Image src={'/images/delete-icon.png'} width={48} height={48} alt="delete" />
                 <div>
-                    <h1 className="font-semibold text-center">Delete link</h1>
-                    <p className="text-[13px] w-5/6 mx-auto text-center text-[#475467]">
-                        Deleting this link will redirect it to the shtcut erro page and can not be undone.
-                    </p>
+                    <h1 className="font-semibold text-center">Delete {title}</h1>
+                    <p className="text-[13px] w-5/6 mx-auto text-center text-[#475467]">{description}</p>
                 </div>
                 <div className="flex w-full gap-2">
                     <Button onClick={handleClose} className="w-full" variant={'outline'}>
