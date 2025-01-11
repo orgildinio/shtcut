@@ -149,12 +149,10 @@ export class WorkspaceService extends MongoBaseService {
     const { module } = obj;
     if (!workspace.modules.includes(module)) {
       const subscription = await this.createSubscription(workspace, obj, session);
-
       workspace.subscriptions =
         workspace.subscriptions && workspace.subscriptions.length
           ? [...workspace.subscriptions, subscription._id]
           : [subscription._id];
-
       workspace.modules = workspace.modules && workspace.modules.length ? [...workspace.modules, module] : [module];
       const [updatedWorkspace, _] = await Promise.all([
         await workspace.save(),
