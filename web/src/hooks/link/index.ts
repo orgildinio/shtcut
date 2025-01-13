@@ -111,8 +111,6 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         ...filter
     };
 
-    // console.log('data',data);
-
     const handleSearchChange = debounce((newSearch: string) => {
         setDebouncedSearch(newSearch);
     }, 500);

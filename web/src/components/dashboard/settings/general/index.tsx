@@ -23,8 +23,6 @@ const GeneralScreen = () => {
         }
     };
 
-    console.log('user:::id::', user);
-
     const form = useForm({
         defaultValues: {
             file: ''

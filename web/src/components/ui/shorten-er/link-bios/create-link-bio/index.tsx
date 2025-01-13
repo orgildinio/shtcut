@@ -66,7 +66,6 @@ const CreateLinkBioComponent = ({
     const handleTabClick = (index: number) => {
         setSelectedTabIndex(index);
     };
-    console.log('linkBiosState', linkBiosState?.createLinkBioResponse);
 
     const handleSubmit = async () => {
         const payload = {

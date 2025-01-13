@@ -41,7 +41,6 @@ export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
         ...filter
     };
 
-    console.log('params', params?.page);
     const createLinkBio = async (payload: LinkBioDataPayload): Promise<any> => {
         const result = await createLinkBioTrigger(payload).unwrap();
         return result;

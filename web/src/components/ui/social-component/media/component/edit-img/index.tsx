@@ -11,7 +11,6 @@ import Cropper from 'react-easy-crop';
 
 const EditModal = () => {
     const selectedPhoto = useSelector((state: RootState) => state.img.selectedPhoto);
-    console.log('clg:::', selectedPhoto);
     const DEFAULT_BRIGHTNESS = 100;
     const DEFAULT_CONTRAST = 100;
     const DEFAULT_SATURATE = 100;
