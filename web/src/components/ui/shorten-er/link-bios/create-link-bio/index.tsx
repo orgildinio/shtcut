@@ -46,9 +46,11 @@ const CreateLinkBioComponent = ({
         bgColor,
         btnColor,
         presetColor,
+        contactInfo,
         handleNextStep,
         handlePrevStep
     } = useGeneralState();
+
     const {
         register,
         handleSubmit: onSubmit,
@@ -64,7 +66,6 @@ const CreateLinkBioComponent = ({
     const handleTabClick = (index: number) => {
         setSelectedTabIndex(index);
     };
-    console.log('linkBiosState', linkBiosState?.createLinkBioResponse);
 
     const handleSubmit = async () => {
         const payload = {
@@ -79,7 +80,12 @@ const CreateLinkBioComponent = ({
                 background: bgColor
             },
             links: state?.links,
-            profileImage: profileImage
+            profileImage: profileImage,
+            contact: {
+                phone: contactInfo.phoneNumber,
+                email: contactInfo.email,
+                website: contactInfo.websiteUrl
+            }
         };
 
         if (step === 1) {
@@ -194,6 +200,7 @@ const CreateLinkBioComponent = ({
                                 handleDescriptionChange={(e) => dispatch(setDescription(e.target.value))}
                                 selectedImage={profileImage as string}
                                 handleImageChange={actions?.handleImageChange}
+                                showAddress={true}
                             />
                             {state?.links.map((link, index) => (
                                 <LinksSection

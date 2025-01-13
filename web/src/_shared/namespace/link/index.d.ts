@@ -88,6 +88,7 @@ export namespace LinkNameSpace {
                 term?: string;
                 content?: string;
             };
+            tags?: { _id: string; name: string }[];
         };
     }
 }

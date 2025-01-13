@@ -9,6 +9,8 @@ export interface LinkBioStateType {
     pagination: UsePaginationState;
     deleteLinkBioResponse: Dict;
     params: UseLinkBioProps;
+    getLinkBioData: LinkBioDataResponse | undefined;
+    getLinkBioLoading: boolean;
 }
 export interface LinkBioActions {
     createLinkBio: (payload: LinkBioDataPayload | any) => Promise<any>;
@@ -16,6 +18,7 @@ export interface LinkBioActions {
     findAllLinkBio?: any;
     paginationActions: UsePaginationActions;
     deleteLinkBio: MutationTrigger<any>;
+    getLinkBio: any;
 }
 
 export interface LinkBioApiResponse {

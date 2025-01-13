@@ -32,7 +32,13 @@ const LinkBioCard = ({ data, handleShowDelete }: { data: LinkBioDataResponse; ha
                             <h1 className="font-semibold text-sm text-[#151314]">
                                 {capitalizeFirstLetter(data?.title)}
                             </h1>
-                            <p className="text-xs cursor-pointer text-primary-0 font-normal">shtcut.co/{data?.slug}</p>
+                            <a
+                                href={`/link-bio/${data?.slug}`}
+                                className="text-xs cursor-pointer text-primary-0 font-normal"
+                                target="_blank"
+                            >
+                                shtcut.co/{data?.slug}
+                            </a>
                             <p className="text-[#2B2829] text-xs">{data?.links?.length} Links</p>
                         </div>
                         <div className="flex items-center gap-x-2 mt-2">

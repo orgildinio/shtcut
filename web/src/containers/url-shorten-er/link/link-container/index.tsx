@@ -3,14 +3,13 @@
 import LinkComponent from '@shtcut/components/dashboard/link/link-component';
 import { useDomain } from '@shtcut/hooks/domain';
 import { useLink } from '@shtcut/hooks/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const LinkContainer = () => {
     const [url, setUrl] = useState('');
     const [search, setSearch] = useState('');
     const router = useRouter();
-    const getParams = useSearchParams();
     const pathName = usePathname();
     const {
         findAllLinksResponse,
@@ -47,17 +46,17 @@ const LinkContainer = () => {
     const onSearchChange = (value: string) => {
         setSearch(value);
         handleSearchChange(value);
-        const newUrl = value ? `${pathName}?search=${encodeURIComponent(value)}` : `${pathName}`;
-        router.replace(newUrl);
+        // const newUrl = value ? `${pathName}?search=${encodeURIComponent(value)}` : `${pathName}`;
+        // router.replace(newUrl);
     };
 
-    useEffect(() => {
-        const state = getParams.get('search');
-        if (state) {
-            setSearch(state as string);
-            handleSearchChange(state as string);
-        }
-    }, [getParams]);
+    // useEffect(() => {
+    //     const state = getParams.get('search');
+    //     if (state) {
+    //         setSearch(state as string);
+    //         handleSearchChange(state as string);
+    //     }
+    // }, [getParams]);
 
     return (
         <LinkComponent

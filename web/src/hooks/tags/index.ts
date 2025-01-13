@@ -7,7 +7,7 @@ import {
     useLazyFindAllTagsQuery,
     useUpdateTagsMutation
 } from '@shtcut/services/tags/index';
-import { CreateTagPayload, TagResponse, TagsApiResponse } from '@shtcut/types/tags';
+import { CreateTagPayload, TagResponse, TagsApiResponse, TagsApiResponseObject } from '@shtcut/types/tags';
 import { useEffect, useState } from 'react';
 import { usePagination } from '../usePagination';
 import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
@@ -23,13 +23,13 @@ interface UseTagsProps {
 }
 
 interface UseTagsReturnsType {
-    createTags: (payload: CreateTagPayload) => Promise<TagsApiResponse>;
+    createTags: (payload: CreateTagPayload) => Promise<TagsApiResponseObject>;
     updateTags: any;
     findAllTags: any;
     isLoading: boolean;
     findAllTagsResponse: TagsApiResponse | undefined;
     deleteTag: MutationTrigger<any>;
-    createTagsResponse: TagsApiResponse | undefined;
+    createTagsResponse: TagsApiResponseObject | undefined;
     isLoadingState: boolean;
     setLoadingState: (key: 'creating' | 'deleting' | 'updating', value: boolean) => void;
     deleteTagResponse: Dict;
@@ -61,7 +61,7 @@ export const useTags = (props: UseTagsProps): UseTagsReturnsType => {
         all,
         ...filter
     };
-    const createTags = async (payload: CreateTagPayload): Promise<TagsApiResponse> => {
+    const createTags = async (payload: CreateTagPayload): Promise<TagsApiResponseObject> => {
         const result = await createTagsTrigger(payload).unwrap();
         return result;
     };

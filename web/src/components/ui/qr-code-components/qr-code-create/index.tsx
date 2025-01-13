@@ -151,7 +151,6 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                 title: state?.title
             }
         };
-        console.log('payload', payload);
     };
 
     const tabData = [

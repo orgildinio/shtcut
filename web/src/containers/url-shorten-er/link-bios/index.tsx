@@ -4,7 +4,6 @@ import React from 'react';
 
 const LinkBiosContainer = () => {
     const { linkBiosState, linkBioActions } = useLinkBios({ callLinkbio: true });
-    console.log('linkBiosState', linkBiosState?.findAllLinkBioResponse);
     return (
         <LinkBiosComponent
             findAllLinkBioResponse={linkBiosState?.findAllLinkBioResponse}
