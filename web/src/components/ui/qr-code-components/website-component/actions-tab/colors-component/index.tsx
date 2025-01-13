@@ -4,7 +4,7 @@ import useQrCodeColorHooks from '@shtcut/hooks/code-color';
 import React, { useState } from 'react';
 import ColorPicker from 'react-pick-color';
 import { useDispatch } from 'react-redux';
-import TemplatesComponent from '../../../vcard-component/general-template/templates';
+import TemplatesComponent from '../../../../../general-template/templates';
 import { setBgColor, setBorderColor, setBtnColor, setPresetColor } from '@shtcut/redux/slices/selects';
 import useGeneralState from '@shtcut/hooks/general-state';
 import { setQrCodePresetColor } from '@shtcut/redux/slices/qr-code';

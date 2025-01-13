@@ -199,6 +199,7 @@ interface QrCodeHeaderTypes {
     handleDescriptionChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     selectedImage: string | null;
     handleImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    showAddress?: boolean;
 }
 export interface ContactActions {
     name: string;

@@ -1,12 +1,12 @@
 'use client';
 
-import { Dict } from '@shtcut-ui/react';
 import { useEffect, useState } from 'react';
 import { usePagination } from '../usePagination';
 import {
     useCreateLinkBioMutation,
     useDeleteLinkBioMutation,
-    useLazyFindAllLinkBioQuery
+    useLazyFindAllLinkBioQuery,
+    useLazyGetLinkBioQuery
 } from '@shtcut/services/link-bios';
 import { LinkBioActions, LinkBioDataPayload, LinkBioStateType, UseLinkBioProps } from '@shtcut/types/link-bio';
 
@@ -19,7 +19,7 @@ export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
     const { callLinkbio = false, search = '', filter, all } = props;
     const { paginationActions, pagination } = usePagination();
     const [loaded, setLoaded] = useState(false);
-
+    const [getLinkBio, { data: getLinkBioResponse, isLoading: getLinkBioLoading }] = useLazyGetLinkBioQuery();
     const [createLinkBioTrigger, { data }] = useCreateLinkBioMutation();
     const [findAllLinkBio, { isLoading: findLinkBioLoading, data: findAllLinkBioResponse }] =
         useLazyFindAllLinkBioQuery();
@@ -47,6 +47,8 @@ export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
         return result;
     };
     const createLinkBioResponse = data?.data ?? undefined;
+    const getLinkBioData = getLinkBioResponse?.data ?? undefined;
+
     useEffect(() => {
         if (callLinkbio) {
             findAllLinkBio({
@@ -64,14 +66,17 @@ export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
             findLinkBioLoading,
             pagination,
             deleteLinkBioResponse,
-            params
+            getLinkBioData,
+            params,
+            getLinkBioLoading
         },
         linkBioActions: {
             createLinkBio,
             setLoadingState,
             findAllLinkBio,
             paginationActions,
-            deleteLinkBio
+            deleteLinkBio,
+            getLinkBio
         }
     };
 };

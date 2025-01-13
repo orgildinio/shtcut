@@ -1,4 +1,7 @@
 import { Card, Input, Label } from '@shtcut-ui/react';
+import useGeneralState from '@shtcut/hooks/general-state';
+import { updateContactField } from '@shtcut/redux/slices/selects';
+import { useAppDispatch } from '@shtcut/redux/store';
 import { QrCodeHeaderTypes } from '@shtcut/types/types';
 import { Image as LucideImage, Minus, Plus } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
@@ -13,13 +16,19 @@ const LinkHeader = ({
     handleTitleChange,
     handleDescriptionChange,
     selectedImage,
-    handleImageChange
+    handleImageChange,
+    showAddress = false
 }: QrCodeHeaderTypes) => {
     const getParams = useSearchParams();
     const tabParams = getParams.get('tabs');
+    const { contactInfo } = useGeneralState();
+    const dispatch = useAppDispatch();
+    const handleInputChange = (key: keyof typeof contactInfo) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(updateContactField({ key, value: e.target.value }));
+    };
     return (
         <Card className="shadow-sm mt-4 py-4 px-6 border border-gray-100 ">
-            <section>
+            <section className=" py-3">
                 <section className="flex justify-between ">
                     <section className="flex flex-col gap-2">
                         <Label>{label}</Label>
@@ -33,52 +42,79 @@ const LinkHeader = ({
                 </section>
                 {isVisible && (
                     <section>
-                        <section className="mt-4 flex flex-col gap-4 border-b pb-4">
-                            <Input
-                                placeholder={tabParams === 'vCard' ? 'Enter Full Name' : 'Title'}
-                                value={titleValue}
-                                onChange={handleTitleChange}
-                            />
-                            <Input
-                                placeholder={
-                                    tabParams === 'vCard' ? 'Enter Job description ' : 'Description (optional)'
-                                }
-                                value={descriptionValue}
-                                onChange={handleDescriptionChange}
-                            />
-                        </section>
                         <section>
-                            <section className="flex flex-col gap-2 pt-4">
-                                <Label>Image (optional)</Label>
-                                <p className="text-sm text-[#5A5555]">Add image using the + button.</p>
-                                <section className="relative bg-[#FAFAFA] mt-2 w-20">
-                                    <section className="h-20 w-20 rounded-md border flex justify-center items-center">
-                                        {selectedImage ? (
-                                            <img
-                                                src={selectedImage}
-                                                alt="Preview"
-                                                className="h-full w-full object-cover rounded-md"
-                                            />
-                                        ) : (
-                                            <LucideImage color="#B5B3B3" size={40} />
-                                        )}
+                            <section className="mt-4 flex flex-col gap-4  pb-4">
+                                <Input
+                                    placeholder={tabParams === 'vCard' ? 'Enter Full Name' : 'Title'}
+                                    value={titleValue}
+                                    onChange={handleTitleChange}
+                                />
+                                <Input
+                                    placeholder={
+                                        tabParams === 'vCard' ? 'Enter Job description ' : 'Description (optional)'
+                                    }
+                                    value={descriptionValue}
+                                    onChange={handleDescriptionChange}
+                                />
+                            </section>
+                            <section>
+                                <section className="flex flex-col gap-2 pt-4">
+                                    <Label>Image (optional)</Label>
+                                    <p className="text-sm text-[#5A5555]">Add image using the + button.</p>
+                                    <section className="relative bg-[#FAFAFA] mt-2 w-20">
+                                        <section className="h-20 w-20 rounded-md border flex justify-center items-center">
+                                            {selectedImage ? (
+                                                <img
+                                                    src={selectedImage}
+                                                    alt="Preview"
+                                                    className="h-full w-full object-cover rounded-md"
+                                                />
+                                            ) : (
+                                                <LucideImage color="#B5B3B3" size={40} />
+                                            )}
+                                        </section>
+                                        <label
+                                            htmlFor="image-upload"
+                                            className="absolute top-0 right-0 bg-black w-6 h-6 flex justify-center items-center cursor-pointer rounded-full"
+                                        >
+                                            <Plus color="white" size={16} />
+                                        </label>
+                                        <input
+                                            id="image-upload"
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            className="hidden"
+                                        />
                                     </section>
-                                    <label
-                                        htmlFor="image-upload"
-                                        className="absolute top-0 right-0 bg-black w-6 h-6 flex justify-center items-center cursor-pointer rounded-full"
-                                    >
-                                        <Plus color="white" size={16} />
-                                    </label>
-                                    <input
-                                        id="image-upload"
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        className="hidden"
-                                    />
                                 </section>
                             </section>
                         </section>
+                        {showAddress && (
+                            <section className="pt-4 mt-4 border-t">
+                                <Label>Contact Information</Label>
+                                <section className=" pb-3 flex flex-col w-full gap-3 mt-4">
+                                    <Input
+                                        placeholder="Phone Number"
+                                        value={contactInfo?.phoneNumber ?? ''}
+                                        onChange={handleInputChange('phoneNumber')}
+                                        type="text"
+                                    />
+                                    <Input
+                                        placeholder="Email Address"
+                                        type="email"
+                                        value={contactInfo?.email ?? ''}
+                                        onChange={handleInputChange('email')}
+                                    />
+                                    <Input
+                                        placeholder="Website URL"
+                                        value={contactInfo.websiteUrl}
+                                        onChange={handleInputChange('websiteUrl')}
+                                        type="url"
+                                    />
+                                </section>
+                            </section>
+                        )}
                     </section>
                 )}
             </section>

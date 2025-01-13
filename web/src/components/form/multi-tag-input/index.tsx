@@ -1,5 +1,7 @@
-import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger } from '@shtcut-ui/react';
+import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, toast } from '@shtcut-ui/react';
+import { handleError } from '@shtcut/_shared';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
+import { useTags } from '@shtcut/hooks/tags';
 import { TagResponse } from '@shtcut/types/tags';
 import React, { useState, KeyboardEvent, ChangeEvent } from 'react';
 
@@ -38,33 +40,45 @@ const MultiTagsInput = ({
     watchLink,
     singleLink
 }: MultiTagsInputProps) => {
-    console.log('single', singleLink?.tags);
+    const { createTags, isLoadingState, setLoadingState } = useTags({ callTags: true });
     const isEdit = !!singleLink;
     const [tags, setTags] = useState<{ _id: string; text: string; color: string }[]>(
         isEdit ? singleLink?.tags?.map((tag) => ({ _id: tag?._id, text: tag.name, color: getRandomColor() })) : []
     );
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
-
-    const addTag = (tagText: string, _id: string) => {
+    const addTag = async (tagText: string) => {
         const normalizedTagText = tagText.toLowerCase();
+
+        // Prevent duplicate tags
         if (!tags.some((tag) => tag.text.toLowerCase() === normalizedTagText)) {
-            const newTag = { _id, text: tagText, color: getRandomColor() };
-            const newTags = [...tags, newTag];
-            const newIds = [...selectedIds, _id];
-            setTags(newTags);
-            setSelectedIds(newIds);
-            if (onTagsChange) {
-                onTagsChange(newIds);
+            setLoadingState('creating', true);
+            try {
+                const color = getRandomColor();
+                const response = await createTags({ name: tagText, color });
+                const newTag = { _id: response?.data?.id, text: tagText, color };
+                const newTags = [...tags, newTag];
+                const newIds = [...selectedIds, response?.data?.id];
+                setTags(newTags);
+                setSelectedIds(newIds);
+
+                if (onTagsChange) {
+                    onTagsChange(newIds);
+                }
+            } catch (error) {
+                handleError({ error });
+            } finally {
+                setLoadingState('creating', false);
             }
         }
+
         setInputValue('');
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && inputValue.trim() !== '') {
             e.preventDefault();
-            addTag(inputValue.trim(), `custom-${Date.now()}`);
+            addTag(inputValue.trim());
         }
     };
 
@@ -74,9 +88,21 @@ const MultiTagsInput = ({
     const handleSelectChange = (selectedValue: string) => {
         const selectedTag = initialTags?.find((tag) => tag.name === selectedValue);
         if (selectedTag) {
-            addTag(selectedTag.name, selectedTag._id);
+            if (!selectedIds.includes(selectedTag.id)) {
+                const color = getRandomColor();
+                const newTag = { _id: selectedTag.id, text: selectedTag.name, color };
+                const newTags = [...tags, newTag];
+                const newIds = [...selectedIds, selectedTag.id];
+                setTags(newTags);
+                setSelectedIds(newIds);
+
+                if (onTagsChange) {
+                    onTagsChange(newIds);
+                }
+            }
         }
     };
+
     const removeTag = (indexToRemove: number) => {
         const newTags = tags.filter((_, index) => index !== indexToRemove);
         const newIds = selectedIds.filter((_, index) => index !== indexToRemove);
@@ -124,7 +150,7 @@ const MultiTagsInput = ({
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
                         placeholder={placeholder}
-                        disabled={!watchLink}
+                        disabled={!watchLink || isLoadingState}
                     />
                     {initialTags && initialTags.length > 0 && (
                         <Select onValueChange={handleSelectChange}>

@@ -16,7 +16,12 @@ export interface TagsApiResponse extends MetaData {
     data: TagResponse[];
 }
 
+export interface TagsApiResponseObject extends MetaData {
+    data: TagResponse;
+}
+
 export interface TagResponse extends AppObject {
+    id: string;
     publicId: string;
     name: string;
     type: string;

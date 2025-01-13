@@ -71,7 +71,7 @@ const LinkComponent = ({
     const [domain, setDomain] = useState<string | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [countriesData, setCountriesData] = useState<{ countryCode: string; url: string }[]>([]);
-    const [tags, setTags] = useState<string[]>(['']);
+    const [tags, setTags] = useState<string[]>([]);
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(undefined);
     const currentWorkspace = useCurrentWorkSpace();
     const showDropdown = useSelector((state: RootState) => state.ui.showDropdown);
@@ -186,7 +186,7 @@ const LinkComponent = ({
             return acc;
         }, {});
         const aliasString = randomAlias ? randomAlias : data?.alias;
-        const payload = {
+        const payload: Record<string, any> = {
             title: data?.title,
             target: data?.target,
             alias: aliasString,
@@ -199,8 +199,8 @@ const LinkComponent = ({
                 android: data?.android,
                 ios: data?.ios
             },
-            tags: tags,
             geo: geoObject,
+            tags,
             utmParams: {
                 source: data?.source,
                 medium: data?.medium,
@@ -209,6 +209,11 @@ const LinkComponent = ({
                 content: data?.content
             }
         };
+        if (tags && tags.length > 0) {
+            payload.tags = tags;
+        }
+
+        console.log('payload', payload);
         try {
             if (isUpdating) {
                 await updateLink({ payload, id: singleLink?._id });
@@ -218,7 +223,7 @@ const LinkComponent = ({
             form.reset();
             setLoadingState(isUpdating ? 'updating' : 'creating', false);
             dispatch(toggleDropdown());
-            // setSearch('');
+
             doFind();
             setPreview(null);
         } catch (err) {

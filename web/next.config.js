@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-    webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
+    webpack: (config) => {
         config.resolve.alias.canvas = false;
         config.resolve.alias.encoding = false;
         config.module.rules.push({

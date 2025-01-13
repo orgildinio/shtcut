@@ -24,7 +24,6 @@ import MultiTagsInput from '@shtcut/components/form/multi-tag-input';
 import { DomainNameSpace } from '@shtcut/_shared/namespace/domain';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import { TagResponse } from '@shtcut/types/tags';
-import { IconChevronDown } from '@tabler/icons-react';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 const CreateLinkForm = ({

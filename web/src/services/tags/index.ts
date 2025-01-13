@@ -1,9 +1,9 @@
 import { FetchArgs } from '@reduxjs/toolkit/query';
 import { api } from '@shtcut/_shared/api/app.api';
-import { ACL, DELETE, POST, PUT } from '@shtcut/_shared/constant';
+import { ACL, DELETE, POST } from '@shtcut/_shared/constant';
 import { domainTag, linkTag } from '../tags';
 import { QueryArgs } from '@shtcut/_shared/namespace';
-import { CreateTagPayload, TagsApiResponse } from '@shtcut/types/tags';
+import { CreateTagPayload, TagsApiResponse, TagsApiResponseObject } from '@shtcut/types/tags';
 import { Dict } from '@shtcut-ui/react';
 
 export const tagsApi = api.injectEndpoints({
@@ -16,7 +16,7 @@ export const tagsApi = api.injectEndpoints({
                 }) as unknown as FetchArgs,
             providesTags: [domainTag]
         }),
-        createTags: builder.mutation<TagsApiResponse, CreateTagPayload>({
+        createTags: builder.mutation<TagsApiResponseObject, CreateTagPayload>({
             query: (payload) => {
                 return {
                     url: ACL.tags,

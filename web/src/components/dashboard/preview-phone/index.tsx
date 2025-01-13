@@ -1,7 +1,7 @@
 import React from 'react';
 import PdfFrameComponent from '../../ui/qr-code-components/pdf-qr-code/pdf-frame-step-1';
 import FrameComponents from '../../ui/qr-code-components/frames-component';
-import GeneralTemplate from '../../ui/qr-code-components/vcard-component/general-template';
+import GeneralTemplate from '../../general-template';
 import useGeneralState from '@shtcut/hooks/general-state';
 
 interface ComponentType {
