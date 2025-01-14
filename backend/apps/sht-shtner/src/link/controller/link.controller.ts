@@ -42,6 +42,22 @@ export class LinkController extends AppController {
     }
   }
 
+  @Get('/:id/analytics')
+  @HttpCode(OK)
+  public async analytics(
+    @Param('id') id: string,
+    @Param('alias') alias: string,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
+    try {
+      return res.status(OK).json({});
+    } catch (e) {
+      return next(e);
+    }
+  }
+
   @Get('/metadata')
   @HttpCode(OK)
   public async urlMetaData(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction) {
