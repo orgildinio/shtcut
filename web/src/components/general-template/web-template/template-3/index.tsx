@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { User } from 'lucide-react';
 import { Card } from '@shtcut-ui/react';
 
-const WebTemplate2 = ({
+const WebTemplate3 = ({
     linkBioData,
     isLoading
 }: {
@@ -65,4 +65,4 @@ const WebTemplate2 = ({
     );
 };
 
-export default WebTemplate2;
+export default WebTemplate3;

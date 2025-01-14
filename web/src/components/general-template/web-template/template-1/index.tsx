@@ -1,9 +1,11 @@
-import { User } from 'lucide-react';
+import { Link, MapPin, User } from 'lucide-react';
 import React from 'react';
 import { LinkBioDataResponse } from '@shtcut/types/link-bio';
 import Image from 'next/image';
 import WebCardPreview from '../components/web-card-preview';
 import SkeletonLoaderWeb from '../components/skeleton-loader';
+import { Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@shtcut-ui/react';
+import TemplateCard from '../components/template-card';
 
 const WebTemplate1 = ({
     linkBioData,
@@ -40,7 +42,68 @@ const WebTemplate1 = ({
                         </div>
                     </section>
                     <section className="w-[598px] relative bottom-24 h-[500px] mx-auto">
-                        <WebCardPreview linkBioData={linkBioData} />
+                        <div className="rounded-2xl   bg-white shadow-sm border h-full w-full  px-12 ">
+                            <Tabs defaultValue="links" className="w-full   pt-4">
+                                <TabsList className=" bg-transparent m-0 h-12 border-none flex gap-4 py-6 px-0 items-center  w-full">
+                                    <TabsTrigger
+                                        value="contact"
+                                        className="text-secondary-5  font-medium w-full  rounded-md  text-xs shadow-none  p-0 px-0  h-10 data-[state=active]:text-primary-0  data-[state=active]:border-primary-0 text-[#121211] bg-[#FAFAFA] flex items-center gap-x-2  border data-[state=active]:bg-[#DCE5FB] "
+                                    >
+                                        CONTACT
+                                    </TabsTrigger>
+                                    <TabsTrigger
+                                        value="address"
+                                        className="text-secondary-5  font-medium w-full  rounded-md  text-xs shadow-none  p-0 px-0  h-10 data-[state=active]:text-primary-0  data-[state=active]:border-primary-0 text-[#121211] bg-[#FAFAFA] flex items-center gap-x-2  border data-[state=active]:bg-[#DCE5FB] "
+                                    >
+                                        <MapPin size={15} /> ADDRESS
+                                    </TabsTrigger>
+                                    <TabsTrigger
+                                        value="links"
+                                        className="text-secondary-5  font-medium w-full  rounded-md  text-xs shadow-none  p-0 px-0  h-10 data-[state=active]:text-primary-0  data-[state=active]:border-primary-0 text-[#121211] bg-[#FAFAFA] flex items-center gap-x-2  border data-[state=active]:bg-[#DCE5FB] "
+                                    >
+                                        LINKS
+                                    </TabsTrigger>
+                                </TabsList>
+                                <Card className=" mt-4 shadow-sm">
+                                    <TabsContent value="contact" className="w-full">
+                                        <section className="w-full p-4 flex flex-col gap-4">
+                                            <p>no data</p>
+                                        </section>
+                                    </TabsContent>
+                                    <TabsContent value="links" className="w-full shadow-none border-none">
+                                        <section className="w-full p-4 flex flex-col gap-4">
+                                            {linkBioData &&
+                                                linkBioData?.links.map((link) => (
+                                                    <a
+                                                        href={link.url}
+                                                        className="flex w-full gap-4  border-b py-3"
+                                                        target="_blank "
+                                                        key={link.id}
+                                                    >
+                                                        <section>
+                                                            {linkBioData?.profileImage ? (
+                                                                <Image
+                                                                    src={linkBioData?.profileImage ?? ''}
+                                                                    alt={linkBioData?.title}
+                                                                    width={24}
+                                                                    height={24}
+                                                                    className="rounded-md"
+                                                                />
+                                                            ) : (
+                                                                <Link size={15} />
+                                                            )}
+                                                        </section>
+                                                        <p className="text-sm ">{linkBioData?.title}</p>
+                                                    </a>
+                                                ))}
+                                        </section>
+                                    </TabsContent>
+                                    <TabsContent value="address" className="p-4 ">
+                                        <p>no data</p>
+                                    </TabsContent>
+                                </Card>
+                            </Tabs>
+                        </div>
                     </section>
                 </>
             )}

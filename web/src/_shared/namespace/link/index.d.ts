@@ -163,7 +163,7 @@ export interface OpenGraph {
 }
 
 export interface LinkTypeResponse {
-    findAllLinksResponse: LinkNameSpace.Link[];
+    findAllLinksResponse: FindAllLinkResresponseType | undefined;
     isLoading: boolean;
     updateLinkResponse: Dict;
     isLoadingState: boolean;

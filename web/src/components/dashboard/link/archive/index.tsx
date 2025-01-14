@@ -22,7 +22,7 @@ const LinkArchiveComponent = ({
 }: LinkTypeResponse) => {
     const [selectData, setSelectData] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState(false);
-    const [loadingId, setLoadingId] = useState<string | null>(null); // State for specific ID loading
+    const [loadingId, setLoadingId] = useState<string | null>(null);
 
     const handleCheckboxChange = (id: string, isChecked: boolean) => {
         if (isChecked) {
@@ -39,7 +39,7 @@ const LinkArchiveComponent = ({
         if (selectAll) {
             setSelectData([]);
         } else {
-            const allIds = findAllLinksResponse.map((data) => data._id);
+            const allIds = findAllLinksResponse?.data?.map((data) => data._id) || [];
             setSelectData(allIds);
         }
         setSelectAll(!selectAll);
@@ -106,9 +106,9 @@ const LinkArchiveComponent = ({
                 </div>
             ) : (
                 <section>
-                    {findAllLinksResponse && findAllLinksResponse?.length > 0 ? (
+                    {findAllLinksResponse && findAllLinksResponse?.data && findAllLinksResponse.data.length > 0 ? (
                         <section className="flex flex-col gap-y-[14px] mt-8">
-                            {findAllLinksResponse.map((data) => {
+                            {findAllLinksResponse?.data.map((data) => {
                                 const apexDomain = getApexDomain(data?.target ?? '');
                                 return (
                                     <Card
