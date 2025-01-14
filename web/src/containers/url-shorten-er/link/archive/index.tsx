@@ -24,7 +24,7 @@ const LinkArchiveContainer = () => {
     return (
         <LinkArchiveComponent
             isLoading={isLoading}
-            findAllLinksResponse={findAllLinksResponse ?? []}
+            findAllLinksResponse={findAllLinksResponse}
             updateLinkResponse={updateLinkResponse}
             isLoadingState={isLoadingState}
             updateLink={updateLink}
