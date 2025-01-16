@@ -264,7 +264,7 @@ export class LinkService extends MongoBaseService {
 
   public async linkPassword(req, alias: string, password: string) {
     try {
-      const link = await this.model.findOne({ alias }).select('+password');
+      const link = await this.model.findOne({ alias }).select('+password').populate(['domain']);
       if (!link) {
         throw AppException.NOT_FOUND(lang.get('link').notFound);
       }
@@ -272,7 +272,7 @@ export class LinkService extends MongoBaseService {
       if (!hashedPassword) {
         throw AppException.UNAUTHORIZED(lang.get('link').invalidPassword);
       }
-      return this.visit(req, link.domainName, alias);
+      return this.visit(req, link.domain.name, alias);
     } catch (e) {
       throw e;
     }

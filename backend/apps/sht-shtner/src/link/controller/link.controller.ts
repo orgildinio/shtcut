@@ -59,7 +59,7 @@ export class LinkController extends AppController {
     }
   }
 
-  @Get('/:alias/password')
+  @Post('/:alias/password')
   @HttpCode(OK)
   public async linkPassword(
     @Param('alias') alias: string,

@@ -43,7 +43,7 @@ export class Domain {
   @Prop({
     type: String,
     lowercase: true,
-    default: 'shtcut.link',
+    default: 'shtcut.co',
   })
   name: string;
 
