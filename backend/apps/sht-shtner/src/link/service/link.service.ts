@@ -262,6 +262,22 @@ export class LinkService extends MongoBaseService {
     }
   }
 
+  public async linkPassword(req, alias: string, password: string) {
+    try {
+      const link = await this.model.findOne({ alias }).select('+password');
+      if (!link) {
+        throw AppException.NOT_FOUND(lang.get('link').notFound);
+      }
+      const hashedPassword = await bcrypt.compare(password, link.password);
+      if (!hashedPassword) {
+        throw AppException.UNAUTHORIZED(lang.get('link').invalidPassword);
+      }
+      return this.visit(req, link.domainName, alias);
+    } catch (e) {
+      throw e;
+    }
+  }
+
   public async visit(req: Request, domainName: string, alias: string) {
     try {
       const slug = Utils.slugifyText(domainName);
