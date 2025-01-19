@@ -335,8 +335,9 @@ export class LinkService extends MongoBaseService {
     }
   }
 
-  public async analytic(link) {
+  public async analytic(linkId) {
     try {
+      const link = await this.model.findOne({ _id: linkId }).populate(['domain']);
     } catch (e) {}
   }
 
