@@ -80,6 +80,18 @@ export class LinkBio {
   contacts: Dict;
 
   @Prop({
+    type: {
+      city: String,
+      postal: String,
+      state: String,
+      street: String,
+      zipCode: Number,
+      country: String,
+    },
+  })
+  address: Dict;
+
+  @Prop({
     type: Boolean,
     default: true,
   })
@@ -114,9 +126,20 @@ LinkBioSchema.statics.config = () => {
       'profileImage',
       'colors',
       'links',
+      'address',
       'workspace',
     ],
-    updateFillables: ['name', 'slug', 'contacts', 'description', 'template', 'profileImage', 'colors', 'links'],
+    updateFillables: [
+      'name',
+      'slug',
+      'contacts',
+      'description',
+      'template',
+      'profileImage',
+      'colors',
+      'links',
+      'address',
+    ],
     hiddenFields: ['deleted'],
   };
 };
