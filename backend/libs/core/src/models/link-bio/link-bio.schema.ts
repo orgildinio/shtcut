@@ -80,6 +80,18 @@ export class LinkBio {
   contacts: Dict;
 
   @Prop({
+    type: {
+      city: String,
+      postal: String,
+      state: String,
+      street: String,
+      zipCode: Number,
+      country: String,
+    },
+  })
+  address: Dict;
+
+  @Prop({
     type: Boolean,
     default: true,
   })
