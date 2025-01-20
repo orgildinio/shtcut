@@ -126,9 +126,20 @@ LinkBioSchema.statics.config = () => {
       'profileImage',
       'colors',
       'links',
+      'address',
       'workspace',
     ],
-    updateFillables: ['name', 'slug', 'contacts', 'description', 'template', 'profileImage', 'colors', 'links'],
+    updateFillables: [
+      'name',
+      'slug',
+      'contacts',
+      'description',
+      'template',
+      'profileImage',
+      'colors',
+      'links',
+      'address',
+    ],
     hiddenFields: ['deleted'],
   };
 };
