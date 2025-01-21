@@ -89,6 +89,14 @@ export const linkApi = api.injectEndpoints({
                 method: GET
             }),
             providesTags: [linkTag]
+        }),
+        submitLinkPassword: builder.mutation<ApiResponse<Dict>, { alias: string; password: string }>({
+            query: ({ alias, password }) => ({
+                url: `${SHTNER.links}/${alias}/password`,
+                method: POST,
+                body: { password }
+            }),
+            invalidatesTags: [linkTag]
         })
     })
 });
@@ -103,6 +111,7 @@ export const {
     useLazyFetchMetadataQuery,
     useGetLinkQuery,
     useUpdateArchivedLinkMutation,
+    useSubmitLinkPasswordMutation,
     endpoints: {
         createLink,
         findAllLinks,
@@ -112,6 +121,7 @@ export const {
         duplicateLink,
         fetchMetadata,
         visitLink,
-        updateArchivedLink
+        updateArchivedLink,
+        submitLinkPassword
     }
 } = linkApi;

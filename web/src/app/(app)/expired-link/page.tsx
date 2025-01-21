@@ -1,11 +1,15 @@
 import { Button } from '@shtcut-ui/react';
 import { TimerOff } from 'lucide-react';
+import Image from 'next/image';
 import React from 'react';
 
 const ExpireLink = () => {
     return (
         <div className="flex items-center justify-center h-screen">
             <section className="flex items-center justify-center flex-col gap-y-5">
+                <section className="mb-6">
+                    <Image src={'/logos/shtcut-logo.png'} width={110} height={30} alt="shtcut-logo" />
+                </section>
                 <section
                     className="bg-primary-0 w-36 h-36 rounded-full
                  flex justify-center text-white items-center"

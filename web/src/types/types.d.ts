@@ -263,3 +263,70 @@ interface CompanyInfo {
     name: string;
     department: string;
 }
+
+type UTMParams = {
+    source?: string;
+    medium?: string;
+    campaign?: string;
+    term?: string;
+    content?: string;
+};
+
+type Devices = {
+    android: string;
+    ios: string;
+};
+
+type Domain = {
+    _id: string;
+    publicId: string;
+    user: string;
+    workspace: string;
+    links: any[];
+    name: string;
+    slug: string;
+    landingPage: string;
+    verification: any[];
+    verified: boolean;
+    isDefault: boolean;
+    type: string;
+    banned: boolean;
+    active: boolean;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    id: string;
+};
+
+type Metadata = {
+    title: string;
+    description: string;
+    image: string;
+    url: string;
+    images: string[];
+};
+
+type RedirectUrlType = {
+    utmParams: UTMParams;
+    devices: Devices;
+    _id: string;
+    publicId: string;
+    alias: string;
+    target: string;
+    domain: Domain;
+    enableTracking: boolean;
+    title: string;
+    expiryDate: string;
+    tags: string[];
+    metadata: Metadata;
+    proxy: boolean;
+    isPrivate: boolean;
+    clicks: number;
+    archived: boolean;
+    active: boolean;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    qrCode: string;
+    id: string;
+};

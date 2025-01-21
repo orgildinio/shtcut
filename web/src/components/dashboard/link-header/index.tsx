@@ -6,6 +6,7 @@ import { QrCodeHeaderTypes } from '@shtcut/types/types';
 import { Image as LucideImage, Minus, Plus } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
+import ContactInfo from '../contact-info';
 const LinkHeader = ({
     label,
     description,
@@ -90,29 +91,10 @@ const LinkHeader = ({
                                 </section>
                             </section>
                         </section>
+
                         {showAddress && (
                             <section className="pt-4 mt-4 border-t">
-                                <Label>Contact Information</Label>
-                                <section className=" pb-3 flex flex-col w-full gap-3 mt-4">
-                                    <Input
-                                        placeholder="Phone Number"
-                                        value={contactInfo?.phoneNumber ?? ''}
-                                        onChange={handleInputChange('phoneNumber')}
-                                        type="text"
-                                    />
-                                    <Input
-                                        placeholder="Email Address"
-                                        type="email"
-                                        value={contactInfo?.email ?? ''}
-                                        onChange={handleInputChange('email')}
-                                    />
-                                    <Input
-                                        placeholder="Website URL"
-                                        value={contactInfo.websiteUrl}
-                                        onChange={handleInputChange('websiteUrl')}
-                                        type="url"
-                                    />
-                                </section>
+                                <ContactInfo isVisible={true} toggleVisibility={toggleVisibility} showOthers={true} />
                             </section>
                         )}
                     </section>

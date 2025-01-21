@@ -81,10 +81,17 @@ const CreateLinkBioComponent = ({
             },
             links: state?.links,
             profileImage: profileImage,
-            contact: {
+            contacts: {
                 phone: contactInfo.phoneNumber,
                 email: contactInfo.email,
                 website: contactInfo.websiteUrl
+            },
+            address: {
+                street: contactInfo.streetAddress,
+                country: contactInfo.country,
+                city: contactInfo.city,
+                zipCode: Number(contactInfo.zipCode),
+                state: contactInfo.state
             }
         };
 

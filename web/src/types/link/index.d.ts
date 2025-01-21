@@ -5,6 +5,20 @@ type LinkBioDataType = {
     image?: string | null;
 };
 
+interface LinkDataAddress {
+    street: string;
+    country: string;
+    city: string;
+    zipCode: number;
+    state: string;
+}
+
+interface LinkDataContact {
+    phone: string;
+    email: string;
+    website: string;
+}
+
 interface ContactAction {
     name: string;
     icon: React.ReactNode;

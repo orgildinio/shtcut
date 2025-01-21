@@ -1,7 +1,8 @@
 import { API_BASE_URL, SHTNER } from '@shtcut/_shared/constant';
+import { RedirectUrlType } from '@shtcut/types/types';
 import { userAgent } from 'next/server';
 
-export async function fetchTargetUrl(alias: string): Promise<string | null> {
+export async function fetchTargetUrl(alias: string): Promise<RedirectUrlType | null> {
     try {
         const response = await fetch(
             `${API_BASE_URL}/shtner/links/visit/shtcut.link/${alias}?apiKey=${SHTNER.metaKey}`
@@ -11,7 +12,8 @@ export async function fetchTargetUrl(alias: string): Promise<string | null> {
             return null;
         }
         const data = await response.json();
-        return data?.data?.target || null;
+        console.log('data:::', data);
+        return data?.data || null;
     } catch (error) {
         return null;
     }
