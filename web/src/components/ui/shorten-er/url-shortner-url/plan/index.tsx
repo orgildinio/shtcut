@@ -7,7 +7,6 @@ import { Check } from 'lucide-react';
 
 const PlanShorten = () => {
     const [isExploding, setIsExploding] = useState(false);
-    console.log('isexplode', isExploding);
     return (
         <div className="max-w-screen-xl px-4  mx-auto">
             <section className="flex flex-col gap-6">

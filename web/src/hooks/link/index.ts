@@ -53,6 +53,7 @@ interface UseLinkReturnsType {
     getLinkResponse: Dict;
     updateLinkResponse: Dict;
     duplicateLinkResponse: Dict;
+    submitPasswordResponse: Dict;
     duplicate: any;
     deleteLinkResponse: Dict;
     pagination: UsePaginationState;
@@ -68,7 +69,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     const { callLinks = false, search, filter, id, url, all } = props;
     const { paginationActions, pagination } = usePagination();
     const [createLink, createLinkResponse] = useCreateLinkMutation();
-    const [submitPassword] = useSubmitLinkPasswordMutation();
+    const [submitPassword, submitPasswordResponse] = useSubmitLinkPasswordMutation();
     const [updateLink, updateLinkResponse] = useUpdateLinkMutation();
     const [deleteLink, deleteLinkResponse] = useDeleteLinkMutation();
     const [findAllLinks, { isLoading, data: findAllLinksResponse }] = useLazyFindAllLinksQuery();
@@ -157,6 +158,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         updateLinkResponse,
         duplicateLinkResponse,
         deleteLinkResponse,
+        submitPasswordResponse,
         pagination,
         handleCloseLoading,
         isLoadingState,

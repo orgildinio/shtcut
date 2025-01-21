@@ -12,7 +12,6 @@ export async function fetchTargetUrl(alias: string): Promise<RedirectUrlType | n
             return null;
         }
         const data = await response.json();
-        console.log('data:::', data);
         return data?.data || null;
     } catch (error) {
         return null;

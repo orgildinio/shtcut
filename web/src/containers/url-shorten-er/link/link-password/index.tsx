@@ -6,7 +6,6 @@ const LinkPasswordContainer = () => {
     const queryParams = useSearchParams();
     const aliasQuery = queryParams.get('alias');
 
-    console.log('aliasQuery', aliasQuery);
 
     return <LinkPasswordComponent aliasQuery={aliasQuery ?? ''} />;
 };
