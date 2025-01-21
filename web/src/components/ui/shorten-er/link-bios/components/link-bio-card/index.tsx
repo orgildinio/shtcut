@@ -56,7 +56,7 @@ const LinkBioCard = ({ data, handleShowDelete }: { data: LinkBioDataResponse; ha
                     </div>
                     <LinkBioCardActions
                         onDeleteShowModal={handleShowDelete}
-                        handleCopy={() => handleCopy(`beta.shtcut.co/${data?.slug}`)}
+                        handleCopy={() => handleCopy(`beta.shtcut.co/link-bio/${data?.slug}`)}
                     />
                 </div>
             </div>
