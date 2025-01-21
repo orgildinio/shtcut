@@ -1,7 +1,7 @@
 import { Card, Checkbox, useToast } from '@shtcut-ui/react';
 import Image from 'next/image';
 import React from 'react';
-import { Clock3, Tag } from 'lucide-react';
+import { Clock3, Lock, Tag } from 'lucide-react';
 import CardsActions from '../card-actions';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import { getApexDomain, truncate } from '@shtcut/_shared/helpers';
@@ -33,7 +33,7 @@ const LinkListedComponent = ({
 }) => {
     const { toast } = useToast();
     const apexDomain = getApexDomain(data?.target ?? '');
-
+    console.log('data:::', data);
     const handleCopy = () => {
         const textToCopy = `https://beta.shtcut.co/${data?.alias}`;
         if (textToCopy) {
@@ -78,7 +78,10 @@ const LinkListedComponent = ({
                     </div>
                     <div className="">
                         <div className="flex flex-col">
-                            <h1 className="font-semibold text-sm text-[#151314]">{data?.title}</h1>
+                            <section className="flex items-center gap-x-2">
+                                <h1 className="font-semibold text-sm text-[#151314]">{data?.title}</h1>
+                                {data?.isPrivate && <Lock size={14} />}
+                            </section>
                             <a
                                 target="_blank"
                                 rel="noopener noreferrer"

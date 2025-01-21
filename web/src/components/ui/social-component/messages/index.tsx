@@ -12,7 +12,6 @@ const MessagesComponent = () => {
         setSingleChat(chat);
     };
 
-    console.log('singleChat', singleChat);
     return (
         <div>
             <div className="flex justify-between items-center">

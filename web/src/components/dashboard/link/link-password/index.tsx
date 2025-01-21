@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormControl, FormField, FormItem, FormMessage, Form } from '@shtcut-ui/react';
 import { Lock } from 'lucide-react';
 import Image from 'next/image';
@@ -6,10 +6,13 @@ import { PasswordInput } from '@shtcut/components/_shared';
 import { useForm } from 'react-hook-form';
 import { useLink } from '@shtcut/hooks/link';
 import { LoadingButton } from '@shtcut/components/_shared/loading-button';
+import { useRouter } from 'next/navigation';
+import { handleError } from '@shtcut/_shared';
 
 const LinkPasswordComponent = ({ aliasQuery }: { aliasQuery: string }) => {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const { submitPassword } = useLink({ callLinks: true });
+    const { submitPassword, submitPasswordResponse } = useLink({ callLinks: true });
     const form = useForm({
         defaultValues: {
             password: ''
@@ -21,13 +24,25 @@ const LinkPasswordComponent = ({ aliasQuery }: { aliasQuery: string }) => {
         setIsLoading(true);
         const password = value.password;
         try {
-            const response = await submitPassword({ alias: aliasQuery, password }).unwrap();
+            await submitPassword({ alias: aliasQuery, password }).unwrap();
         } catch (error) {
-            console.error('Error submitting password:', error);
+            handleError({ error });
         } finally {
             setIsLoading(false);
         }
     };
+
+    const { isSuccess } = submitPasswordResponse;
+
+    useEffect(() => {
+        if (isSuccess) {
+            const target = submitPasswordResponse?.data?.data?.target;
+            if (target) {
+                router.push(target);
+            }
+            return;
+        }
+    }, [isSuccess, submitPasswordResponse]);
 
     return (
         <div className="flex items-center justify-center h-screen">

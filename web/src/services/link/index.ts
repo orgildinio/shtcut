@@ -90,7 +90,7 @@ export const linkApi = api.injectEndpoints({
             }),
             providesTags: [linkTag]
         }),
-        submitLinkPassword: builder.mutation<ApiResponse<Dict>, { alias: string; password: string }>({
+        submitLinkPassword: builder.mutation<ApiResponse<LinkNameSpace.Link>, { alias: string; password: string }>({
             query: ({ alias, password }) => ({
                 url: `${SHTNER.links}/${alias}/password`,
                 method: POST,

@@ -212,9 +212,7 @@ const LinkComponent = ({
         if (tags && tags.length > 0) {
             payload.tags = tags;
         }
-        console.log('singleLink', singleLink);
-
-        console.log('payload', payload);
+    
         try {
             if (isUpdating) {
                 await updateLink({ payload, id: singleLink?._id });
