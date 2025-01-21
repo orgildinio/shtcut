@@ -81,13 +81,7 @@ export namespace LinkNameSpace {
                 ios?: string;
             };
             geo?: Dict;
-            utmParams?: {
-                source?: string;
-                medium?: string;
-                campaign?: string;
-                term?: string;
-                content?: string;
-            };
+            utmParams?: UTMParams;
             tags?: { _id: string; name: string }[];
         };
     }

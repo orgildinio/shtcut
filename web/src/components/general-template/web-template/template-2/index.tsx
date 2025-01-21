@@ -48,11 +48,11 @@ const WebTemplate2 = ({
                             </Card>
                         </section>
                     </section>
-                    <Card className="w-[508px] relative  mx-auto rounded-t-none">
+                    <Card className="w-[508px] relative  mx-auto rounded-t-none" style={{backgroundColor:linkBioData?.colors?.background}}>
                         <div className=" ">
                             <section className="pt-14">
-                                <h1 className="font-semibold text-center  ">Sammy Jackson</h1>
-                                <p className=" text-center  ">Co-Founder</p>
+                                <h1 className="font-semibold text-center  ">{linkBioData?.name}</h1>
+                                <p className=" text-center  ">{linkBioData?.description}</p>
                             </section>
                         </div>{' '}
                         <section className="pt-4 ">

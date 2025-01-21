@@ -12,6 +12,7 @@ import {
     useLazyFetchMetadataQuery,
     useLazyFindAllLinksQuery,
     useLazyGetLinkQuery,
+    useSubmitLinkPasswordMutation,
     useUpdateLinkMutation
 } from '@shtcut/services/link';
 import { FindAllLinkResresponseType, MetadataResponse } from '@shtcut/_shared/namespace/link';
@@ -41,6 +42,7 @@ interface UseLinkReturnsType {
     createLink: MutationTrigger<any>;
     deleteLink: MutationTrigger<any>;
     updateLink: MutationTrigger<any>;
+    submitPassword: MutationTrigger<any>;
     fetchMetadata: Dict;
     findAllLinks: any;
     isLoading: boolean;
@@ -66,6 +68,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     const { callLinks = false, search, filter, id, url, all } = props;
     const { paginationActions, pagination } = usePagination();
     const [createLink, createLinkResponse] = useCreateLinkMutation();
+    const [submitPassword] = useSubmitLinkPasswordMutation();
     const [updateLink, updateLinkResponse] = useUpdateLinkMutation();
     const [deleteLink, deleteLinkResponse] = useDeleteLinkMutation();
     const [findAllLinks, { isLoading, data: findAllLinksResponse }] = useLazyFindAllLinksQuery();
@@ -147,6 +150,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         deleteLink,
         findAllLinks,
         duplicate,
+        submitPassword,
         findAllLinksResponse,
         createLinkResponse,
         getLinkResponse,

@@ -1,23 +1,35 @@
 import { NextRequest, NextResponse, userAgent } from 'next/server';
 import { fetchTargetUrl, isIgnoredPath } from '@shtcut/hooks';
-import { headers } from 'next/headers';
 import requestIp from 'request-ip';
 
 export async function middleware(request: NextRequest) {
     const url = request.nextUrl;
     const alias = url.pathname.slice(1);
     const detectedIp = requestIp.getClientIp(request as any);
-    console.log('requestIp:::', detectedIp);
 
     if (isIgnoredPath(alias)) {
         return NextResponse.next();
     }
 
     if (alias) {
-        const targetUrl = await fetchTargetUrl(alias);
+        const response = await fetchTargetUrl(alias);
+        if (response) {
+            const { target, isPrivate, expiryDate } = response;
 
-        if (targetUrl) {
-            return NextResponse.redirect(targetUrl);
+            // Check if the link has password
+            if (isPrivate) {
+                return NextResponse.redirect(
+                    `${process.env.NEXT_PUBLIC_LOCALHOST_URL}/link-password?alias=${encodeURIComponent(alias)}`
+                );
+            }
+            // Check if the link has expired
+            if (expiryDate && new Date(expiryDate) < new Date()) {
+                return NextResponse.redirect(`${process.env.NEXT_PUBLIC_LOCALHOST_URL}/expired-link`);
+            }
+
+            if (target) {
+                return NextResponse.redirect(target);
+            }
         }
     }
 

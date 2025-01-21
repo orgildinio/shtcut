@@ -74,64 +74,88 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     const handleSave = () => {
         // setSaveModal(true);
         //website
-        // const qrCodeData = {
-        //     url: urlValue,
-        //     selectedFrame: state?.selectedFrame,
-        //     preset: presetColor,
-        //     logo: state?.logo,
-        //     borderColor,
-        //     bgColor,
-        //     title,
-        //     qrStyle: state?.qrStyle,
-        //     eyeRadius: state?.eyeRadius
-        // };
+        const qrCodeData = {
+            url: urlValue,
+            selectedFrame: state?.selectedFrame,
+            colors: {
+                presetColor,
+                qrCodeBorderColor: borderColor,
+                background: bgColor
+            },
+            logo: state?.logo,
+            title: state?.title,
+            qrStyle: state?.qrStyle,
+            eyeRadius: state?.eyeRadius
+        };
         //multi link
         // const payload = {
-        // title,
-        // description,
-        // profileImage,
-        // links: linkState?.links,
-        // bgColor,
+        //     title,
+        //     description,
+        //     profileImage,
+        //     links: linkState?.links,
+        //     bgColor,
         //     socialMedia: socialMediaLinks,
-        // template: {
-        //     template: activeTemplateString,
-        //     presetColor,
-        //     btnColor
-        // },
+        //     template: {
+        //         template: activeTemplateString,
+        //         presetColor,
+        //         btnColor
+        //     },
         // qrCode: {
+        //     colors: {
+        //         presetColor: state?.presetColor,
+        //         btnColor,
+        //         background: bgColor,
+        //         borderColor
+        //     },
         //     frame: state?.selectedFrame,
         //     qrStyle: state?.qrStyle,
         //     eyeRadius: state?.eyeRadius,
         //     logo: state?.logo,
-        //     borderColor,
-        //     qrCodePresetColor: state?.presetColor,
-        //     title: state?.title
+        //     name: state?.title
         // }
         // };
+
+        // console.log('payload', payload);
         // vcard
         // const payload = {
-        // title,
-        // description,
-        // profileImage,
-        //     address: contactInfo,
+        //     title,
+        //     description,
+        //     profileImage,
+        //     contacts: {
+        //         phone: contactInfo.phoneNumber,
+        //         email: contactInfo.email,
+        //         website: contactInfo.websiteUrl
+        //     },
+        //     address: {
+        //         street: contactInfo.streetAddress,
+        //         country: contactInfo.country,
+        //         city: contactInfo.city,
+        //         zipCode: contactInfo.zipCode,
+        //         state: contactInfo.state
+        //     },
         //     company: companyInfo,
         //     socialMedia: socialMediaLinks,
         //     bgColor,
-        // qrCode: {
-        //     frame: state?.selectedFrame,
-        //     qrStyle: state?.qrStyle,
-        //     eyeRadius: state?.eyeRadius,
-        //     logo: state?.logo,
-        //     borderColor,
-        //     qrCodePresetColor: state?.presetColor,
-        //     title: state?.title
-        // },
+        //     qrCode: {
+        //         colors: {
+        //             presetColor: state?.presetColor,
+        //             btnColor,
+        //             background: bgColor,
+        //             borderColor
+        //         },
+        //         frame: state?.selectedFrame,
+        //         qrStyle: state?.qrStyle,
+        //         eyeRadius: state?.eyeRadius,
+        //         logo: state?.logo,
+        //         name: state?.title
+        //     },
         //     template: {
         //         template: activeTemplateString,
         //         presetColor,
         //         btnColor
         //     }
         // };
+        // console.log('payload', payload);
 
         //pdf
         const payload = {
@@ -142,15 +166,20 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
             file: fileInfo,
             bgColor,
             qrCode: {
+                colors: {
+                    presetColor: state?.presetColor,
+                    btnColor,
+                    background: bgColor,
+                    borderColor
+                },
                 frame: state?.selectedFrame,
                 qrStyle: state?.qrStyle,
                 eyeRadius: state?.eyeRadius,
                 logo: state?.logo,
-                borderColor,
-                qrCodePresetColor: state?.presetColor,
-                title: state?.title
+                name: state?.title
             }
         };
+        console.log('payload', payload);
     };
 
     const tabData = [

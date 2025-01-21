@@ -138,7 +138,7 @@ export default function SideBar({ isOpen, isTab, setIsOpen, workSpaceTitle }: Pr
                                 }
                             }}
                         >
-                            <Link href={data.href}>
+                            <Link href={data.href} shallow>
                                 <div
                                     className={`flex hover:bg-[#E8EFFF] hover:text-primary-0 items-center  h-[34px] rounded hover:text-primary ${
                                         isOpen ? 'justify-start gap-x-3 px-3' : 'justify-center'

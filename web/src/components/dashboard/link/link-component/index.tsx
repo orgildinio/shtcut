@@ -212,6 +212,7 @@ const LinkComponent = ({
         if (tags && tags.length > 0) {
             payload.tags = tags;
         }
+        console.log('singleLink', singleLink);
 
         console.log('payload', payload);
         try {

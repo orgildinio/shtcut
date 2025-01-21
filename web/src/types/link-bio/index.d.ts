@@ -41,6 +41,8 @@ export interface LinkBioDataResponse {
         btnColor?: string;
         presetColor?: string;
     };
+    address: LinkDataAddress;
+    contacts: LinkDataContact;
     active: boolean;
     _id: string;
     createdAt: string;
@@ -58,11 +60,13 @@ export interface LinkBioDataPayload {
         };
         description: string;
         links: LinkBioDataType[];
+        address: LinkDataAddress;
         name: string;
         profileImage: string;
         template: string;
         title: string;
         workspace?: string;
+        contacts: LinkDataContact;
     };
 }
 

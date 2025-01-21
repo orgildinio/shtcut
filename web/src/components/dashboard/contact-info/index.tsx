@@ -6,7 +6,15 @@ import { useAppDispatch } from '@shtcut/redux/store';
 import useGeneralState from '@shtcut/hooks/general-state';
 import { updateContactField } from '@shtcut/redux/slices/selects';
 
-const ContactInfo = ({ isVisible, toggleVisibility }: { isVisible: boolean; toggleVisibility: () => void }) => {
+const ContactInfo = ({
+    isVisible,
+    toggleVisibility,
+    showOthers
+}: {
+    isVisible: boolean;
+    showOthers?: boolean;
+    toggleVisibility: () => void;
+}) => {
     const dispatch = useAppDispatch();
     const { contactInfo } = useGeneralState();
     const { countryOptions, handleCountryChange, handleStateChange, selectedCountry, selectedState, stateOptions } =
@@ -26,16 +34,23 @@ const ContactInfo = ({ isVisible, toggleVisibility }: { isVisible: boolean; togg
     };
 
     return (
-        <Card className="shadow-sm mt-4 py-4 px-6 border border-gray-100 ">
+        <Card
+            className={` mt-4 py-4   ${showOthers ? 'shadow-none border-none' : 'px-6 shadow-sm border border-gray-100'}`}
+        >
             <section className="flex justify-between ">
                 <section className="flex flex-col gap-2">
                     <Label>Contact Information&apos;s</Label>
                     <p className="text-sm text-[#5A5555]">Enter details</p>
                 </section>
-                {isVisible ? (
-                    <Minus onClick={toggleVisibility} className="cursor-pointer" />
-                ) : (
-                    <Plus onClick={toggleVisibility} className="cursor-pointer" />
+                {!showOthers && (
+                    <>
+                        {' '}
+                        {isVisible ? (
+                            <Minus onClick={toggleVisibility} className="cursor-pointer" />
+                        ) : (
+                            <Plus onClick={toggleVisibility} className="cursor-pointer" />
+                        )}
+                    </>
                 )}
             </section>
             {isVisible && (
@@ -112,6 +127,7 @@ const ContactInfo = ({ isVisible, toggleVisibility }: { isVisible: boolean; togg
                                     placeholder="Zip Code"
                                     value={contactInfo.zipCode}
                                     onChange={handleInputChange('zipCode')}
+                                    type='number'
                                 />
                             </section>
                             <Input placeholder="City" value={contactInfo.city} onChange={handleInputChange('city')} />
