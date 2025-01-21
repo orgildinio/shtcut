@@ -5,6 +5,7 @@ import { formatDate, getApexDomain, truncate } from '@shtcut/_shared';
 import { GOOGLE_FAVICON_URL } from '@shtcut/_shared/constant';
 import { LinkNameSpace, LinkTypeResponse } from '@shtcut/_shared/namespace/link';
 import { LoadingButton } from '@shtcut/components/_shared/loading-button';
+import BackButton from '@shtcut/components/back-btn';
 import StarLoader from '@shtcut/components/loader/star-loader';
 import { ArchiveRestore, Clock3, Tag } from 'lucide-react';
 import Image from 'next/image';
@@ -83,7 +84,8 @@ const LinkArchiveComponent = ({
 
     return (
         <div>
-            <div className="flex justify-between items-center">
+            <BackButton/>
+            <div className="flex pt-6 justify-between items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">Link Archive </h1>
 
                 <section className="flex items-center gap-x-4">

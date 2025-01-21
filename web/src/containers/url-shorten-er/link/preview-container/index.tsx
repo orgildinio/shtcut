@@ -10,8 +10,9 @@ const SingleLinkPreviewContainer = () => {
         callLinks: true,
         all: true
     });
+
     const findLinkByIdData =
-        findAllLinksResponse && findAllLinksResponse?.find((link_alias) => link_alias.alias === alias)?._id;
+        findAllLinksResponse && findAllLinksResponse?.data?.find((link_alias) => link_alias.alias === alias)?._id;
     const { getLinkResponse } = useLink({ id: findLinkByIdData });
 
     if (isLoading) {

@@ -19,6 +19,7 @@ import useQrCodeState from '@shtcut/hooks/qrcode/index.';
 import { resetGeneralState } from '@shtcut/redux/slices/selects';
 import { useLinksManager } from '@shtcut/hooks/use-links-manager';
 import { useAppDispatch } from '@shtcut/redux/store';
+import BackButton from '@shtcut/components/back-btn';
 
 const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => {
     const dispatch = useAppDispatch();
@@ -219,7 +220,9 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
 
     return (
         <div className=" ">
-            <div className="flex justify-between  items-center">
+            <BackButton />
+
+            <div className="flex pt-6 justify-between  items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">Create QR Codes</h1>
                 <div className="flex items-center gap-x-3">
                     {Number(step) > 1 && (

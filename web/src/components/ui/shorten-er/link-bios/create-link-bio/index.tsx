@@ -22,6 +22,7 @@ import QrCodeName from '@shtcut/components/ui/qr-code-components/website-compone
 import { useCurrentWorkSpace } from '@shtcut/hooks/current-workspace';
 import { getImagePreview, handleError } from '@shtcut/_shared';
 import { LinkBioActions, LinkBioStateType } from '@shtcut/types/link-bio';
+import BackButton from '@shtcut/components/back-btn';
 
 const CreateLinkBioComponent = ({
     linkBioActions,
@@ -166,7 +167,8 @@ const CreateLinkBioComponent = ({
 
     return (
         <section>
-            <div className="flex justify-between items-center">
+            <BackButton/>
+            <div className="flex pt-8 justify-between items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">Create Link</h1>
                 <div className="flex items-center gap-x-3">
                     {Number(step) > 1 && (

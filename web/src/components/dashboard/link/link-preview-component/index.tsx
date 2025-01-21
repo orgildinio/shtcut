@@ -12,6 +12,7 @@ import CountriesComponent from '../../../countries';
 import { LineChartComponent } from '@shtcut/components/_shared/Analytics/LineChart';
 import SelectMonths from '../../../select-months';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
+import BackButton from '@shtcut/components/back-btn';
 
 const SingleLinkPreviewComponent = ({ getLinkResponse }: { getLinkResponse: LinkNameSpace.Link }) => {
     const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
@@ -41,7 +42,8 @@ const SingleLinkPreviewComponent = ({ getLinkResponse }: { getLinkResponse: Link
     ];
     return (
         <div className=" ">
-            <div className="flex justify-between items-center">
+            <BackButton/>
+            <div className="flex pt-6 justify-between items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">Analytics</h1>
                 <div className="flex items-center gap-x-2">
                     <SearchInput />
