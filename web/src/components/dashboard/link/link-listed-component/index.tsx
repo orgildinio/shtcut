@@ -33,7 +33,6 @@ const LinkListedComponent = ({
 }) => {
     const { toast } = useToast();
     const apexDomain = getApexDomain(data?.target ?? '');
-    console.log('data:::', data);
     const handleCopy = () => {
         const textToCopy = `https://beta.shtcut.co/${data?.alias}`;
         if (textToCopy) {
