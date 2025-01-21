@@ -38,7 +38,7 @@ const LinkBioCard = ({ data, handleShowDelete }: { data: LinkBioDataResponse; ha
                                 className="text-xs cursor-pointer text-primary-0 font-normal"
                                 target="_blank"
                             >
-                                shtcut.co/{data?.slug}
+                                beta.shtcut.co/{data?.slug}
                             </a>
                             <p className="text-[#2B2829] text-xs">{data?.links?.length} Links</p>
                         </div>
@@ -56,7 +56,7 @@ const LinkBioCard = ({ data, handleShowDelete }: { data: LinkBioDataResponse; ha
                     </div>
                     <LinkBioCardActions
                         onDeleteShowModal={handleShowDelete}
-                        handleCopy={() => handleCopy(`shtcut.co/${data?.slug}`)}
+                        handleCopy={() => handleCopy(`beta.shtcut.co/${data?.slug}`)}
                     />
                 </div>
             </div>
