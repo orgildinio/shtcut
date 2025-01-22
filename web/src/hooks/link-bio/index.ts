@@ -6,9 +6,11 @@ import {
     useCreateLinkBioMutation,
     useDeleteLinkBioMutation,
     useLazyFindAllLinkBioQuery,
+    useLazyGetBioQuery,
     useLazyGetLinkBioQuery
 } from '@shtcut/services/link-bios';
 import { LinkBioActions, LinkBioDataPayload, LinkBioStateType, UseLinkBioProps } from '@shtcut/types/link-bio';
+import { debounce } from 'lodash';
 
 interface UseTagsReturnsType {
     linkBiosState: LinkBioStateType;
@@ -16,10 +18,11 @@ interface UseTagsReturnsType {
 }
 
 export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
-    const { callLinkbio = false, search = '', filter, all } = props;
+    const { callLinkbio = false, search = '', filter, all, id } = props;
     const { paginationActions, pagination } = usePagination();
     const [loaded, setLoaded] = useState(false);
     const [getLinkBio, { data: getLinkBioResponse, isLoading: getLinkBioLoading }] = useLazyGetLinkBioQuery();
+    const [getBio, { data: getBioResponse, isLoading: getBioLoading }] = useLazyGetBioQuery();
     const [createLinkBioTrigger, { data }] = useCreateLinkBioMutation();
     const [findAllLinkBio, { isLoading: findLinkBioLoading, data: findAllLinkBioResponse }] =
         useLazyFindAllLinkBioQuery();
@@ -40,6 +43,9 @@ export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
         all,
         ...filter
     };
+    const handleSearchChange = debounce((newSearch: string) => {
+        setDebouncedSearch(newSearch);
+    }, 500);
 
     const createLinkBio = async (payload: LinkBioDataPayload): Promise<any> => {
         const result = await createLinkBioTrigger(payload).unwrap();
@@ -57,6 +63,15 @@ export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
         }
     }, [callLinkbio, debouncedSearch, findAllLinkBio, pagination, loaded]);
 
+     useEffect(() => {
+         if (id) {
+             getBio({
+                 id,
+                 population: params.population
+             });
+         }
+     }, [id]);
+
     return {
         linkBiosState: {
             isLoadingState,
@@ -67,7 +82,9 @@ export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
             deleteLinkBioResponse,
             getLinkBioData,
             params,
-            getLinkBioLoading
+            getLinkBioLoading,
+            getBioResponse,
+            getBioLoading
         },
         linkBioActions: {
             createLinkBio,
@@ -75,7 +92,8 @@ export const useLinkBios = (props: UseLinkBioProps): UseTagsReturnsType => {
             findAllLinkBio,
             paginationActions,
             deleteLinkBio,
-            getLinkBio
+            getLinkBio,
+            handleSearchChange
         }
     };
 };

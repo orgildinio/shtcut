@@ -13,6 +13,7 @@ export async function middleware(request: NextRequest) {
 
     if (alias) {
         const response = await fetchTargetUrl(alias);
+        console.log('response middle::', response);
         if (response) {
             const { target, isPrivate, expiryDate } = response;
 

@@ -1,9 +1,18 @@
+'use client';
+
 import LinkBiosComponent from '@shtcut/components/ui/shorten-er/link-bios';
 import { useLinkBios } from '@shtcut/hooks/link-bio';
-import React from 'react';
+import React, { useState } from 'react';
 
 const LinkBiosContainer = () => {
-    const { linkBiosState, linkBioActions } = useLinkBios({ callLinkbio: true });
+    const [search, setSearch] = useState('');
+
+    const { linkBiosState, linkBioActions } = useLinkBios({ callLinkbio: true, search });
+
+    const onSearchChange = (value: string) => {
+        setSearch(value);
+        linkBioActions.handleSearchChange(value);
+    };
     return (
         <LinkBiosComponent
             findAllLinkBioResponse={linkBiosState?.findAllLinkBioResponse}
@@ -12,6 +21,8 @@ const LinkBiosContainer = () => {
             paginationActions={linkBioActions?.paginationActions}
             linkBioActions={linkBioActions}
             linkBiosState={linkBiosState}
+            onSearchChange={onSearchChange}
+            search={search}
         />
     );
 };

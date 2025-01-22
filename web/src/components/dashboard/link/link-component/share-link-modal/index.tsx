@@ -5,7 +5,6 @@ import {
     TwitterShareButton,
     LinkedinShareButton,
     WhatsappShareButton,
-    PinterestShareButton
 } from 'next-share';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import Image from 'next/image';
@@ -17,9 +16,9 @@ interface SocialShareProps {
 }
 
 const ShareLinkModal = ({ data }: SocialShareProps) => {
-    const url = `${data?.domain?.name}/${data?.alias}`;
+    const url = `beta.shtcut.co/${data?.alias}`;
     const handleCopy = () => {
-        const textToCopy = `${data?.domain?.name}/${data?.alias}`;
+        const textToCopy = `${process.env.NEXT_PROD_URL}/${data?.alias}`;
         if (textToCopy) {
             navigator.clipboard
                 .writeText(textToCopy)

@@ -1,30 +1,25 @@
-'use client';
-import { Button, Card, Dict } from '@shtcut-ui/react';
-import { SearchInput } from '@shtcut/components/dashboard/nav-component';
+import { LinkBioDataResponse } from '@shtcut/types/link-bio';
 import React, { createElement, useState } from 'react';
-import { PiSortDescendingBold } from 'react-icons/pi';
-import LinkListedComponent from '../link-listed-component';
 import { HiUsers } from 'react-icons/hi';
 import { LineChart as Chart } from 'lucide-react';
 import { BiPieChartAlt } from 'react-icons/bi';
-import ReferralComponent from '../../../referrals';
-import CountriesComponent from '../../../countries';
-import { LineChartComponent } from '@shtcut/components/_shared/Analytics/LineChart';
-import SelectMonths from '../../../select-months';
-import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import BackButton from '@shtcut/components/back-btn';
+import { Button, Card } from '@shtcut-ui/react';
+import { SearchInput } from '@shtcut/components/dashboard/nav-component';
+import { PiSortDescendingBold } from 'react-icons/pi';
+import { LineChartComponent } from '@shtcut/components/_shared/Analytics/LineChart';
+import CountriesComponent from '@shtcut/components/countries';
+import ReferralComponent from '@shtcut/components/referrals';
+import SelectMonths from '@shtcut/components/select-months';
+import SingleLinkBioCard from '../components/single-bio-card';
 
-const SingleLinkPreviewComponent = ({ getLinkResponse }: { getLinkResponse: LinkNameSpace.Link }) => {
+const LinkBioAnalyticsComponent = ({ bioData }: { bioData: LinkBioDataResponse }) => {
     const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
-
-    const handleSelect = (value: string) => {
-        setSelectedMonth(value);
-    };
     const analticsScore = [
         {
             id: '1',
             text: 'Click Counts',
-            totalNumber: getLinkResponse?.clicks,
+            totalNumber: bioData?.clicks || 0,
             icon: HiUsers
         },
         {
@@ -40,22 +35,24 @@ const SingleLinkPreviewComponent = ({ getLinkResponse }: { getLinkResponse: Link
             icon: BiPieChartAlt
         }
     ];
+    const handleSelect = (value: string) => {
+        setSelectedMonth(value);
+    };
     return (
-        <div className=" ">
+        <div>
             <BackButton />
             <div className="flex pt-6 justify-between items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">Analytics</h1>
                 <div className="flex items-center gap-x-2">
                     <SearchInput />
-                    <Button className="flex border  hover:bg-primary-0 hover:text-white shadow-none text-sm text-[#5A5555] items-center font-normal bg-white gap-x-2 border-[#CCCBCB]">
+                    <Button className="flex border  hover:bg-primary-0 hover:text-white shadow-none text-xs text-[#5A5555] items-center font-normal bg-white gap-x-2 border-[#CCCBCB]">
                         <PiSortDescendingBold size={20} /> Sort by
                     </Button>
                 </div>
             </div>
             <div className="mt-8">
-                <LinkListedComponent data={getLinkResponse} edit={true} />
+                <SingleLinkBioCard data={bioData} />
             </div>
-
             <div className="mt-[22px] flex items-center w-full gap-6 ">
                 {analticsScore.map((data) => (
                     <Card
@@ -90,4 +87,4 @@ const SingleLinkPreviewComponent = ({ getLinkResponse }: { getLinkResponse: Link
     );
 };
 
-export default SingleLinkPreviewComponent;
+export default LinkBioAnalyticsComponent;

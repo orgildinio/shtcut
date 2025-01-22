@@ -2,7 +2,7 @@ import { Card, Checkbox, useToast } from '@shtcut-ui/react';
 import Image from 'next/image';
 import React from 'react';
 import { Clock3, Lock, Tag } from 'lucide-react';
-import CardsActions from '../card-actions';
+import CardsActions from '../../../card-actions';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import { getApexDomain, truncate } from '@shtcut/_shared/helpers';
 import { formatDate } from '@shtcut/_shared';
@@ -33,7 +33,6 @@ const LinkListedComponent = ({
 }) => {
     const { toast } = useToast();
     const apexDomain = getApexDomain(data?.target ?? '');
-    console.log('data:::', data);
     const handleCopy = () => {
         const textToCopy = `https://beta.shtcut.co/${data?.alias}`;
         if (textToCopy) {

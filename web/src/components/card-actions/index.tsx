@@ -16,15 +16,15 @@ const CardsActions = ({
     onClickShare,
     handleUpdateLink
 }: {
-    edit: boolean | undefined;
+    edit?: boolean | undefined;
     onClickNavigation: () => void;
     numberOfClicks: number;
-    onDeleteClick: (() => void) | undefined;
-    onDuplicateClick: (() => void) | undefined;
-    onQrCodeClick: (() => void) | undefined;
-    onClickAchive: (() => void) | undefined;
-    onClickShare: (() => void) | undefined;
-    handleCopy: () => void;
+    onDeleteClick?: (() => void) | undefined;
+    onDuplicateClick?: (() => void) | undefined;
+    onQrCodeClick?: (() => void) | undefined;
+    onClickAchive?: (() => void) | undefined;
+    onClickShare?: (() => void) | undefined;
+    handleCopy?: () => void;
     handleUpdateLink?: () => void;
 }) => {
     const route = useRouter();

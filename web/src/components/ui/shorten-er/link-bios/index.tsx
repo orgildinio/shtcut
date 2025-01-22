@@ -8,6 +8,7 @@ import { skeletonRows } from '@shtcut/components/card-skeleton';
 import { UsePaginationActions, UsePaginationState } from '@shtcut/types/pagination';
 import PaginationTable from '@shtcut/components/pagination';
 import DeleteComponent from '@shtcut/components/dashboard/link/link-component/delete-modal';
+import SearchFilterActions from '@shtcut/components/dashboard/link/search-filter-actions';
 
 const LinkBiosComponent = ({
     findAllLinkBioResponse,
@@ -15,7 +16,9 @@ const LinkBiosComponent = ({
     pagination,
     paginationActions,
     linkBiosState,
-    linkBioActions
+    linkBioActions,
+    onSearchChange,
+    search
 }: {
     findAllLinkBioResponse: LinkBioApiResponse | undefined;
     linkBioLoading: boolean | undefined;
@@ -23,6 +26,8 @@ const LinkBiosComponent = ({
     paginationActions: UsePaginationActions;
     linkBiosState: LinkBioStateType;
     linkBioActions: LinkBioActions;
+    search: string;
+    onSearchChange: (value: string) => void;
 }) => {
     const router = useRouter();
     const pathName = usePathname();
@@ -63,11 +68,14 @@ const LinkBiosComponent = ({
         }
     }, [isDeleted]);
 
+    const handleNavigate = (slug: string) => {
+        router.push(`${pathName}/analytics/${slug}`);
+    };
+
     return (
         <div>
             <div className="flex justify-between  items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">Link-in-bio</h1>
-
                 <Button
                     className="bg-primary-0 text-xs h-8 rounded "
                     onClick={() => router.push(`${pathName}/create-link-bio`)}
@@ -75,6 +83,9 @@ const LinkBiosComponent = ({
                     Create New Link
                 </Button>
             </div>
+            <section>
+                <SearchFilterActions search={search} onSearchChange={onSearchChange} />
+            </section>
             <section>
                 {linkBioLoading ? (
                     <div className="flex flex-col gap-y-[14px] mt-8">{skeletonRows}</div>
@@ -85,7 +96,11 @@ const LinkBiosComponent = ({
                         {findAllLinkBioResponse &&
                             findAllLinkBioResponse?.data?.map((data, index) => (
                                 <div key={index}>
-                                    <LinkBioCard data={data} handleShowDelete={() => handleShowDelete(data?.id)} />
+                                    <LinkBioCard
+                                        data={data}
+                                        handleShowDelete={() => handleShowDelete(data?.id)}
+                                        handleNavigateAnalytics={() => handleNavigate(data?.slug)}
+                                    />
                                 </div>
                             ))}
                     </div>

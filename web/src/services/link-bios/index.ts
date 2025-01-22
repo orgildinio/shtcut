@@ -27,6 +27,15 @@ export const linkBioApi = api.injectEndpoints({
                 }) as unknown as FetchArgs,
             providesTags: [linkBio]
         }),
+        getBio: builder.query<ApiResponse<LinkBioDataResponse>, { id: string; population?: string }>({
+            query: (params) =>
+                ({
+                    url: `${SHTNER.linksBio}/${params.id}`, 
+                    params
+                }) as unknown as FetchArgs,
+            providesTags: [linkBio]
+        }),
+
         getLinkBio: builder.query<ApiResponse<LinkBioDataResponse | undefined>, QueryArgs & { slug: string }>({
             query: ({ slug }: QueryArgs & { slug: string }) => ({
                 url: `${SHTNER.linksBio}/search/one?slug=${slug}`
@@ -49,5 +58,6 @@ export const {
     useLazyFindAllLinkBioQuery,
     useDeleteLinkBioMutation,
     useLazyGetLinkBioQuery,
-    endpoints: { createLinkBio, findAllLinkBio, deleteLinkBio, getLinkBio }
+    useLazyGetBioQuery,
+    endpoints: { createLinkBio, findAllLinkBio, deleteLinkBio, getLinkBio,getBio }
 } = linkBioApi;
