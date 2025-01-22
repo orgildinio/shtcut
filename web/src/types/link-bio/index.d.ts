@@ -11,6 +11,8 @@ export interface LinkBioStateType {
     params: UseLinkBioProps;
     getLinkBioData: LinkBioDataResponse | undefined;
     getLinkBioLoading: boolean;
+    getBioLoading: boolean;
+    getBioResponse: Dict;
 }
 export interface LinkBioActions {
     createLinkBio: (payload: LinkBioDataPayload | any) => Promise<any>;
@@ -19,6 +21,7 @@ export interface LinkBioActions {
     paginationActions: UsePaginationActions;
     deleteLinkBio: MutationTrigger<any>;
     getLinkBio: any;
+    handleSearchChange: any;
 }
 
 export interface LinkBioApiResponse {
@@ -47,6 +50,7 @@ export interface LinkBioDataResponse {
     _id: string;
     createdAt: string;
     updatedAt: string;
+    clicks: number;
     __v: string;
     id: string;
 }

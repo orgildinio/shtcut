@@ -14,7 +14,6 @@ const LinkBioDynamicContainer = () => {
         }
     }, [slug, linkBioActions.getLinkBio]);
 
-    console.log('data', linkBiosState.getLinkBioData);
 
     return (
         <LinkBioDynamicComponent

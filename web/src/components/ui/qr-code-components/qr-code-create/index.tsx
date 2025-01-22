@@ -221,7 +221,6 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     return (
         <div className=" ">
             <BackButton />
-
             <div className="flex pt-6 justify-between  items-center">
                 <h1 className="font-semibold text-[#2B2829] text-xl">Create QR Codes</h1>
                 <div className="flex items-center gap-x-3">

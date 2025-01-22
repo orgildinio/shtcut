@@ -18,7 +18,7 @@ const FeatureActions = ({
     onClickShare,
     handleUpdateLink
 }: {
-    onClickNavigation: () => void;
+    onClickNavigation: () => void | undefined;
     onDeleteClick: (() => void) | undefined;
     onDuplicateClick: (() => void) | undefined;
     onQrCodeClick: (() => void) | undefined;

@@ -1,5 +1,5 @@
-import { Card, Checkbox, Modal } from '@shtcut-ui/react';
-import { Calendar, Link, Lock } from 'lucide-react';
+import { Card, Checkbox } from '@shtcut-ui/react';
+import { Calendar, Link } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import LinkBioCardActions from '../link-card-actions';
@@ -9,10 +9,21 @@ import { formatDate } from '@shtcut/_shared';
 import { capitalizeFirstLetter } from '@shtcut/_shared/constant';
 import useCopyToClipboard from '@shtcut/hooks/useCopyToClipboard';
 
-const LinkBioCard = ({ data, handleShowDelete }: { data: LinkBioDataResponse; handleShowDelete: () => void }) => {
+const LinkBioCard = ({
+    data,
+    handleShowDelete,
+    handleNavigateAnalytics
+}: {
+    data: LinkBioDataResponse;
+    handleShowDelete: () => void;
+    handleNavigateAnalytics: () => void;
+}) => {
     const { handleCopy } = useCopyToClipboard();
     return (
-        <Card className=" cursor-pointer border border-gray-200 shadow-sm  rounded-[10px] p-4  ">
+        <Card
+            className=" cursor-pointer border border-gray-200 shadow-sm  rounded-[10px] p-4  "
+            onClick={handleNavigateAnalytics}
+        >
             <div className="flex justify-between items-center">
                 <div className="flex gap-x-3">
                     <div className="relative top-1">
@@ -37,6 +48,7 @@ const LinkBioCard = ({ data, handleShowDelete }: { data: LinkBioDataResponse; ha
                                 href={`/link-bio/${data?.slug}`}
                                 className="text-xs cursor-pointer text-primary-0 font-normal"
                                 target="_blank"
+                                onClick={(e) => e.stopPropagation()}
                             >
                                 beta.shtcut.co/{data?.slug}
                             </a>
