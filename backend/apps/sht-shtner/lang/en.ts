@@ -19,6 +19,7 @@ export default {
     invalidExpiryDate: 'The expiry date is invalid; it must adhere to the ISO-8601 format.',
     invalidateExpiryFutureDate: 'The expiry date must be set in the future.',
     emptyUrl: 'URL key is required',
+    invalidPassword: 'The password is invalid',
   },
 
   plan: {

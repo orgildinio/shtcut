@@ -262,15 +262,28 @@ export class LinkService extends MongoBaseService {
     }
   }
 
+  public async linkPassword(req, alias: string, password: string) {
+    try {
+      const link = await this.model.findOne({ alias }).select('+password').populate(['domain']);
+      if (!link) {
+        throw AppException.NOT_FOUND(lang.get('link').notFound);
+      }
+      const hashedPassword = await bcrypt.compare(password, link.password);
+      if (!hashedPassword) {
+        throw AppException.UNAUTHORIZED(lang.get('link').invalidPassword);
+      }
+      return this.visit(req, link.domain.name, alias);
+    } catch (e) {
+      throw e;
+    }
+  }
+
   public async visit(req: Request, domainName: string, alias: string) {
     try {
       const slug = Utils.slugifyText(domainName);
       const domain = await this.domainModel.findOne({ ...Utils.conditionWithDelete({ slug }) });
       this.ensureDomainExists(domain);
 
-      // todo check if the domain is verified
-
-      // Find link by alias and domain
       const link = await this.model.findOne({ alias, domain: domain._id }).populate(['domain']);
       if (!link) {
         return null;
@@ -320,6 +333,12 @@ export class LinkService extends MongoBaseService {
     if (!domain) {
       throw AppException.NOT_FOUND(lang.get('domain').notFound);
     }
+  }
+
+  public async analytic(linkId) {
+    try {
+      const link = await this.model.findOne({ _id: linkId }).populate(['domain']);
+    } catch (e) {}
   }
 
   /**

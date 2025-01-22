@@ -3,6 +3,7 @@ import { AppController, CreateLinkDto, JwtAuthGuard, NOT_FOUND, OK, QueryParser,
 import { LinkService } from '../service/link.service';
 import { ConfigService } from '@nestjs/config';
 import { NextFunction, Request, Response } from 'express';
+import * as _ from 'lodash';
 
 @Controller('links')
 export class LinkController extends AppController {
@@ -35,6 +36,43 @@ export class LinkController extends AppController {
       response = await this.service.getResponse({
         code: OK,
         value: link,
+      });
+      return res.status(OK).json(response);
+    } catch (e) {
+      return next(e);
+    }
+  }
+
+  @Get('/:id/analytics')
+  @HttpCode(OK)
+  public async analytics(
+    @Param('id') id: string,
+    @Param('alias') alias: string,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
+    try {
+      return res.status(OK).json({});
+    } catch (e) {
+      return next(e);
+    }
+  }
+
+  @Post('/:alias/password')
+  @HttpCode(OK)
+  public async linkPassword(
+    @Param('alias') alias: string,
+    @Body() payload: { password: string },
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
+    try {
+      const link = await this.service.linkPassword(req, alias, payload.password);
+      const response = await this.service.getResponse({
+        code: OK,
+        value: _.omit(link, ['password']),
       });
       return res.status(OK).json(response);
     } catch (e) {

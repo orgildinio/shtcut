@@ -75,6 +75,23 @@ export class LinkBio {
   colors: Dict;
 
   @Prop({
+    type: MG.Types.Mixed,
+  })
+  contacts: Dict;
+
+  @Prop({
+    type: {
+      city: String,
+      postal: String,
+      state: String,
+      street: String,
+      zipCode: Number,
+      country: String,
+    },
+  })
+  address: Dict;
+
+  @Prop({
     type: Boolean,
     default: true,
   })
@@ -99,8 +116,30 @@ LinkBioSchema.statics.config = () => {
     idToken: 'lnk-bio',
     slugify: 'title',
     uniques: ['title'],
-    fillables: ['name', 'title', 'slug', 'description', 'template', 'profileImage', 'colors', 'links', 'workspace'],
-    updateFillables: ['name', 'slug', 'description', 'template', 'profileImage', 'colors', 'links'],
+    fillables: [
+      'name',
+      'title',
+      'slug',
+      'contacts',
+      'description',
+      'template',
+      'profileImage',
+      'colors',
+      'links',
+      'address',
+      'workspace',
+    ],
+    updateFillables: [
+      'name',
+      'slug',
+      'contacts',
+      'description',
+      'template',
+      'profileImage',
+      'colors',
+      'links',
+      'address',
+    ],
     hiddenFields: ['deleted'],
   };
 };
