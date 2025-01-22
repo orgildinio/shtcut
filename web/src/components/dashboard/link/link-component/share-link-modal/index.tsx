@@ -1,11 +1,6 @@
 import React from 'react';
 import { IoCloseCircleOutline } from 'react-icons/io5';
-import {
-    FacebookShareButton,
-    TwitterShareButton,
-    LinkedinShareButton,
-    WhatsappShareButton,
-} from 'next-share';
+import { FacebookShareButton, TwitterShareButton, LinkedinShareButton, WhatsappShareButton } from 'next-share';
 import { LinkNameSpace } from '@shtcut/_shared/namespace/link';
 import Image from 'next/image';
 import { Input, toast } from '@shtcut-ui/react';
@@ -18,7 +13,7 @@ interface SocialShareProps {
 const ShareLinkModal = ({ data }: SocialShareProps) => {
     const url = `beta.shtcut.co/${data?.alias}`;
     const handleCopy = () => {
-        const textToCopy = `${process.env.NEXT_PROD_URL}/${data?.alias}`;
+        const textToCopy = `${process.env.NEXT_STAGING_URL}/${data?.alias}`;
         if (textToCopy) {
             navigator.clipboard
                 .writeText(textToCopy)
