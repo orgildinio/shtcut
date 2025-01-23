@@ -111,6 +111,19 @@ LinkBioSchema.virtual('id').get(function () {
   return this._id.toHexString();
 });
 
+LinkBioSchema.statics.searchQuery = (q: string) => {
+  const regex = new RegExp(q);
+  return [
+    { title: { $regex: regex, $options: 'i' } },
+    { description: { $regex: regex, $options: 'i' } },
+    { 'address.city': { $regex: regex, $options: 'i' } },
+    { 'address.postal': { $regex: regex, $options: 'i' } },
+    { 'address.state': { $regex: regex, $options: 'i' } },
+    { 'address.street': { $regex: regex, $options: 'i' } },
+    { 'address.country': { $regex: regex, $options: 'i' } },
+  ];
+};
+
 LinkBioSchema.statics.config = () => {
   return {
     idToken: 'lnk-bio',

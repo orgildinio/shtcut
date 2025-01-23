@@ -62,4 +62,10 @@ export abstract class AppController extends BaseController {
   public async remove(@Param('id') id: string, @Req() req: Request, @Res() res: Response, @Next() next: NextFunction) {
     return super.remove(id, req, res, next);
   }
+
+  @Delete('/delete/many')
+  @HttpCode(OK)
+  public async deleteMany(@Req() req, @Res() res, @Next() next: NextFunction) {
+    return super.deleteMany(req, res, next);
+  }
 }
