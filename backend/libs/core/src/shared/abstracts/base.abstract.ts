@@ -114,6 +114,14 @@ export abstract class BaseAbstract {
   }
 
   /**
+   * @param {Object} response required for response
+   * @return {Object}
+   */
+  public async postDeleteMany(response) {
+    return response;
+  }
+
+  /**
    * The function "postFindOne" returns a response object asynchronously.
    * @param {ResponseOption} response - The parameter "response" is of type "ResponseOption".
    * @returns The response object is being returned.

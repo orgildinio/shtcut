@@ -356,4 +356,23 @@ export abstract class BaseController {
       return next(e);
     }
   }
+
+  @Delete('/delete/many')
+  @HttpCode(OK)
+  public async deleteMany(@Req() req, @Res() res, @Next() next: NextFunction) {
+    try {
+      const objects: any = await this.service.deleteMany(req.body);
+      const response = await this.service.getResponse(
+        await this.service.postDeleteMany({
+          code: OK,
+          value: {
+            ids: objects,
+          },
+        }),
+      );
+      return res.status(OK).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

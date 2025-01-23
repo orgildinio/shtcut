@@ -554,4 +554,33 @@ export class MongoBaseService extends BaseAbstract {
     }
     return object;
   }
+
+  /**
+   * @param {Object} payload request body with ids
+   */
+  async deleteMany(payload) {
+    try {
+      const { ids } = payload;
+      const deleted = [];
+      if (ids?.length) {
+        const objects = await this.model.find({
+          _id: { $in: [...ids] },
+          deleted: false,
+        });
+        const isSoftDelete = this.entity.config.softDelete;
+        for (let object of objects) {
+          if (isSoftDelete) {
+            _.extend(object, { deleted: true });
+            object = await object.save();
+          } else {
+            object = await object.remove();
+          }
+          deleted.push(object._id);
+        }
+      }
+      return deleted;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
