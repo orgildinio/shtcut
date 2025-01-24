@@ -10,7 +10,7 @@ export class CreateLinkDto {
   public readonly title: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   public readonly target: string;
 
   @IsString()

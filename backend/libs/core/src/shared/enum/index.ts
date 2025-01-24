@@ -4,6 +4,7 @@ export enum QueueTasks {
   SEND_SMS = 'task.send.sms',
   SEND_NOTIFICATION = 'task.send.notification',
   PING = 'task.send.ping',
+  TELEGRAM = 'task.send.telegram_queue',
 }
 
 export enum Queues {

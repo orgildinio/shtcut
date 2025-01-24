@@ -380,4 +380,25 @@ export class LinkService extends MongoBaseService {
       await session?.endSession();
     }
   }
+
+  async archivedMany(payload) {
+    try {
+      const { ids } = payload;
+      const deleted = [];
+      if (ids?.length) {
+        const objects = await this.model.find({
+          _id: { $in: [...ids] },
+          archived: false,
+        });
+        for (let object of objects) {
+          _.extend(object, { archived: true });
+          object = await object.save();
+          deleted.push(object._id);
+        }
+      }
+      return deleted;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

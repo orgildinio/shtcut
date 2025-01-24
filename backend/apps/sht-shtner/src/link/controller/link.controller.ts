@@ -154,4 +154,21 @@ export class LinkController extends AppController {
       return next(e);
     }
   }
+
+  @Post('/archived/many')
+  @HttpCode(OK)
+  public async archivedMany(@Body() payload: { ids: string[] }, @Req() req, @Res() res, @Next() next: NextFunction) {
+    try {
+      const objects: any = await this.service.archivedMany(payload);
+      const response = await this.service.getResponse({
+        code: OK,
+        value: {
+          ids: objects,
+        },
+      });
+      return res.status(OK).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
