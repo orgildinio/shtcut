@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { QrCodeProps } from 'shtcut/core';
+import { Document, Types, Schema as MG } from 'mongoose';
+import { Dict, QrCodeProps } from 'shtcut/core';
 
 export type QrCodeDocument = QrCode & Document;
 
@@ -25,6 +25,31 @@ export class QrCode {
     default: 'link',
   })
   type: string;
+
+  @Prop({
+    type: MG.Types.Mixed,
+  })
+  contacts: Dict;
+
+  @Prop({
+    type: MG.Types.Mixed,
+  })
+  qrCode: Dict;
+
+  @Prop({
+    type: MG.Types.Mixed,
+  })
+  template: Dict;
+
+  @Prop({
+    type: MG.Types.Mixed,
+  })
+  company: Dict;
+
+  @Prop({
+    type: MG.Types.Mixed,
+  })
+  socialMedia: Dict;
 
   @Prop({
     type: Types.ObjectId,
@@ -74,6 +99,16 @@ export class QrCode {
   imageFormat: string;
 
   @Prop({
+    type: String,
+  })
+  bgColor: string;
+
+  @Prop({
+    type: String,
+  })
+  profileImage: string;
+
+  @Prop({
     type: Object,
   })
   properties: QrCodeProps;
@@ -107,9 +142,39 @@ QrCodeSchema.virtual('id').get(function () {
 QrCodeSchema.statics.config = () => {
   return {
     idToken: 'qr',
-    uniques: ['link', 'domain', 'workspace'],
-    fillables: ['workspace', 'link', 'scanned', 'domain', 'properties', 'enableTracking', 'archived'],
-    updateFillables: ['workspace', 'link', 'scanned', 'domain', 'imageFormat', 'archived'],
+    uniques: [],
+    fillables: [
+      'workspace',
+      'link',
+      'type',
+      'scanned',
+      'qrCode',
+      'socialMedia',
+      'contacts',
+      'template',
+      'user',
+      'bgColor',
+      'profileImage',
+      'domain',
+      'properties',
+      'enableTracking',
+      'archived',
+    ],
+    updateFillables: [
+      'workspace',
+      'link',
+      'scanned',
+      'type',
+      'qrCode',
+      'socialMedia',
+      'contacts',
+      'bgColor',
+      'profileImage',
+      'template',
+      'user',
+      'domain',
+      'archived',
+    ],
     hiddenFields: ['deleted'],
   };
 };

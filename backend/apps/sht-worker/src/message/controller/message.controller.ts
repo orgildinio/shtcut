@@ -25,4 +25,8 @@ export class MessageController {
     };
     Logger.log(`Send email-payload: ${JSON.stringify(payload)}`);
   }
+  @EventPattern(QueueTasks.TELEGRAM)
+  public async telegram(payload) {
+    Logger.log(`Received-telegram - Send email: ${payload}`);
+  }
 }
