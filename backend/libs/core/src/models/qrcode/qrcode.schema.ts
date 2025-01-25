@@ -106,6 +106,11 @@ export class QrCode {
   @Prop({
     type: String,
   })
+  url: string;
+
+  @Prop({
+    type: String,
+  })
   profileImage: string;
 
   @Prop({
@@ -156,6 +161,7 @@ QrCodeSchema.statics.config = () => {
       'bgColor',
       'profileImage',
       'domain',
+      'url',
       'properties',
       'enableTracking',
       'archived',
@@ -170,6 +176,7 @@ QrCodeSchema.statics.config = () => {
       'contacts',
       'bgColor',
       'profileImage',
+      'url',
       'template',
       'user',
       'domain',
