@@ -22,6 +22,11 @@ export class QrCode {
 
   @Prop({
     type: String,
+  })
+  slug: string;
+
+  @Prop({
+    type: String,
     default: 'link',
   })
   type: string;
@@ -147,7 +152,8 @@ QrCodeSchema.virtual('id').get(function () {
 QrCodeSchema.statics.config = () => {
   return {
     idToken: 'qr',
-    uniques: [],
+    uniques: ['slug'],
+    slugify: 'title',
     fillables: [
       'workspace',
       'link',
