@@ -4,7 +4,7 @@ import { EyeRadiusType } from '@shtcut/types/types';
 import useGeneralState from '@shtcut/hooks/general-state';
 import useQrCodeState from '@shtcut/hooks/qrcode/index.';
 const Frame_3 = () => {
-    const { presetColorString, tabParams, borderColor } = useGeneralState();
+    const { presetColorString, tabParams, borderColor, urlScan } = useGeneralState();
     const { state } = useQrCodeState();
 
     return (
@@ -42,7 +42,7 @@ const Frame_3 = () => {
                 <div className="absolute ">
                     <QRCode
                         id="shtcut-qrcode"
-                        value={''}
+                        value={urlScan as string}
                         removeQrCodeBehindLogo={true}
                         ecLevel="L"
                         fgColor={tabParams !== 'website' ? state?.presetColor : presetColorString}

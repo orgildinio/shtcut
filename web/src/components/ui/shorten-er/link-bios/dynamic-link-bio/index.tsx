@@ -4,18 +4,12 @@ import WebTemplate3 from '@shtcut/components/general-template/web-template/templ
 import { LinkBioDataResponse } from '@shtcut/types/link-bio';
 import React from 'react';
 
-const LinkBioDynamicComponent = ({
-    linkBioData,
-    isLoading
-}: {
-    linkBioData: LinkBioDataResponse | undefined;
-    isLoading: boolean;
-}) => {
+const LinkBioDynamicComponent = ({ linkData, isLoading }: { linkData: any | undefined; isLoading: boolean }) => {
     return (
         <section>
-            {linkBioData?.template === 'template_1' && <WebTemplate1 linkBioData={linkBioData} isLoading={isLoading} />}
-            {linkBioData?.template === 'template_2' && <WebTemplate2 linkBioData={linkBioData} isLoading={isLoading} />}
-            {linkBioData?.template === 'template_3' && <WebTemplate3 linkBioData={linkBioData} isLoading={isLoading} />}
+            {linkData?.template === 'template_1' && <WebTemplate1 linkData={linkData} isLoading={isLoading} />}
+            {linkData?.template === 'template_2' && <WebTemplate2 linkData={linkData} isLoading={isLoading} />}
+            {linkData?.template === 'template_3' && <WebTemplate3 linkData={linkData} isLoading={isLoading} />}
         </section>
     );
 };

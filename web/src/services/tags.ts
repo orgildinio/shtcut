@@ -5,5 +5,6 @@ export const linkTag = 'link-tag';
 export const linkBio = 'link-bio';
 export const domainTag = 'domain-tag';
 export const members = 'member-invite';
+export const qrCode = 'qr-code';
 
 export default [loggedInUserTag, workspaceTag, linkTag];

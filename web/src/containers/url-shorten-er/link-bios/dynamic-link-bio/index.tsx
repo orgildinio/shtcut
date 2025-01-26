@@ -1,26 +1,21 @@
 import LinkBioDynamicComponent from '@shtcut/components/ui/shorten-er/link-bios/dynamic-link-bio';
-import { useLinkBios } from '@shtcut/hooks/link-bio';
+import { useGetLink } from '@shtcut/hooks/get-link';
 import { useParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 
 const LinkBioDynamicContainer = () => {
-    const { linkBioActions, linkBiosState } = useLinkBios({ callLinkbio: true });
+    const { linkActions, linkState } = useGetLink();
     const params = useParams();
     const { slug } = params;
+    console.log('slug::', slug);
 
     useEffect(() => {
         if (slug) {
-            linkBioActions.getLinkBio({ slug });
+            linkActions.getLink({ slug });
         }
-    }, [slug, linkBioActions.getLinkBio]);
+    }, [slug, linkActions.getLink]);
 
-
-    return (
-        <LinkBioDynamicComponent
-            isLoading={linkBiosState?.getLinkBioLoading}
-            linkBioData={linkBiosState.getLinkBioData}
-        />
-    );
+    return <LinkBioDynamicComponent isLoading={linkState?.isLoading} linkData={linkState.getLinkData} />;
 };
 
 export default LinkBioDynamicContainer;

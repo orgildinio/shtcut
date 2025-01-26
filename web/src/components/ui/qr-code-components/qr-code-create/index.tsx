@@ -1,4 +1,4 @@
-import { Button, Modal, Tabs, TabsContent, TabsList, TabsTrigger } from '@shtcut-ui/react';
+import { Button, Modal, Tabs, TabsContent, TabsList, TabsTrigger, toast } from '@shtcut-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { QrCodeInterface } from '@shtcut/types/types';
 import Image from 'next/image';
@@ -9,19 +9,24 @@ import { resetState } from '@shtcut/redux/slices/qr-code';
 import MultiLinksComponent from '../multi-link-components';
 import PdfQrCodeComponent from '../pdf-qr-code';
 import VCardComponent from '../vcard-component';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import FrameComponents from '../frames-component';
 import WebsiteComponent from '../website-component';
 import PreviewPhone from '../../../dashboard/preview-phone';
 import { useForm } from 'react-hook-form';
 import useGeneralState from '@shtcut/hooks/general-state';
 import useQrCodeState from '@shtcut/hooks/qrcode/index.';
-import { resetGeneralState } from '@shtcut/redux/slices/selects';
+import { resetGeneralState, setUrl } from '@shtcut/redux/slices/selects';
 import { useLinksManager } from '@shtcut/hooks/use-links-manager';
 import { useAppDispatch } from '@shtcut/redux/store';
 import BackButton from '@shtcut/components/back-btn';
+import { useQrCode } from '@shtcut/hooks/auth/qr-code';
+import { handleError } from '@shtcut/_shared';
+import { LoadingButton } from '@shtcut/components/_shared/loading-button';
 
 const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => {
+    const params = useParams();
+
     const dispatch = useAppDispatch();
     const {
         step,
@@ -49,138 +54,186 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     const initialTab = tabParams ? (tabParams as string) : 'website';
     const [switchTab, setSwitchTab] = useState<string>(initialTab);
     const qrCodeRef = useRef(null);
-
-    const {
-        register,
-        handleSubmit,
-        formState: { errors, isValid },
-        watch
-    } = useForm({
+    const { qrActions, qrState } = useQrCode({ call: true });
+    const { workspace } = params;
+    const { register, handleSubmit, watch } = useForm({
         mode: 'onChange',
         defaultValues: {
             url: ''
         }
     });
-    const urlValue = watch('url');
-
-    const handleTabChange = (tabs: string) => {
-        setSwitchTab(tabs);
-        // dispatch(resetState());
-        // dispatch(resetGeneralState());
-    };
     const generalReset = () => {
         dispatch(resetState());
         dispatch(resetGeneralState());
     };
-    const handleSave = () => {
-        // setSaveModal(true);
-        //website
-        const qrCodeData = {
-            url: urlValue,
-            selectedFrame: state?.selectedFrame,
+    const urlValue = watch('url');
+    const handleTabChange = (tabs: string) => {
+        setSwitchTab(tabs);
+        generalReset();
+    };
+    const handleClose = () => {
+        setSaveModal(false);
+        router.push(`/url/${workspace}/qr-codes`);
+    };
+
+    const handleSave = async () => {
+        const commonQrCodeData = {
             colors: {
                 presetColor,
-                qrCodeBorderColor: borderColor,
+                borderColor: borderColor,
                 background: bgColor
             },
-            logo: state?.logo,
-            title: state?.title,
+            frame: state?.selectedFrame,
             qrStyle: state?.qrStyle,
-            eyeRadius: state?.eyeRadius
+            eyeRadius: state?.eyeRadius,
+            logo: state?.logo,
+            name: state?.title
         };
-        //multi link
-        // const payload = {
-        //     title,
-        //     description,
-        //     profileImage,
-        //     links: linkState?.links,
-        //     bgColor,
-        //     socialMedia: socialMediaLinks,
-        //     template: {
-        //         template: activeTemplateString,
-        //         presetColor,
-        //         btnColor
-        //     },
-        // qrCode: {
-        //     colors: {
-        //         presetColor: state?.presetColor,
-        //         btnColor,
-        //         background: bgColor,
-        //         borderColor
-        //     },
-        //     frame: state?.selectedFrame,
-        //     qrStyle: state?.qrStyle,
-        //     eyeRadius: state?.eyeRadius,
-        //     logo: state?.logo,
-        //     name: state?.title
-        // }
-        // };
-
-        // console.log('payload', payload);
-        // vcard
-        // const payload = {
-        //     title,
-        //     description,
-        //     profileImage,
-        //     contacts: {
-        //         phone: contactInfo.phoneNumber,
-        //         email: contactInfo.email,
-        //         website: contactInfo.websiteUrl
-        //     },
-        //     address: {
-        //         street: contactInfo.streetAddress,
-        //         country: contactInfo.country,
-        //         city: contactInfo.city,
-        //         zipCode: contactInfo.zipCode,
-        //         state: contactInfo.state
-        //     },
-        //     company: companyInfo,
-        //     socialMedia: socialMediaLinks,
-        //     bgColor,
-        //     qrCode: {
-        //         colors: {
-        //             presetColor: state?.presetColor,
-        //             btnColor,
-        //             background: bgColor,
-        //             borderColor
-        //         },
-        //         frame: state?.selectedFrame,
-        //         qrStyle: state?.qrStyle,
-        //         eyeRadius: state?.eyeRadius,
-        //         logo: state?.logo,
-        //         name: state?.title
-        //     },
-        //     template: {
-        //         template: activeTemplateString,
-        //         presetColor,
-        //         btnColor
-        //     }
-        // };
-        // console.log('payload', payload);
-
-        //pdf
-        const payload = {
+        const webPayload = {
+            type: 'website',
+            bgColor,
+            url: urlValue,
+            qrCode: commonQrCodeData
+        };
+        const multiLinkPayload = {
+            type: 'multi-link',
+            title,
+            description,
+            profileImage,
+            links: linkState?.links,
+            bgColor,
+            socialMedia: socialMediaLinks,
+            template: {
+                template: activeTemplateString,
+                presetColor,
+                btnColor
+            },
+            qrCode: commonQrCodeData
+        };
+        const vCardPayload = {
+            type: 'vcard',
+            title,
+            description,
+            profileImage,
+            contacts: {
+                phone: contactInfo.phoneNumber,
+                email: contactInfo.email,
+                website: contactInfo.websiteUrl
+            },
+            address: {
+                street: contactInfo.streetAddress,
+                country: contactInfo.country,
+                city: contactInfo.city,
+                zipCode: contactInfo.zipCode,
+                state: contactInfo.state
+            },
+            company: companyInfo,
+            socialMedia: socialMediaLinks,
+            bgColor,
+            qrCode: commonQrCodeData,
+            template: {
+                template: activeTemplateString,
+                presetColor,
+                btnColor
+            }
+        };
+        const pdfPayload = {
             type: 'pdf',
             title,
             description,
             profileImage,
             file: fileInfo,
             bgColor,
-            qrCode: {
-                colors: {
-                    presetColor: state?.presetColor,
-                    btnColor,
-                    background: bgColor,
-                    borderColor
-                },
-                frame: state?.selectedFrame,
-                qrStyle: state?.qrStyle,
-                eyeRadius: state?.eyeRadius,
-                logo: state?.logo,
-                name: state?.title
-            }
+            qrCode: commonQrCodeData
         };
-        console.log('payload', payload);
+        let payload;
+
+        // Dynamically select the payload based on the switchTab value
+        switch (switchTab) {
+            case 'website':
+                payload = webPayload;
+                break;
+            case 'multi':
+                payload = multiLinkPayload;
+                break;
+            case 'vCard':
+                payload = vCardPayload;
+                break;
+            case 'pdf':
+                payload = pdfPayload;
+                break;
+            default:
+                console.error('Invalid tab selected');
+                return;
+        }
+        if (step === 1) {
+            if (switchTab === 'website' && !urlValue) {
+                return toast({
+                    variant: 'destructive',
+                    title: 'Missing URL',
+                    description: 'Please provide a URL before proceeding.'
+                });
+            }
+
+            if (switchTab !== 'website' && !title) {
+                return toast({
+                    variant: 'destructive',
+                    title: 'Missing Title',
+                    description: 'Please provide a title before proceeding.'
+                });
+            }
+
+            if (switchTab === 'multi') {
+                const hasValidLink = linkState?.links?.every(
+                    (link) => link.label.trim() !== '' && link.url.trim() !== ''
+                );
+                if (!hasValidLink) {
+                    return toast({
+                        variant: 'destructive',
+                        title: 'Invalid Links',
+                        description: 'Please ensure all links have a title and URL filled in.'
+                    });
+                }
+            }
+
+            if (switchTab === 'pdf' && !fileInfo) {
+                return toast({
+                    variant: 'destructive',
+                    title: 'No File',
+                    description: 'Please upload a file before proceeding.'
+                });
+            }
+
+            // Proceed to the next step
+            handleNextStep();
+            return;
+        }
+        if (step === 2) {
+            handleNextStep();
+            return;
+        }
+
+        if (step === 3) {
+            qrActions.setLoadingState('creating', true);
+            console.log('payload', payload);
+            try {
+                const res = await qrActions.createqrCode({
+                    payload,
+                    options: {
+                        successMessage: 'Qrcodes successfully created! 🚀'
+                    }
+                });
+                console.log('res', res);
+                const newUrl = switchTab === 'website' ? urlValue : `https://localhost/qr-code/${''}`;
+                generalReset();
+                dispatch(setUrl(newUrl));
+                setSaveModal(true);
+            } catch (error) {
+                handleError({ error });
+            } finally {
+                qrActions.setLoadingState('creating', false);
+            }
+        }
     };
 
     const tabData = [
@@ -217,6 +270,9 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     const onSubmit = (data: { url: string }) => {
         console.log('Title:', data.url);
     };
+    console.log('switchTab', switchTab);
+
+    console.log('step', step);
 
     return (
         <div className=" ">
@@ -234,20 +290,14 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                         </Button>
                     )}
 
-                    <Button
-                        onClick={() => {
-                            if (step && Number(step) > 2) {
-                                handleSave();
-                            } else if (handleNextStep) {
-                                handleNextStep();
-                                handleSave();
-                            }
-                        }}
+                    <LoadingButton
+                        loading={qrState.isLoadingState}
+                        onClick={handleSave}
                         type={step && Number(step) > 2 ? 'submit' : 'submit'}
                         className="bg-primary-0 flex justify-center w-28 h-8 text-xs rounded items-center gap-x-2"
                     >
                         {step && Number(step) > 2 ? 'Save' : ' Next'}
-                    </Button>
+                    </LoadingButton>
                 </div>
             </div>
             <div className="flex mt-[22px] gap-7">
@@ -311,12 +361,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                     <PreviewPhone switchTab={switchTab} links={linkState?.links} selectedTab={Number(selectedTab)} />
                 </div>
             </div>
-            <Modal
-                setShowModal={setSaveModal}
-                showModel={saveModal}
-                onClose={() => setSaveModal(false)}
-                className=" bg-gray-50  p-4"
-            >
+            <Modal setShowModal={setSaveModal} showModel={saveModal} onClose={handleClose} className=" bg-gray-50  p-4">
                 <div className="flex flex-col gap-4 items-center">
                     <div className="flex flex-col items-center gap-2">
                         {state?.logo ? (
@@ -328,7 +373,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                         <FrameComponents />
                     </div>
                     <div className="flex mt-10 items-center w-full gap-4">
-                        <Button variant={'outline'} className="w-full h-8 text-xs" onClick={() => setSaveModal(false)}>
+                        <Button variant={'outline'} className="w-full h-8 text-xs" onClick={handleClose}>
                             Cancel
                         </Button>
                         <DownloadBtn qrCodeRef={qrCodeRef} />

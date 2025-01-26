@@ -12,7 +12,7 @@ const SettingContainer = () => {
         findAllTags,
         deleteTagResponse
     } = useTags({
-        callTags: true
+        call: true
     });
 
     return (

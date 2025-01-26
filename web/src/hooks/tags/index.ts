@@ -7,20 +7,11 @@ import {
     useLazyFindAllTagsQuery,
     useUpdateTagsMutation
 } from '@shtcut/services/tags/index';
-import { CreateTagPayload, TagResponse, TagsApiResponse, TagsApiResponseObject } from '@shtcut/types/tags';
+import { CreateTagPayload, TagsApiResponse, TagsApiResponseObject } from '@shtcut/types/tags';
 import { useEffect, useState } from 'react';
 import { usePagination } from '../usePagination';
 import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
-
-interface UseTagsProps {
-    id?: string;
-    key?: string;
-    callTags?: boolean;
-    search?: string;
-    filter?: Dict;
-    url?: string;
-    all?: boolean;
-}
+import { UseProps } from '@shtcut/types/types';
 
 interface UseTagsReturnsType {
     createTags: (payload: CreateTagPayload) => Promise<TagsApiResponseObject>;
@@ -36,8 +27,8 @@ interface UseTagsReturnsType {
     updateTagsResponse: TagsApiResponse | undefined;
 }
 
-export const useTags = (props: UseTagsProps): UseTagsReturnsType => {
-    const { callTags = false, search = '', filter, all } = props;
+export const useTags = (props: UseProps): UseTagsReturnsType => {
+    const { call = false, search = '', filter, all } = props;
     const { pagination } = usePagination();
     const [createTagsTrigger, { data: createTagsResponse }] = useCreateTagsMutation();
     const [findAllTags, { isLoading, data: findAllTagsResponse }] = useLazyFindAllTagsQuery();
@@ -72,13 +63,13 @@ export const useTags = (props: UseTagsProps): UseTagsReturnsType => {
     };
 
     useEffect(() => {
-        if (callTags && !loaded) {
+        if (call && !loaded) {
             findAllTags({
                 ...params
             });
             setLoaded(true);
         }
-    }, [callTags, debouncedSearch, filter, findAllTags, loaded]);
+    }, [call, debouncedSearch, filter, findAllTags, loaded]);
 
     return {
         isLoading,

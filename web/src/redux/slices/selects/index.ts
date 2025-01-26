@@ -1,23 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@shtcut/redux/store';
-import { CompanyInfo, ContactInfo } from '@shtcut/types/types';
+import { CompanyInfo, ContactInfo, GeneralState } from '@shtcut/types/types';
 
-interface GeneralState {
-    title: string;
-    description: string;
-    image: string;
-    step: number;
-    template: string | undefined;
-    bgColor: string;
-    presetColor: string;
-    btnColor: string;
-    selectedTab: number;
-    borderColor: string | undefined;
-    socialLinks: { [key: string]: string };
-    contactInfo: ContactInfo;
-    company: CompanyInfo;
-    file: File | null;
-}
 type UpdateFieldPayload = {
     key: keyof ContactInfo | keyof CompanyInfo;
     value: string;
@@ -27,6 +11,7 @@ const initialState: GeneralState = {
     title: '',
     description: '',
     image: '',
+    url: '',
     step: 1,
     template: 'template_1',
     bgColor: '#ffffff',
@@ -68,7 +53,9 @@ const generalSelectSlice = createSlice({
         setImage: (state, action: PayloadAction<string>) => {
             state.image = action.payload;
         },
-
+        setUrl: (state, action: PayloadAction<string>) => {
+            state.url = action.payload;
+        },
         setStep: (state, action: PayloadAction<number>) => {
             state.step = action.payload;
         },
@@ -147,7 +134,8 @@ export const {
     updateContactField,
     setCompany,
     updateCompanyField,
-    setFile
+    setFile,
+    setUrl
 } = generalSelectSlice.actions;
 
 export default generalSelectSlice.reducer;
@@ -161,6 +149,7 @@ export const generalStateSelectors = {
     setDescription: createSelector('description'),
     selectStep: createSelector('step'),
     selectImage: createSelector('image'),
+    selectUrl: createSelector('url'),
     selectSelectedTemplate: createSelector('template'),
     selectBgColor: createSelector('bgColor'),
     selectPresetColor: createSelector<string>('presetColor'),

@@ -40,6 +40,7 @@ const useGeneralState = () => {
         name: ''
     };
     const fileInfo = useAppSelector(generalStateSelectors.selectFile);
+    const urlScan = useAppSelector(generalStateSelectors.selectUrl);
 
     const handleNextStep = () => {
         dispatch(nextStep());
@@ -67,6 +68,7 @@ const useGeneralState = () => {
         contactInfo,
         companyInfo,
         fileInfo,
+        urlScan,
         handleNextStep,
         handlePrevStep
     };

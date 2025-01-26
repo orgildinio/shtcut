@@ -1,4 +1,3 @@
-import { LinkBioDataResponse } from '@shtcut/types/link-bio';
 import React from 'react';
 import SkeletonLoaderWeb from '../components/skeleton-loader';
 import Image from 'next/image';
@@ -7,13 +6,7 @@ import { Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@shtcut-ui/react
 import InfoField from '../components/info-field';
 import TemplateCard from '../components/template-card';
 
-const WebTemplate3 = ({
-    linkBioData,
-    isLoading
-}: {
-    linkBioData: LinkBioDataResponse | undefined;
-    isLoading: boolean;
-}) => {
+const WebTemplate3 = ({ linkData, isLoading }: { linkData: any | undefined; isLoading: boolean }) => {
     return (
         <section>
             {isLoading ? (
@@ -23,7 +16,7 @@ const WebTemplate3 = ({
                     <section
                         className="h-[372px] relative"
                         style={{
-                            backgroundImage: linkBioData?.profileImage ? `url(${linkBioData.profileImage})` : undefined,
+                            backgroundImage: linkData?.profileImage ? `url(${linkData.profileImage})` : undefined,
                             backgroundSize: 'contain',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat'
@@ -32,10 +25,10 @@ const WebTemplate3 = ({
                         <div
                             className="absolute inset-0 bg-opacity-40"
                             style={{
-                                backgroundColor: linkBioData?.colors?.background
-                                    ? linkBioData?.colors?.background === '#ffffff'
+                                backgroundColor: linkData?.colors?.background
+                                    ? linkData?.colors?.background === '#ffffff'
                                         ? 'rgba(0, 0, 0, 0.3)'
-                                        : linkBioData?.colors?.background
+                                        : linkData?.colors?.background
                                     : 'rgba(0, 0, 0, 0.3)'
                             }}
                         />
@@ -44,13 +37,13 @@ const WebTemplate3 = ({
                                 className="rounded-full w-fit mx-auto
                          h-fit  p-3 shadow-none border items-center flex justify-center   m-0 mb-0 mt-0"
                             >
-                                {linkBioData?.profileImage ? (
+                                {linkData?.profileImage ? (
                                     <Image
-                                        src={linkBioData?.profileImage}
+                                        src={linkData?.profileImage}
                                         width={130}
                                         height={130}
                                         className="rounded-full"
-                                        alt={linkBioData.name}
+                                        alt={linkData.name}
                                     />
                                 ) : (
                                     <User size={130} />
@@ -60,12 +53,12 @@ const WebTemplate3 = ({
                     </section>
                     <Card
                         className="w-[508px] relative  mx-auto pb-10 "
-                        style={{ backgroundColor: linkBioData?.colors?.background }}
+                        style={{ backgroundColor: linkData?.colors?.background }}
                     >
                         <div className=" ">
                             <section className="pt-14">
-                                <h1 className="font-semibold text-center  ">{linkBioData?.name}</h1>
-                                <p className=" text-center  ">{linkBioData?.description}</p>
+                                <h1 className="font-semibold text-center  ">{linkData?.name}</h1>
+                                <p className=" text-center  ">{linkData?.description}</p>
                             </section>
                         </div>{' '}
                         <section className="pt-4 ">
@@ -99,26 +92,26 @@ const WebTemplate3 = ({
                                             <section className="space-y-4">
                                                 <InfoField
                                                     label="Mobile"
-                                                    value={linkBioData?.contacts?.phone}
-                                                    icon={<Phone size={16} color={linkBioData?.colors?.presetColor} />}
+                                                    value={linkData?.contacts?.phone}
+                                                    icon={<Phone size={16} color={linkData?.colors?.presetColor} />}
                                                 />
                                                 <InfoField
                                                     label="Email"
-                                                    value={linkBioData?.contacts?.email}
-                                                    icon={<Mail size={16} color={linkBioData?.colors?.presetColor} />}
+                                                    value={linkData?.contacts?.email}
+                                                    icon={<Mail size={16} color={linkData?.colors?.presetColor} />}
                                                 />
                                                 <InfoField
                                                     label="Website"
-                                                    value={linkBioData?.contacts?.website}
-                                                    icon={<Globe size={16} color={linkBioData?.colors?.presetColor} />}
+                                                    value={linkData?.contacts?.website}
+                                                    icon={<Globe size={16} color={linkData?.colors?.presetColor} />}
                                                     hasDivider={false}
                                                 />
                                             </section>
                                         </TabsContent>
                                         <TabsContent value="links" className="w-full shadow-none border-none">
                                             <section className="w-full p-4 flex flex-col gap-4">
-                                                {linkBioData &&
-                                                    linkBioData?.links.map((link) => (
+                                                {linkData &&
+                                                    linkData?.links.map((link) => (
                                                         <a
                                                             href={link.url}
                                                             className="flex w-full"
@@ -126,10 +119,10 @@ const WebTemplate3 = ({
                                                             key={link.id}
                                                         >
                                                             <TemplateCard
-                                                                color={linkBioData?.colors?.btnColor ?? ''}
+                                                                color={linkData?.colors?.btnColor ?? ''}
                                                                 label={link?.label}
                                                                 image={link.image ?? ''}
-                                                                presetColor={linkBioData?.colors?.presetColor}
+                                                                presetColor={linkData?.colors?.presetColor}
                                                             />
                                                         </a>
                                                     ))}
@@ -139,29 +132,29 @@ const WebTemplate3 = ({
                                             <section className="space-y-4">
                                                 <InfoField
                                                     label="Street"
-                                                    value={linkBioData?.address?.street}
-                                                    color={linkBioData?.colors?.presetColor}
+                                                    value={linkData?.address?.street}
+                                                    color={linkData?.colors?.presetColor}
                                                 />
                                                 <InfoField
                                                     label="State"
-                                                    value={linkBioData?.address?.state}
-                                                    color={linkBioData?.colors?.presetColor}
+                                                    value={linkData?.address?.state}
+                                                    color={linkData?.colors?.presetColor}
                                                 />
                                                 <InfoField
                                                     label="Country"
-                                                    value={linkBioData?.address?.country}
-                                                    color={linkBioData?.colors?.presetColor}
+                                                    value={linkData?.address?.country}
+                                                    color={linkData?.colors?.presetColor}
                                                 />
                                                 <InfoField
                                                     label="City"
-                                                    value={linkBioData?.address?.city}
-                                                    color={linkBioData?.colors?.presetColor}
+                                                    value={linkData?.address?.city}
+                                                    color={linkData?.colors?.presetColor}
                                                 />
                                                 <InfoField
                                                     label="Zipcode"
-                                                    value={linkBioData?.address?.zipCode}
+                                                    value={linkData?.address?.zipCode}
                                                     hasDivider={false}
-                                                    color={linkBioData?.colors?.presetColor}
+                                                    color={linkData?.colors?.presetColor}
                                                 />
                                             </section>
                                         </TabsContent>

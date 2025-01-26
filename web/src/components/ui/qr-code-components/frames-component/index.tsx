@@ -4,6 +4,7 @@ import useQrCodeState from '@shtcut/hooks/qrcode/index.';
 
 const FrameComponents = () => {
     const { state } = useQrCodeState();
+
     const FrameComponents = () => {
         switch (state?.selectedFrame) {
             case 1:

@@ -1,19 +1,12 @@
 import { Link, MapPin, User, UserRound } from 'lucide-react';
 import React from 'react';
-import { LinkBioDataResponse } from '@shtcut/types/link-bio';
 import Image from 'next/image';
 import SkeletonLoaderWeb from '../components/skeleton-loader';
 import { Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@shtcut-ui/react';
 import InfoField from '../components/info-field';
 import { Phone, Mail, Globe } from 'lucide-react';
 
-const WebTemplate1 = ({
-    linkBioData,
-    isLoading
-}: {
-    linkBioData: LinkBioDataResponse | undefined;
-    isLoading: boolean;
-}) => {
+const WebTemplate1 = ({ linkData, isLoading }: { linkData: any | undefined; isLoading: boolean }) => {
     return (
         <div>
             {isLoading ? (
@@ -21,15 +14,15 @@ const WebTemplate1 = ({
             ) : (
                 <>
                     {' '}
-                    <section className=" h-[372px] " style={{ backgroundColor: linkBioData?.colors.presetColor }}>
+                    <section className=" h-[372px] " style={{ backgroundColor: linkData?.colors.presetColor }}>
                         <div className="flex justify-center gap-y-2 flex-col items-center pt-8">
-                            {linkBioData?.profileImage ? (
+                            {linkData?.profileImage ? (
                                 <Image
-                                    src={linkBioData?.profileImage}
+                                    src={linkData?.profileImage}
                                     width={130}
                                     height={130}
                                     className="rounded-full"
-                                    alt={linkBioData.name}
+                                    alt={linkData.name}
                                 />
                             ) : (
                                 <User size={130} />
@@ -69,17 +62,17 @@ const WebTemplate1 = ({
                                         <section className="space-y-4">
                                             <InfoField
                                                 label="Mobile"
-                                                value={linkBioData?.contacts?.phone}
+                                                value={linkData?.contacts?.phone}
                                                 icon={<Phone size={16} />}
                                             />
                                             <InfoField
                                                 label="Email"
-                                                value={linkBioData?.contacts?.email}
+                                                value={linkData?.contacts?.email}
                                                 icon={<Mail size={16} />}
                                             />
                                             <InfoField
                                                 label="Website"
-                                                value={linkBioData?.contacts?.website}
+                                                value={linkData?.contacts?.website}
                                                 icon={<Globe size={16} />}
                                                 hasDivider={false}
                                             />
@@ -87,14 +80,14 @@ const WebTemplate1 = ({
                                     </TabsContent>
                                     <TabsContent value="links" className="w-full shadow-none border-none">
                                         <section>
-                                            {linkBioData && linkBioData?.links?.length > 0 ? (
+                                            {linkData && linkData?.links?.length > 0 ? (
                                                 <section className="w-full p-4 flex flex-col gap-4">
-                                                    {linkBioData &&
-                                                        linkBioData?.links.map((link, index) => (
+                                                    {linkData &&
+                                                        linkData?.links.map((link, index) => (
                                                             <a
                                                                 href={link.url}
                                                                 className={`flex w-full gap-4  ${
-                                                                    index !== linkBioData.links.length - 1
+                                                                    index !== linkData.links.length - 1
                                                                         ? 'border-b '
                                                                         : ''
                                                                 } py-3`}
@@ -102,10 +95,10 @@ const WebTemplate1 = ({
                                                                 key={link.id}
                                                             >
                                                                 <section>
-                                                                    {linkBioData?.profileImage ? (
+                                                                    {linkData?.profileImage ? (
                                                                         <Image
-                                                                            src={linkBioData?.profileImage ?? ''}
-                                                                            alt={linkBioData?.title}
+                                                                            src={linkData?.profileImage ?? ''}
+                                                                            alt={linkData?.title}
                                                                             width={24}
                                                                             height={24}
                                                                             className="rounded-md"
@@ -114,7 +107,7 @@ const WebTemplate1 = ({
                                                                         <Link size={15} />
                                                                     )}
                                                                 </section>
-                                                                <p className="text-sm ">{linkBioData?.title}</p>
+                                                                <p className="text-sm ">{linkData?.title}</p>
                                                             </a>
                                                         ))}
                                                 </section>
@@ -127,13 +120,13 @@ const WebTemplate1 = ({
                                     </TabsContent>
                                     <TabsContent value="address" className="p-4">
                                         <section className="space-y-4">
-                                            <InfoField label="Street" value={linkBioData?.address?.street} />
-                                            <InfoField label="State" value={linkBioData?.address?.state} />
-                                            <InfoField label="Country" value={linkBioData?.address?.country} />
-                                            <InfoField label="City" value={linkBioData?.address?.city} />
+                                            <InfoField label="Street" value={linkData?.address?.street} />
+                                            <InfoField label="State" value={linkData?.address?.state} />
+                                            <InfoField label="Country" value={linkData?.address?.country} />
+                                            <InfoField label="City" value={linkData?.address?.city} />
                                             <InfoField
                                                 label="Zipcode"
-                                                value={linkBioData?.address?.zipCode}
+                                                value={linkData?.address?.zipCode}
                                                 hasDivider={false}
                                             />
                                         </section>

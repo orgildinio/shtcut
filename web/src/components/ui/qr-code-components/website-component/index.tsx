@@ -24,6 +24,7 @@ const WebsiteComponent = ({ step, switchTab, register }: QrCodeInterface) => {
                                     message: 'url link bio cannot exceed 50 characters'
                                 }
                             })}
+                            type="url"
                             placeholder="https//shtcut/help/example/what-is-shtcut"
                         />
                     </div>
