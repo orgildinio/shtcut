@@ -1,4 +1,3 @@
-import { LinkBioDataResponse } from '@shtcut/types/link-bio';
 import React from 'react';
 import WebCardPreview from '../components/web-card-preview';
 import SkeletonLoaderWeb from '../components/skeleton-loader';
@@ -6,13 +5,7 @@ import Image from 'next/image';
 import { User } from 'lucide-react';
 import { Card } from '@shtcut-ui/react';
 
-const WebTemplate2 = ({
-    linkBioData,
-    isLoading
-}: {
-    linkBioData: LinkBioDataResponse | undefined;
-    isLoading: boolean;
-}) => {
+const WebTemplate2 = ({ linkData, isLoading }: { linkData: any | undefined; isLoading: boolean }) => {
     return (
         <section>
             {isLoading ? (
@@ -22,7 +15,7 @@ const WebTemplate2 = ({
                     <section
                         className="h-[372px] relative"
                         style={{
-                            backgroundImage: linkBioData?.profileImage ? `url(${linkBioData.profileImage})` : undefined,
+                            backgroundImage: linkData?.profileImage ? `url(${linkData.profileImage})` : undefined,
                             backgroundSize: 'contain',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat'
@@ -34,13 +27,13 @@ const WebTemplate2 = ({
                                 className="rounded-full w-fit mx-auto
                          h-fit  p-3 shadow-none border items-center flex justify-center   m-0 mb-0 mt-0"
                             >
-                                {linkBioData?.profileImage ? (
+                                {linkData?.profileImage ? (
                                     <Image
-                                        src={linkBioData?.profileImage}
+                                        src={linkData?.profileImage}
                                         width={130}
                                         height={130}
                                         className="rounded-full"
-                                        alt={linkBioData.name}
+                                        alt={linkData.name}
                                     />
                                 ) : (
                                     <User size={130} />
@@ -48,15 +41,18 @@ const WebTemplate2 = ({
                             </Card>
                         </section>
                     </section>
-                    <Card className="w-[508px] relative  mx-auto rounded-t-none" style={{backgroundColor:linkBioData?.colors?.background}}>
+                    <Card
+                        className="w-[508px] relative  mx-auto rounded-t-none"
+                        style={{ backgroundColor: linkData?.colors?.background }}
+                    >
                         <div className=" ">
                             <section className="pt-14">
-                                <h1 className="font-semibold text-center  ">{linkBioData?.name}</h1>
-                                <p className=" text-center  ">{linkBioData?.description}</p>
+                                <h1 className="font-semibold text-center  ">{linkData?.name}</h1>
+                                <p className=" text-center  ">{linkData?.description}</p>
                             </section>
                         </div>{' '}
                         <section className="pt-4 ">
-                            <WebCardPreview linkBioData={linkBioData} />
+                            <WebCardPreview linkData={linkData} />
                         </section>
                     </Card>{' '}
                 </>

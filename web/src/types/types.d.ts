@@ -330,3 +330,31 @@ type RedirectUrlType = {
     qrCode: string;
     id: string;
 };
+
+interface UseProps {
+    id?: string;
+    key?: string;
+    call?: boolean;
+    search?: string;
+    filter?: Dict;
+    url?: string;
+    all?: boolean;
+}
+
+interface GeneralState {
+    title: string;
+    description: string;
+    image: string;
+    step: number;
+    template: string | undefined;
+    bgColor: string;
+    presetColor: string;
+    btnColor: string;
+    selectedTab: number;
+    borderColor: string | undefined;
+    socialLinks: { [key: string]: string };
+    contactInfo: ContactInfo;
+    company: CompanyInfo;
+    file: File | null;
+    url: string;
+}

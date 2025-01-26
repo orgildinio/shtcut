@@ -16,7 +16,7 @@ const CreateTags = ({
 }) => {
     const { toast } = useToast();
     const { createTags, updateTags, isLoadingState, createTagsResponse, setLoadingState } = useTags({
-        callTags: true
+        call: true
     });
 
     const tagsColor = [

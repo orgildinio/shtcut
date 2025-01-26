@@ -58,7 +58,7 @@ const LinkComponent = ({
     handleCloseLoading,
     params
 }: LinkComponentType) => {
-    const { findAllTagsResponse } = useTags({ callTags: true });
+    const { findAllTagsResponse } = useTags({ call: true });
     const [updateLinksArchived] = useUpdateArchivedLinkMutation();
     const dispatch = useAppDispatch();
     const qrCodeRef = useRef(null);
@@ -212,7 +212,7 @@ const LinkComponent = ({
         if (tags && tags.length > 0) {
             payload.tags = tags;
         }
-    
+
         try {
             if (isUpdating) {
                 await updateLink({ payload, id: singleLink?._id });

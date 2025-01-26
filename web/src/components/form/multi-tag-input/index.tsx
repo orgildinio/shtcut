@@ -40,7 +40,7 @@ const MultiTagsInput = ({
     watchLink,
     singleLink
 }: MultiTagsInputProps) => {
-    const { createTags, isLoadingState, setLoadingState } = useTags({ callTags: true });
+    const { createTags, isLoadingState, setLoadingState } = useTags({ call: true });
     const isEdit = !!singleLink;
     const [tags, setTags] = useState<{ _id: string; text: string; color: string }[]>(
         isEdit ? singleLink?.tags?.map((tag) => ({ _id: tag?._id, text: tag.name, color: getRandomColor() })) : []

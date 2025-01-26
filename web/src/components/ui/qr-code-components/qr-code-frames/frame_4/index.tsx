@@ -5,7 +5,7 @@ import React from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
 const Frame_4 = () => {
-    const { presetColorString, tabParams, borderColor } = useGeneralState();
+    const { presetColorString, tabParams, borderColor, urlScan } = useGeneralState();
     const { state } = useQrCodeState();
 
     return (
@@ -46,7 +46,7 @@ const Frame_4 = () => {
                 <div className="absolute ">
                     <QRCode
                         id="shtcut-qrcode"
-                        value={''}
+                        value={urlScan as string}
                         removeQrCodeBehindLogo={true}
                         ecLevel="L"
                         fgColor={tabParams !== 'website' ? state?.presetColor : presetColorString}

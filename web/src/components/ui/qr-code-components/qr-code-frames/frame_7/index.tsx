@@ -4,14 +4,14 @@ import { EyeRadiusType } from '@shtcut/types/types';
 import React from 'react';
 import { QRCode } from 'react-qrcode-logo';
 const Frame_7 = () => {
-    const { presetColorString, tabParams, borderColor } = useGeneralState();
+    const { presetColorString, tabParams, borderColor, urlScan } = useGeneralState();
     const { state } = useQrCodeState();
     return (
         <div className="w-full flex items-center justify-center h-full flex-1 flex-col">
             <div className={` border-[3.2px]  w-fit rounded-[6px]`} style={{ borderColor: borderColor }}>
                 <QRCode
                     id="shtcut-qrcode"
-                    value={''}
+                    value={urlScan as string}
                     removeQrCodeBehindLogo={true}
                     ecLevel="L"
                     bgColor="white"

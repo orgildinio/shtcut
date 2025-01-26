@@ -84,7 +84,7 @@ const LinkListedComponent = ({
                             <a
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                href={`${data?.domain?.name?.startsWith('http') ? '' : 'http://'}localhost:3000/${data?.alias}`}
+                                href={`${data?.domain?.name?.startsWith('http') ? '' : 'http://'}${process.env.NEXT_STAGING_URL}/${data?.alias}`}
                                 className="text-xs text-primary-0 font-normal"
                             >
                                 {data?.domain.name || data?.domain?.slug}/{data?.alias}
