@@ -163,7 +163,7 @@ QrCodeSchema.virtual('id').get(function () {
 QrCodeSchema.statics.config = () => {
   return {
     idToken: 'qr',
-    uniques: ['slug'],
+    uniques: ['title'],
     slugify: 'title',
     fillables: [
       'workspace',
