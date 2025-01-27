@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import lang from 'apps/sht-shtner/lang';
-import { ClientSession } from 'mongodb';
-import { Model } from 'mongoose';
+import { ClientSession, Model } from 'mongoose';
 import {
   AppException,
+  Dict,
   Hit,
   HitDocument,
   IpService,
@@ -40,6 +40,11 @@ export class QrCodeService extends MongoBaseService {
       patch: true,
       remove: true,
     };
+  }
+
+  public createNewObject(obj: Dict, session?: ClientSession): Promise<any> {
+    if (obj.slug) obj.isSlugAvailable = true;
+    return super.createNewObject(obj, session);
   }
 
   public async visit(req: Request, id: string) {
