@@ -23,6 +23,11 @@ export class QrCode {
   @Prop({
     type: String,
   })
+  title: string;
+
+  @Prop({
+    type: String,
+  })
   slug: string;
 
   @Prop({
@@ -168,6 +173,7 @@ QrCodeSchema.statics.config = () => {
       'qrCode',
       'socialMedia',
       'contacts',
+      'title',
       'isSlugAvailable',
       'template',
       'user',
@@ -189,6 +195,7 @@ QrCodeSchema.statics.config = () => {
       'socialMedia',
       'contacts',
       'bgColor',
+      'title',
       'profileImage',
       'url',
       'template',
