@@ -131,6 +131,12 @@ export class QrCode {
 
   @Prop({
     type: Boolean,
+    default: false,
+  })
+  isSlugAvailable: boolean;
+
+  @Prop({
+    type: Boolean,
     default: true,
   })
   active: boolean;
@@ -162,6 +168,7 @@ QrCodeSchema.statics.config = () => {
       'qrCode',
       'socialMedia',
       'contacts',
+      'isSlugAvailable',
       'template',
       'user',
       'bgColor',
@@ -177,6 +184,7 @@ QrCodeSchema.statics.config = () => {
       'link',
       'scanned',
       'type',
+      'isSlugAvailable',
       'qrCode',
       'socialMedia',
       'contacts',
