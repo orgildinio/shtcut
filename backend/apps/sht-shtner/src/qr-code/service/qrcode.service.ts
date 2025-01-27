@@ -47,6 +47,11 @@ export class QrCodeService extends MongoBaseService {
     return super.createNewObject(obj, session);
   }
 
+  public updateObject(id: string, obj: Dict, session?: ClientSession) {
+    if (obj.title) obj.slug = Utils.slugifyText(obj.title);
+    return super.updateObject(id, obj, session);
+  }
+
   public async visit(req: Request, id: string) {
     try {
       const qrCode = await this.model.findOne({ ...Utils.conditionWithDelete({ _id: id }) });
