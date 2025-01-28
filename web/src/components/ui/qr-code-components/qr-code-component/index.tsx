@@ -16,8 +16,6 @@ interface QrCodeCardProps {
 }
 
 const QrCodeCard = ({ id, data, selectedIds, onChange, handleDeleteQrCodeLink }: QrCodeCardProps) => {
-    if (!data) return;
-
     const urlScan = data && data?.type === 'website' ? data?.url : `http://localhost:3000/qr-code/${data?.slug}`;
 
     return (

@@ -2,7 +2,6 @@ import { Button, Modal } from '@shtcut-ui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-
 import Image from 'next/image';
 import QrCodeCard from '../../qr-code-components/qr-code-component';
 import { skeletonRows } from '@shtcut/components/card-skeleton';
