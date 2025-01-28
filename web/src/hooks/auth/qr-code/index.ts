@@ -1,35 +1,37 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePagination } from '../../usePagination';
 import { UseProps } from '@shtcut/types/types';
-import { useCreateQrCodeMutation } from '@shtcut/services/qr-code';
+import {
+    useCreateQrCodeMutation,
+    useDeleteLinkQrCodeMutation,
+    useLazyFindAllQrCodeQuery
+} from '@shtcut/services/qr-code';
+import { QrCodeLinkActions, QrCodeLinkState } from '@shtcut/types/qr-code';
 
 interface UseReturnsType {
-    qrActions: {
-        createqrCode: (payload: any) => Promise<any>;
-        setLoadingState: (key: 'creating' | 'deleting' | 'updating', value: boolean) => void;
-    };
-    qrState: {
-        isLoadingState: boolean;
-        createQrCodeResponse: any;
-    };
+    qrActions: QrCodeLinkActions;
+    qrState: QrCodeLinkState;
 }
 
 export const useQrCode = (props: UseProps): UseReturnsType => {
     const { call = false, search = '', filter, all } = props;
-    const { pagination } = usePagination();
+    const { paginationActions, pagination } = usePagination();
     const [createQrCodeTrigger, { data: createQrCodeResponse }] = useCreateQrCodeMutation();
-
-    const [loaded, setLoaded] = useState(false);
+    const [findAllQrCode, { isLoading, data: findAllQrCodeResponse }] = useLazyFindAllQrCodeQuery();
+    const [deleteQrCodeLink, deleteLinkResponse] = useDeleteLinkQrCodeMutation();
     const [debouncedSearch, setDebouncedSearch] = useState(search);
+    const [loaded, setLoaded] = useState(false);
     const [loading, setLoading] = useState({
         creating: false,
         deleting: false,
         updating: false
     });
+
     const isLoadingState = Object.values(loading).some((state) => state);
     const setLoadingState = (key: keyof typeof loading, value: boolean) => {
         setLoading((prev) => ({ ...prev, [key]: value }));
     };
+
     const params = {
         ...pagination,
         search: debouncedSearch,
@@ -41,14 +43,31 @@ export const useQrCode = (props: UseProps): UseReturnsType => {
         return result;
     };
 
+    useEffect(() => {
+        if (call) {
+            findAllQrCode({
+                ...params
+            });
+            setLoaded(true);
+        }
+    }, [call, debouncedSearch, findAllQrCode, loaded, pagination]);
+
     return {
         qrActions: {
             createqrCode,
-            setLoadingState
+            setLoadingState,
+            paginationActions,
+            deleteQrCodeLink,
+            findAllQrCode
         },
         qrState: {
             isLoadingState,
-            createQrCodeResponse
+            createQrCodeResponse,
+            findAllQrCodeResponse,
+            isLoading,
+            deleteLinkResponse,
+            pagination,
+            params
         }
     };
 };

@@ -125,21 +125,31 @@ export const isValidURL = (url: string) => {
 export const truncate = (input: string, length = 0) =>
     input.length > length ? `${input.substring(0, length)}` : input;
 
-interface HandleErrorProps {
-    error: any;
+interface HandleProps {
+    error?: any;
     defaultMessage?: string;
     title?: string;
+    response?: any;
 }
 
-export const handleError = ({
-    error,
-    defaultMessage = 'Failed. Please try again.',
-    title = 'Error!'
-}: HandleErrorProps) => {
+export const handleError = ({ error, defaultMessage = 'Failed. Please try again.', title = 'Error!' }: HandleProps) => {
     const errorMessage = error?.error?.message || error?.data?.message || defaultMessage;
     toast({
         variant: 'destructive',
         title: title,
         description: errorMessage
+    });
+};
+
+export const handleSuccess = ({
+    response,
+    defaultMessage = 'Operation successful!',
+    title = 'Success!'
+}: HandleProps) => {
+    const successMessage = response?.meta?.message || defaultMessage;
+    toast({
+        variant: 'default',
+        title: title,
+        description: successMessage
     });
 };

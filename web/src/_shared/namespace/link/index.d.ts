@@ -96,6 +96,7 @@ export interface LinkComponentType {
     deleteLink: MutationTrigger<any>;
     createLink: MutationTrigger<any>;
     updateLink: MutationTrigger<any>;
+    deleteManyLinks: MutationTrigger<any>;
     duplicate: any;
     isLoading: boolean;
     deleteLinkResponse: Dict;

@@ -1,4 +1,9 @@
+import { ApiResponse } from '@shtcut/_shared/namespace';
+import { UsePaginationActions, UsePaginationState } from '../pagination';
 import { EyeRadiusType } from '../types';
+import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
+import { Dict } from '@shtcut-ui/react';
+import { LinkParams } from '@shtcut/hooks/link';
 
 // Common QR Code Data Interface
 interface CommonQrCodeData {
@@ -79,3 +84,63 @@ interface PdfPayload extends CommonQrCodeData {
 
 // Union Type for Payload
 export type QrCodePayload = WebsitePayload | MultiLinkPayload | VcardPayload | PdfPayload;
+
+export interface QrCodeLinkActions {
+    createqrCode: (payload: any) => Promise<any>;
+    setLoadingState: (key: 'creating' | 'deleting' | 'updating', value: boolean) => void;
+    paginationActions: UsePaginationActions;
+    deleteQrCodeLink: MutationTrigger<any>;
+    findAllQrCode: any;
+}
+
+export interface QrCodeLinkState {
+    isLoadingState: boolean;
+    createQrCodeResponse: any;
+    findAllQrCodeResponse: ApiResponse<QRCodeDataResponse[]> | undefined;
+    isLoading: boolean;
+    pagination: UsePaginationState;
+    deleteLinkResponse: Dict;
+    params: LinkParams;
+}
+
+type QRCodeType = 'multi-link' | 'website' | 'vcard' | 'pdf';
+export interface QRCodeDataResponse {
+    id: string;
+    publicId: string;
+    slug: string;
+    title: string;
+    type: QRCodeType;
+    name: string;
+    bgColor: string;
+    createdAt: string;
+    updatedAt: string;
+    archived: boolean;
+    active: boolean;
+    enableTracking: boolean;
+    isSlugAvailable: boolean;
+    scanned: boolean;
+    totalScanned: number;
+    qrCode: {
+        colors: {
+            presetColor: string;
+            borderColor: string;
+            background: string;
+        };
+
+        frame: number | null;
+        qrStyle: 'squares' | 'dots' | 'fluid' | undefined;
+        eyeRadius: EyeRadiusType;
+        logo: string | null;
+        name: string | null;
+    };
+    logo?: string;
+    template?: {
+        template: string;
+        presetColor: string;
+        btnColor: string;
+    };
+    socialMedia?: Record<string, string>;
+    url?: string;
+    __v: number;
+    [key: string]: any;
+}

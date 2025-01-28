@@ -56,6 +56,7 @@ const LinkComponent = ({
     pagination,
     paginationActions,
     handleCloseLoading,
+    deleteManyLinks,
     params
 }: LinkComponentType) => {
     const { findAllTagsResponse } = useTags({ call: true });
@@ -75,7 +76,7 @@ const LinkComponent = ({
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(undefined);
     const currentWorkspace = useCurrentWorkSpace();
     const showDropdown = useSelector((state: RootState) => state.ui.showDropdown);
-
+    const [ids, setIds] = useState<string[]>([]);
     const handleDateChange = (date: Date | undefined) => {
         setSelectedDate(date);
     };
@@ -285,6 +286,25 @@ const LinkComponent = ({
             doFind();
         }
     }, [isSuccess, duplicateIsSuccess, createLinkSuccess, updateLinkSuccess, findAllLinks]);
+    const handleDeleteMany = async () => {
+        if (ids) {
+            setLoadingState('deleting', true);
+            try {
+                await deleteManyLinks({
+                    payload: ids,
+                    options: {
+                        successMessage: `Successfully deleted`
+                    }
+                });
+                doFind();
+                setIds([]);
+            } catch (error) {
+                handleError({ error });
+            } finally {
+                setLoadingState('deleting', false);
+            }
+        }
+    };
 
     const handleUpdateLink = (data: LinkNameSpace.Link) => {
         dispatch(toggleDropdown());
@@ -332,7 +352,7 @@ const LinkComponent = ({
             </section>
 
             <LinkDataComponent
-                isLoading={isLoading}
+                isLoading={isLoading || isLoadingState}
                 findAllLinksResponse={findAllLinksResponse}
                 handleNavigate={handleNavigate}
                 toggleSection={toggleSection}
@@ -340,6 +360,9 @@ const LinkComponent = ({
                 search={search}
                 pagination={pagination}
                 paginationActions={paginationActions}
+                setSelectedIds={setIds}
+                selectedIds={ids}
+                handleDeleteMany={handleDeleteMany}
             />
             <Modal
                 showModel={showDropdown}
