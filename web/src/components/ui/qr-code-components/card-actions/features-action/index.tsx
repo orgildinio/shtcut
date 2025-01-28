@@ -7,7 +7,7 @@ import { Trash2 } from 'lucide-react';
 import { BarChart2 } from 'lucide-react';
 import { PencilLine } from 'lucide-react';
 
-const FeatureActions = () => {
+const FeatureActions = ({ handleDeleteQrCodeLink }: { handleDeleteQrCodeLink: () => void }) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -22,7 +22,10 @@ const FeatureActions = () => {
                 <DropdownMenuCheckboxItem className="p-2 hover:text-primary-0 flex text-xs items-center gap-x-2">
                     <BarChart2 size={16} /> Analytics
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem className="p-2 flex text-xs items-center gap-x-2">
+                <DropdownMenuCheckboxItem
+                    onClick={handleDeleteQrCodeLink}
+                    className="p-2 flex text-xs items-center gap-x-2"
+                >
                     <Trash2 size={16} /> Delete
                 </DropdownMenuCheckboxItem>
             </DropdownMenuContent>

@@ -1,6 +1,6 @@
 import { FetchArgs } from '@reduxjs/toolkit/query';
 import { api } from '@shtcut/_shared/api/app.api';
-import { GET, POST, PUT, SHTNER } from '@shtcut/_shared/constant';
+import { DELETE, GET, POST, PUT, SHTNER } from '@shtcut/_shared/constant';
 import { linkTag } from '../tags';
 import { Dict } from '@shtcut-ui/react';
 import { LinkNameSpace, MetadataResponse } from '@shtcut/_shared/namespace/link';
@@ -16,6 +16,7 @@ export const linkApi = api.injectEndpoints({
                 }) as unknown as FetchArgs,
             providesTags: [linkTag]
         }),
+
         getLink: builder.query<ApiResponse<LinkNameSpace.Link>, Record<string, any>>({
             query: (params: Record<string, string>) =>
                 ({
@@ -51,7 +52,7 @@ export const linkApi = api.injectEndpoints({
             query: ({ id }) => {
                 return {
                     url: `${SHTNER.links}/${id}`,
-                    method: 'PUT',
+                    method: PUT,
                     body: { archived: true }
                 };
             },
@@ -61,7 +62,15 @@ export const linkApi = api.injectEndpoints({
         deleteLink: builder.mutation<Dict, { payload: { id: string } }>({
             query: ({ payload }) => ({
                 url: `${SHTNER.links}/${payload.id}`,
-                method: 'DELETE'
+                method: DELETE
+            }),
+            invalidatesTags: [linkTag]
+        }),
+        deleteManyLinks: builder.mutation<Dict, { payload: { ids: string[] } }>({
+            query: ({ payload }) => ({
+                url: `${SHTNER.links}/delete/many`,
+                method: DELETE,
+                body: payload
             }),
             invalidatesTags: [linkTag]
         }),
@@ -107,6 +116,7 @@ export const {
     useLazyGetLinkQuery,
     useUpdateLinkMutation,
     useDeleteLinkMutation,
+    useDeleteManyLinksMutation,
     useLazyDuplicateLinkQuery,
     useLazyFetchMetadataQuery,
     useGetLinkQuery,
@@ -118,6 +128,7 @@ export const {
         getLink,
         updateLink,
         deleteLink,
+        deleteManyLinks,
         duplicateLink,
         fetchMetadata,
         visitLink,

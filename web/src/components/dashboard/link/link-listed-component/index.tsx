@@ -9,59 +9,58 @@ import { formatDate } from '@shtcut/_shared';
 import { CiImageOff } from 'react-icons/ci';
 import { GOOGLE_FAVICON_URL, hexToRgba } from '@shtcut/_shared/constant';
 import { TagResponse } from '@shtcut/types/tags';
+import useCopyToClipboard from '@shtcut/hooks/useCopyToClipboard';
+
+interface LinkListedComponentProps {
+    edit?: boolean;
+    data?: LinkNameSpace.Link;
+    onClickNavigate?: () => void;
+    onDeleteClick?: () => void;
+    onDuplicateClick?: () => void;
+    onQrCodeClick?: () => void;
+    onClickAchive?: () => void;
+    onClickShare?: () => void;
+    handleUpdateLink?: () => void;
+    onChange?: () => void;
+    checked?: boolean;
+}
 
 const LinkListedComponent = ({
     edit,
-    onClickNavigate,
     data,
+    onClickNavigate,
     onDeleteClick,
     onDuplicateClick,
     onQrCodeClick,
     handleUpdateLink,
     onClickAchive,
-    onClickShare
-}: {
-    edit?: boolean;
-    data?: LinkNameSpace.Link;
-    onClickNavigate?: (() => void) | undefined;
-    onDeleteClick?: (() => void) | undefined;
-    onDuplicateClick?: (() => void) | undefined;
-    onQrCodeClick?: (() => void) | undefined;
-    onClickAchive?: (() => void) | undefined;
-    onClickShare?: (() => void) | undefined;
-    handleUpdateLink?: (() => void) | undefined;
-}) => {
-    const { toast } = useToast();
+    onClickShare,
+    onChange,
+    checked
+}: LinkListedComponentProps) => {
     const apexDomain = getApexDomain(data?.target ?? '');
-    const handleCopy = () => {
-        const textToCopy = `https://beta.shtcut.co/${data?.alias}`;
-        if (textToCopy) {
-            navigator.clipboard
-                .writeText(textToCopy)
-                .then(() => {
-                    toast({
-                        title: 'Copy link ',
-                        description: 'Link copied to clipboard!'
-                    });
-                })
-                .catch((err) => {
-                    toast({
-                        title: 'Copy link ',
-                        description: `Failed to copy text: ${err}`
-                    });
-                });
-        }
-    };
+    const { handleCopy } = useCopyToClipboard();
+
+    if (!data) {
+        return null;
+    }
+
     return (
-        <Card className=" cursor-pointer border border-gray-200 shadow-sm  rounded-[10px] p-4  ">
+        <Card className="cursor-pointer border border-gray-200 shadow-sm rounded-[10px] p-4">
             <div className="flex justify-between items-center">
                 <div className="flex gap-x-3">
                     {!edit && (
                         <div className="relative top-1">
-                            <Checkbox id="terms" className="p-0 m-0 border shadow-none border-[#D2D5DA] " />
+                            <input
+                                type="checkbox"
+                                checked={checked}
+                                onChange={onChange}
+                                id="terms"
+                                className="p-0 m-0 border shadow-none border-[#D2D5DA] cbox cursor-pointer"
+                            />
                         </div>
                     )}
-                    <div className=" border  w-[50px] h-[50px] rounded-full flex justify-center items-center">
+                    <div className="border w-[50px] h-[50px] rounded-full flex justify-center items-center">
                         {apexDomain ? (
                             <Image
                                 src={`${GOOGLE_FAVICON_URL}${apexDomain}`}
@@ -75,37 +74,37 @@ const LinkListedComponent = ({
                             <CiImageOff size={24} />
                         )}
                     </div>
-                    <div className="">
+                    <div>
                         <div className="flex flex-col">
                             <section className="flex items-center gap-x-2">
-                                <h1 className="font-semibold text-sm text-[#151314]">{data?.title}</h1>
-                                {data?.isPrivate && <Lock size={14} />}
+                                <h1 className="font-semibold text-sm text-[#151314]">{data.title}</h1>
+                                {data.isPrivate && <Lock size={14} />}
                             </section>
                             <a
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                href={`${data?.domain?.name?.startsWith('http') ? '' : 'http://'}${process.env.NEXT_STAGING_URL}/${data?.alias}`}
+                                href={`${data.domain?.name?.startsWith('http') ? '' : 'http://'}${process.env.NEXT_STAGING_URL}/${data.alias}`}
                                 className="text-xs text-primary-0 font-normal"
                             >
-                                {data?.domain.name || data?.domain?.slug}/{data?.alias}
+                                {data.domain?.name || data.domain?.slug}/{data.alias}
                             </a>
-
-                            <a href={data?.target} target="_blank" className="text-[#2B2829] text-xs">
-                                {truncate(data?.target ?? '', 100)}
+                            <a href={data.target} target="_blank" className="text-[#2B2829] text-xs">
+                                {truncate(data.target ?? '', 100)}
                             </a>
                         </div>
                         <div className="flex items-center gap-x-2 mt-2">
                             <Clock3 size={16} />
                             <span className="text-[#726C6C] text-xs font-medium">
-                                {data?.createdAt && formatDate(data?.createdAt ?? '')}
+                                {data.createdAt && formatDate(data.createdAt)}
                             </span>
                             <section className="flex items-center gap-2">
-                                {data?.tags.map((tg: TagResponse) => {
+                                {data.tags.map((tg: TagResponse) => {
                                     const isValidHex = /^#?[0-9A-Fa-f]{6}$/.test(tg.color);
                                     const color = isValidHex ? tg.color : '#000000'; // Default to black if invalid
 
                                     return (
                                         <div
+                                            key={tg._id} // Add a unique key for each tag
                                             className="flex items-center space-x-1 w-fit px-2 h-6 rounded justify-center border"
                                             style={{
                                                 border: `1px solid ${color}`,
@@ -125,9 +124,9 @@ const LinkListedComponent = ({
                 </div>
                 <div>
                     <CardsActions
-                        numberOfClicks={data?.clicks ?? 0}
+                        numberOfClicks={data.clicks ?? 0}
                         edit={edit}
-                        handleCopy={handleCopy}
+                        handleCopy={() => handleCopy(`https://beta.shtcut.co/${data.alias}`)}
                         onDeleteClick={onDeleteClick}
                         onDuplicateClick={onDuplicateClick}
                         onQrCodeClick={onQrCodeClick}

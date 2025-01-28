@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import {
     useCreateLinkMutation,
     useDeleteLinkMutation,
+    useDeleteManyLinksMutation,
     useLazyDuplicateLinkQuery,
     useLazyFetchMetadataQuery,
     useLazyFindAllLinksQuery,
@@ -29,8 +30,8 @@ interface UseLinkProps {
     all?: boolean;
 }
 
-interface LinkParams {
-    population: string;
+export interface LinkParams {
+    population?: string;
     search?: string;
     all?: boolean;
     filter?: Dict;
@@ -43,6 +44,7 @@ interface UseLinkReturnsType {
     deleteLink: MutationTrigger<any>;
     updateLink: MutationTrigger<any>;
     submitPassword: MutationTrigger<any>;
+    deleteManyLinks: MutationTrigger<any>;
     fetchMetadata: Dict;
     findAllLinks: any;
     isLoading: boolean;
@@ -56,6 +58,7 @@ interface UseLinkReturnsType {
     submitPasswordResponse: Dict;
     duplicate: any;
     deleteLinkResponse: Dict;
+    deleteManyLinksResponse: Dict;
     pagination: UsePaginationState;
     isLoadingState: boolean;
     handleCloseLoading: () => void;
@@ -72,12 +75,11 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
     const [submitPassword, submitPasswordResponse] = useSubmitLinkPasswordMutation();
     const [updateLink, updateLinkResponse] = useUpdateLinkMutation();
     const [deleteLink, deleteLinkResponse] = useDeleteLinkMutation();
+    const [deleteManyLinks, deleteManyLinksResponse] = useDeleteManyLinksMutation();
     const [findAllLinks, { isLoading, data: findAllLinksResponse }] = useLazyFindAllLinksQuery();
     const [duplicate, duplicateLinkResponse] = useLazyDuplicateLinkQuery();
     const [getLink, getLinkResponse] = useLazyGetLinkQuery();
-    const [fetchMetadata, { data: fetchMetaDataResponse, isLoading: fetchMetaLoading, error }] =
-        useLazyFetchMetadataQuery();
-
+    const [fetchMetadata, { data: fetchMetaDataResponse, isLoading: fetchMetaLoading }] = useLazyFetchMetadataQuery();
     const [debouncedSearch, setDebouncedSearch] = useState(search);
 
     const [loading, setLoading] = useState({
@@ -114,7 +116,6 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         all,
         ...filter
     };
-
     const handleSearchChange = debounce((newSearch: string) => {
         setDebouncedSearch(newSearch);
     }, 500);
@@ -148,6 +149,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         isLoading,
         createLink,
         updateLink,
+        deleteManyLinks,
         deleteLink,
         findAllLinks,
         duplicate,
@@ -166,6 +168,7 @@ export const useLink = (props: UseLinkProps): UseLinkReturnsType => {
         handleSearchChange,
         fetchMetadata,
         fetchMetaDataResponse,
+        deleteManyLinksResponse,
         fetchMetaLoading,
         paginationActions,
         params

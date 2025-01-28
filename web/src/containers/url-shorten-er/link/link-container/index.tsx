@@ -32,7 +32,8 @@ const LinkContainer = () => {
         handleCloseLoading,
         pagination,
         paginationActions,
-        params
+        params,
+        deleteManyLinks
     } = useLink({
         callLinks: true,
         search,
@@ -85,6 +86,7 @@ const LinkContainer = () => {
             pagination={pagination}
             paginationActions={paginationActions}
             params={params}
+            deleteManyLinks={deleteManyLinks}
         />
     );
 };

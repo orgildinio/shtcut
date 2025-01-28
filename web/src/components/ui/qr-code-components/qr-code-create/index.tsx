@@ -1,10 +1,10 @@
-import { Button, Modal, Tabs, TabsContent, TabsList, TabsTrigger, toast } from '@shtcut-ui/react';
+import { Button, Input, Modal, Tabs, TabsContent, TabsList, TabsTrigger, toast } from '@shtcut-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { QrCodeInterface } from '@shtcut/types/types';
 import Image from 'next/image';
 import DownloadBtn from './download-btn';
 import { Link, List } from 'lucide-react';
-import { PiFilePdfDuotone, PiIdentificationCard } from 'react-icons/pi';
+import { PiCopySimple, PiFilePdfDuotone, PiIdentificationCard } from 'react-icons/pi';
 import { resetState } from '@shtcut/redux/slices/qr-code';
 import MultiLinksComponent from '../multi-link-components';
 import PdfQrCodeComponent from '../pdf-qr-code';
@@ -21,12 +21,12 @@ import { useLinksManager } from '@shtcut/hooks/use-links-manager';
 import { useAppDispatch } from '@shtcut/redux/store';
 import BackButton from '@shtcut/components/back-btn';
 import { useQrCode } from '@shtcut/hooks/auth/qr-code';
-import { handleError } from '@shtcut/_shared';
+import { handleError, handleSuccess } from '@shtcut/_shared';
 import { LoadingButton } from '@shtcut/components/_shared/loading-button';
+import useCopyToClipboard from '@shtcut/hooks/useCopyToClipboard';
 
 const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => {
     const params = useParams();
-
     const dispatch = useAppDispatch();
     const {
         step,
@@ -44,7 +44,8 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
         socialMediaLinks,
         companyInfo,
         contactInfo,
-        fileInfo
+        fileInfo,
+        urlScan
     } = useGeneralState();
     const { state: linkState, actions } = useLinksManager();
     const { state } = useQrCodeState();
@@ -62,6 +63,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
             url: ''
         }
     });
+    const { handleCopy } = useCopyToClipboard();
     const generalReset = () => {
         dispatch(resetState());
         dispatch(resetGeneralState());
@@ -73,6 +75,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     };
     const handleClose = () => {
         setSaveModal(false);
+        generalReset();
         router.push(`/url/${workspace}/qr-codes`);
     };
 
@@ -93,7 +96,8 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
             type: 'website',
             bgColor,
             url: urlValue,
-            qrCode: commonQrCodeData
+            qrCode: commonQrCodeData,
+            title: state?.title
         };
         const multiLinkPayload = {
             type: 'multi-link',
@@ -203,8 +207,6 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                     description: 'Please upload a file before proceeding.'
                 });
             }
-
-            // Proceed to the next step
             handleNextStep();
             return;
         }
@@ -214,18 +216,19 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
         }
 
         if (step === 3) {
-            qrActions.setLoadingState('creating', true);
-            console.log('payload', payload);
-            try {
-                const res = await qrActions.createqrCode({
-                    payload,
-                    options: {
-                        successMessage: 'Qrcodes successfully created! 🚀'
-                    }
+            if (!state?.title)
+                return toast({
+                    variant: 'destructive',
+                    title: 'Missing Title',
+                    description: 'Please provide a Qr code title before proceeding.'
                 });
-                console.log('res', res);
-                const newUrl = switchTab === 'website' ? urlValue : `https://localhost/qr-code/${''}`;
-                generalReset();
+            qrActions.setLoadingState('creating', true);
+            try {
+                const res = await qrActions.createqrCode(payload);
+                handleSuccess({
+                    response: res
+                });
+                const newUrl = switchTab === 'website' ? urlValue : `http://localhost:3000/qr-code/${res?.data?.slug}`;
                 dispatch(setUrl(newUrl));
                 setSaveModal(true);
             } catch (error) {
@@ -270,9 +273,6 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     const onSubmit = (data: { url: string }) => {
         console.log('Title:', data.url);
     };
-    console.log('switchTab', switchTab);
-
-    console.log('step', step);
 
     return (
         <div className=" ">
@@ -372,7 +372,18 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                     <div className="w-fit h-40" ref={qrCodeRef}>
                         <FrameComponents />
                     </div>
-                    <div className="flex mt-10 items-center w-full gap-4">
+                    <section className="mt-5 relative w-full">
+                        <Input
+                            value={urlScan as string}
+                            defaultValue={urlScan as string}
+                            className="border border-gray-300 w-full"
+                            disabled
+                        />
+                        <div className="absolute cursor-pointer top-2.5 right-4">
+                            <PiCopySimple color="#726C6C" size={16} onClick={() => handleCopy(urlScan as string)} />
+                        </div>
+                    </section>
+                    <div className="flex mt-8 items-center w-full gap-4">
                         <Button variant={'outline'} className="w-full h-8 text-xs" onClick={handleClose}>
                             Cancel
                         </Button>
