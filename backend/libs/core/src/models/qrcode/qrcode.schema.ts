@@ -28,6 +28,11 @@ export class QrCode {
   @Prop({
     type: String,
   })
+  descriptions: string;
+
+  @Prop({
+    type: String,
+  })
   slug: string;
 
   @Prop({
@@ -90,6 +95,11 @@ export class QrCode {
     ref: 'Link',
   })
   link: any;
+
+  @Prop({
+    type: MG.Types.Mixed,
+  })
+  links: any;
 
   @Prop({
     type: Boolean,
@@ -172,6 +182,8 @@ QrCodeSchema.statics.config = () => {
       'slug',
       'scanned',
       'qrCode',
+      'description',
+      'links',
       'socialMedia',
       'contacts',
       'title',
@@ -192,6 +204,8 @@ QrCodeSchema.statics.config = () => {
       'scanned',
       'slug',
       'type',
+      'description',
+      'links',
       'isSlugAvailable',
       'qrCode',
       'socialMedia',
