@@ -61,14 +61,12 @@ export class QrCodeService extends MongoBaseService {
 
       const ipAddressInfo = await this.ipService.getClientIpInfo(req);
 
-      // If tracking is enabled, update hit information
       if (qrCode.enableTracking) {
         const payload = {
           user: qrCode.user,
           ...ipAddressInfo,
         };
 
-        // Update or create hit record
         await this.hitModel.findOneAndUpdate(
           { qrcode: qrCode._id },
           {
