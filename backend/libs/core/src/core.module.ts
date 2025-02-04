@@ -20,12 +20,15 @@ import { RedisModule } from './worker';
     }),
     RedisModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        host: config.get('app.redis.host'),
-        port: config.get('app.redis.port'),
-        password: config.get('app.redis.password'),
-        db: 0,
-      }),
+      useFactory: (config: ConfigService) => {
+        console.log('host:::', config.get('app.redis.host'));
+        return {
+          host: config.get('app.redis.host'),
+          port: config.get('app.redis.port'),
+          password: config.get('app.redis.password'),
+          db: 0,
+        };
+      },
       inject: [ConfigService],
     }),
     AzureStorageModule.withConfigAsync({
