@@ -44,13 +44,11 @@ export class DomainService extends MongoBaseService {
     try {
       const slug = Utils.slugifyText(obj.name);
 
-      // Check if domain with the same slug exists
       const domain = await this.model.findOne({ ...Utils.conditionWithDelete({ slug }) });
       if (domain) {
         throw AppException.CONFLICT(lang.get('domain').duplicate);
       }
 
-      // Check if the workspace exists
       const workspace = await this.workspaceModel.findOne({
         ...Utils.conditionWithDelete({ _id: obj.workspace, user: obj.user }),
       });
