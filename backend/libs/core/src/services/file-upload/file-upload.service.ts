@@ -8,6 +8,7 @@ import lang from 'shtcut/core/lang';
 import { Readable } from 'stream';
 import { UploadApiErrorResponse, UploadApiOptions, UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import * as sharp from 'sharp';
+import { configuration } from '@config';
 
 /**
  * Builds File upload service
@@ -164,9 +165,9 @@ export class FileUploadService {
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     try {
       cloudinary.config({
-        cloud_name: `${this.config.get('worker.fileUpload.cloudinary.name')}`,
-        api_key: `${this.config.get('worker.fileUpload.cloudinary.apiKey')}`,
-        api_secret: `${this.config.get('worker.fileUpload.cloudinary.apiSecret')}`,
+        cloud_name: configuration().worker.fileUpload.cloudinary.name,
+        api_key: configuration().worker.fileUpload.cloudinary.apiKey,
+        api_secret: configuration().worker.fileUpload.cloudinary.apiSecret,
       });
       return new Promise(async (resolve, reject) => {
         cloudinary.api.ping;
