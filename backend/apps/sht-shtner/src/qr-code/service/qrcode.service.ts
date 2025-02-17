@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import lang from 'apps/sht-shtner/lang';
 import { ClientSession, Model } from 'mongoose';
@@ -130,6 +130,54 @@ export class QrCodeService extends MongoBaseService {
       ]);
       await session?.commitTransaction();
       return qrCode;
+    } catch (e) {
+      await session?.abortTransaction();
+      throw e;
+    } finally {
+      await session?.endSession();
+    }
+  }
+
+  public async bulkDelete(ids: string[]) {
+    let session: ClientSession;
+    try {
+      // Input validation
+      if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        throw new BadRequestException('Please provide valid QR code IDs');
+      }
+
+
+      // Start transaction
+      session = await this.model.startSession();
+      session.startTransaction();
+
+      // Verify all QR codes exist and are accessible
+      const existingQrCodes = await this.model.find({
+        _id: { $in: ids },
+        ...Utils.conditionWithDelete({})
+      });
+
+      if (existingQrCodes.length !== ids.length) {
+        throw new BadRequestException('Some QR codes were not found or are already deleted');
+      }
+
+      // Delete QR codes and their associated links
+      const [deletedQrCodes, deletedLinks] = await Promise.all([
+        this.model.deleteMany(
+          { ...Utils.conditionWithDelete({ _id: { $in: ids } }) },
+          { session }
+        ),
+        this.linkModel.deleteMany(
+          { ...Utils.conditionWithDelete({ qrCode: { $in: ids } }) },
+          { session }
+        ),
+      ]);
+
+      await session.commitTransaction();
+      return {
+        deletedCount: deletedQrCodes.deletedCount,
+        message: `Successfully deleted ${deletedQrCodes.deletedCount} QR codes`
+      };
     } catch (e) {
       await session?.abortTransaction();
       throw e;

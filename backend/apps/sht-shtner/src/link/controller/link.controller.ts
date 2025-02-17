@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpCode, Next, Param, Patch, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Next, Param, Patch, Post, Put, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AppController, CreateLinkDto, JwtAuthGuard, NOT_FOUND, OK, QueryParser, UpdateLinkDto } from 'shtcut/core';
 import { LinkService } from '../service/link.service';
 import { ConfigService } from '@nestjs/config';
 import { NextFunction, Request, Response } from 'express';
 import * as _ from 'lodash';
+import { LinkBulkDto } from 'shtcut/core';
 
 @Controller('links')
 export class LinkController extends AppController {
@@ -24,6 +25,7 @@ export class LinkController extends AppController {
     @Next() next: NextFunction,
   ) {
     try {
+      console.log("Starting....")
       const link = await this.service.visit(req, domain, alias);
       let response = null;
       if (!link) {
@@ -39,6 +41,7 @@ export class LinkController extends AppController {
       });
       return res.status(OK).json(response);
     } catch (e) {
+      console.log(e)
       return next(e);
     }
   }
@@ -169,6 +172,50 @@ export class LinkController extends AppController {
       return res.status(OK).json(response);
     } catch (err) {
       next(err);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/delete/many')
+  @HttpCode(OK)
+  public async deleteLink(
+    @Body(ValidationPipe) payload: LinkBulkDto,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
+    try {
+      const deletedIds = await this.service.deleteMany(payload);
+      const response = await this.service.getResponse({
+        code: OK,
+        value: { ids: deletedIds },
+      });
+      return res.status(OK).json(response);
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/recover/many')
+  @HttpCode(OK)
+  public async recoverLink(
+    @Body(ValidationPipe) payload: LinkBulkDto,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
+    try {
+      const recoveredIds = await this.service.recoverMany(payload);
+      const response = await this.service.getResponse({
+        code: OK,
+        value: {
+          ids: recoveredIds,
+        },
+      });
+      return res.status(OK).json(response);
+    } catch (err) {
+      return next(err);
     }
   }
 }

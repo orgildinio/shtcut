@@ -338,7 +338,7 @@ export class LinkService extends MongoBaseService {
   public async analytic(linkId) {
     try {
       const link = await this.model.findOne({ _id: linkId }).populate(['domain']);
-    } catch (e) {}
+    } catch (e) { }
   }
 
   /**
@@ -381,7 +381,89 @@ export class LinkService extends MongoBaseService {
     }
   }
 
-  async archivedMany(payload) {
+  async deleteMany(payload: { ids: string[] }): Promise<string[]> {
+    let session: ClientSession;
+    try {
+      session = await this.model.startSession();
+      session.startTransaction();
+
+      const { ids } = payload;
+      const deleted = [];
+
+      if (ids?.length) {
+        const links = await this.model.find({
+          ...Utils.conditionWithDelete({ _id: { $in: ids } }),
+          deleted: false
+        });
+
+        for (let link of links) {
+          _.extend(link, {
+            deleted: true,
+            deletedAt: new Date()
+          });
+          await link.save({ session });
+          // Delete associated QR code
+          await this.qrCodeModel.updateOne(
+            { ...Utils.conditionWithDelete({ link: link._id }) },
+            { deleted: true, deletedAt: new Date() },
+            { session }
+          );
+          deleted.push(link._id);
+        }
+      }
+
+      await session.commitTransaction();
+      return deleted;
+    } catch (error) {
+      await session?.abortTransaction();
+      throw error;
+    } finally {
+      await session?.endSession();
+    }
+  }
+
+  async recoverMany(payload: { ids: string[] }): Promise<string[]> {
+    let session: ClientSession;
+    try {
+      session = await this.model.startSession();
+      session.startTransaction();
+
+      const { ids } = payload;
+      const recovered = [];
+
+      if (ids?.length) {
+        const links = await this.model.find({
+          ...Utils.conditionWithDelete({ _id: { $in: ids } }),
+          deleted: true
+        });
+
+        for (let link of links) {
+          _.extend(link, {
+            deleted: false,
+            deletedAt: null
+          });
+          await link.save({ session });
+          // Recover associated QR code
+          await this.qrCodeModel.updateOne(
+            { ...Utils.conditionWithDelete({ link: link._id }) },
+            { deleted: false, deletedAt: null },
+            { session }
+          );
+          recovered.push(link._id);
+        }
+      }
+
+      await session.commitTransaction();
+      return recovered;
+    } catch (error) {
+      await session?.abortTransaction();
+      throw error;
+    } finally {
+      await session?.endSession();
+    }
+  }
+
+  async archivedMany(payload: { ids: string[] }): Promise<string[]> {
     try {
       const { ids } = payload;
       const deleted = [];
