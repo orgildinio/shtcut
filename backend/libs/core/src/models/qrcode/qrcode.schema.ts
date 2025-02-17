@@ -74,6 +74,12 @@ export class QrCode {
 
   @Prop({
     type: Types.ObjectId,
+    ref: 'Media',
+  })
+  pdf: any;
+
+  @Prop({
+    type: Types.ObjectId,
     ref: 'Workspace',
   })
   workspace: any;
@@ -198,6 +204,7 @@ QrCodeSchema.statics.config = () => {
       'properties',
       'enableTracking',
       'archived',
+      'pdf',
     ],
     updateFillables: [
       'workspace',
@@ -220,6 +227,7 @@ QrCodeSchema.statics.config = () => {
       'user',
       'domain',
       'archived',
+      'pdf',
     ],
     hiddenFields: ['deleted'],
   };
