@@ -422,39 +422,43 @@ export class LinkService extends MongoBaseService {
     }
   }
 
-  async recoverMany(payload: { ids: string[] }): Promise<string[]> {
+  async toggleArchiveMany(payload: { ids: string[] }): Promise<string[]> {
     let session: ClientSession;
     try {
       session = await this.model.startSession();
       session.startTransaction();
 
       const { ids } = payload;
-      const recovered = [];
+      const toggledIds = [];
 
       if (ids?.length) {
         const links = await this.model.find({
-          ...Utils.conditionWithDelete({ _id: { $in: ids } }),
-          deleted: true
+          ...Utils.conditionWithDelete({ _id: { $in: ids } })
         });
 
         for (let link of links) {
-          _.extend(link, {
-            deleted: false,
-            deletedAt: null
-          });
+          _.extend(link, { archived: !link.archived });
           await link.save({ session });
-          // Recover associated QR code
+
           await this.qrCodeModel.updateOne(
             { ...Utils.conditionWithDelete({ link: link._id }) },
-            { deleted: false, deletedAt: null },
+            { archived: !link.archived },
             { session }
           );
-          recovered.push(link._id);
+          toggledIds.push(link._id);
+
+          if (this.cacheService) {
+            await this.cacheService.remove(this.modelName + ':' + link._id.toString());
+          }
+        }
+
+        if (this.cacheService) {
+          await this.cacheService.remove(this.modelName + ':list');
         }
       }
 
       await session.commitTransaction();
-      return recovered;
+      return toggledIds;
     } catch (error) {
       await session?.abortTransaction();
       throw error;
@@ -463,24 +467,4 @@ export class LinkService extends MongoBaseService {
     }
   }
 
-  async archivedMany(payload: { ids: string[] }): Promise<string[]> {
-    try {
-      const { ids } = payload;
-      const deleted = [];
-      if (ids?.length) {
-        const objects = await this.model.find({
-          _id: { $in: [...ids] },
-          archived: false,
-        });
-        for (let object of objects) {
-          _.extend(object, { archived: true });
-          object = await object.save();
-          deleted.push(object._id);
-        }
-      }
-      return deleted;
-    } catch (error) {
-      throw error;
-    }
-  }
 }

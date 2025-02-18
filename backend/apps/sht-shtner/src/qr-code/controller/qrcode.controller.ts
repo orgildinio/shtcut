@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Next, Param, Patch, Post, Put, Req, Res, UseGuards, Delete, BadRequestException, ValidationPipe } from '@nestjs/common';
-import { AppController, CreateLinkDto, JwtAuthGuard, NOT_FOUND, OK, UpdateLinkDto, QrCodeDeleteDto } from 'shtcut/core';
+import { AppController, CreateLinkDto, JwtAuthGuard, NOT_FOUND, OK, UpdateLinkDto, QrCodeDeleteDto, CreateQrCodeDto } from 'shtcut/core';
 import { QrCodeService } from '../service/qrcode.service';
 import { ConfigService } from '@nestjs/config';
 import { NextFunction, Request, Response } from 'express';
@@ -18,15 +18,14 @@ export class QrCodeController extends AppController {
   public async visit(@Param('id') id: string, @Req() req: Request, @Res() res: Response, @Next() next: NextFunction) {
     try {
       const qrCode = await this.service.visit(req, id);
-      let response = null;
       if (!qrCode) {
-        response = await this.service.getResponse({
+        const response = await this.getResponse({
           code: NOT_FOUND,
           value: this.lang.notFound,
         });
         return res.status(NOT_FOUND).json(response);
       }
-      response = await this.service.getResponse({
+      const response = await this.getResponse({
         code: OK,
         value: qrCode,
       });
@@ -39,7 +38,7 @@ export class QrCodeController extends AppController {
   @Post('/')
   @HttpCode(OK)
   public async create(
-    @Body() payload: CreateLinkDto,
+    @Body() payload: CreateQrCodeDto,
     @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,
@@ -84,11 +83,10 @@ export class QrCodeController extends AppController {
   ) {
     try {
       const result = await this.service.bulkDelete(payload.ids);
-      const response = await this.service.getResponse({
+      return res.status(OK).json(await this.service.getResponse({
         code: OK,
         value: result,
-      });
-      return res.status(OK).json(response);
+      }));
     } catch (e) {
       return next(e);
     }

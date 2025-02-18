@@ -158,23 +158,6 @@ export class LinkController extends AppController {
     }
   }
 
-  @Post('/archived/many')
-  @HttpCode(OK)
-  public async archivedMany(@Body() payload: { ids: string[] }, @Req() req, @Res() res, @Next() next: NextFunction) {
-    try {
-      const objects: any = await this.service.archivedMany(payload);
-      const response = await this.service.getResponse({
-        code: OK,
-        value: {
-          ids: objects,
-        },
-      });
-      return res.status(OK).json(response);
-    } catch (err) {
-      next(err);
-    }
-  }
-
   @UseGuards(JwtAuthGuard)
   @Post('/delete/many')
   @HttpCode(OK)
@@ -196,21 +179,22 @@ export class LinkController extends AppController {
     }
   }
 
+
   @UseGuards(JwtAuthGuard)
-  @Post('/recover/many')
+  @Post('/toggle-archive/many')
   @HttpCode(OK)
-  public async recoverLink(
+  public async toggleArchive(
     @Body(ValidationPipe) payload: LinkBulkDto,
     @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,
   ) {
     try {
-      const recoveredIds = await this.service.recoverMany(payload);
+      const toggledIds = await this.service.toggleArchiveMany(payload);
       const response = await this.service.getResponse({
         code: OK,
         value: {
-          ids: recoveredIds,
+          ids: toggledIds
         },
       });
       return res.status(OK).json(response);

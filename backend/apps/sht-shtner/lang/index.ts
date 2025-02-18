@@ -16,6 +16,27 @@ function get(prop) {
 
 const lang = {
   get,
+  app: {
+    success: 'Operation successful',
+  },
+  qrcodes: {
+    created: 'QR code successfully created',
+    updated: 'QR code successfully updated',
+    deleted: 'QR code successfully deleted',
+    retrieved: 'QR codes successfully retrieved',
+    notFound: 'QR code not found',
+    duplicate: 'QR code with this title already exists',
+    invalidType: 'Invalid QR code type',
+    validation: {
+      titleRequired: 'Title is required',
+      pdfRequired: 'PDF file is required',
+      urlRequired: 'URL is required',
+      companyRequired: 'Company name is required',
+      contactsRequired: 'Email and phone are required',
+      addressRequired: 'Address details are required',
+      linksRequired: 'At least one link is required'
+    }
+  },
 };
 
 const obj = require(`./${language}`).default;
