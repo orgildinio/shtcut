@@ -56,22 +56,6 @@ class QRCodeProperties {
   name: string;
 }
 
-class QrCodePropClass {
-  public readonly value: string;
-  public readonly bgColor?: string;
-  public readonly patternColor?: string;
-  public readonly fgColor?: string;
-  public readonly logoImage?: string;
-  public readonly eye_color_2_outer?: string;
-  public readonly eye_color_0_outer?: string;
-  public readonly eye_color_0_inner?: string;
-  public readonly eye_color1_inner?: string;
-  public readonly eye_color_2_Inner?: string;
-  public readonly logoPadding?: string;
-  public readonly logoWidth?: string;
-  public readonly qrStyle?: string;
-}
-
 // Base DTO that others will extend
 export class BaseQRCodeDto {
   @IsString()
@@ -93,14 +77,50 @@ export class BaseQRCodeDto {
   qrCode: QRCodeProperties;
 }
 
-// PDF QR Code
-export class PDFQRCodeDto extends BaseQRCodeDto {
+// PDF QR Code (everything inside qrCode)
+export class PDFQRCodeDto {
+  @IsEnum(QRCodeType)
+  type: QRCodeType;
+
+  @IsString()
+  title: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  profileImage?: string;
+
+  @IsString()
+  bgColor: string;
+
   @IsString()
   @IsNotEmpty()
-  file: string; // Base64 or file path
+  file: string;
+
+  @ValidateNested()
+  @Type(() => QRCodeProperties)
+  qrCode: {
+    colors: {
+      background: string;
+      borderColor: string;
+      btnColor: string;
+      presetColor: string;
+    };
+    eyeRadius: Array<{
+      outer: number;
+      inner: number;
+    }>;
+    frame: number;
+    logo: string;
+    name: string;
+    qrStyle: string;
+  };
 }
 
-// vCard QR Code
+// Add these class definitions back
 class Address {
   @IsString()
   street: string;
@@ -152,7 +172,25 @@ class SocialMedia {
   youtube?: string;
 }
 
-export class VCardQRCodeDto extends BaseQRCodeDto {
+// vCard QR Code
+export class VCardQRCodeDto {
+  @IsEnum(QRCodeType)
+  type: QRCodeType;
+
+  @IsString()
+  title: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  profileImage?: string;
+
+  @IsString()
+  bgColor: string;
+
   @ValidateNested()
   @Type(() => Address)
   address: Address;
@@ -166,25 +204,74 @@ export class VCardQRCodeDto extends BaseQRCodeDto {
   contacts: Contacts;
 
   @ValidateNested()
+  @Type(() => QRCodeProperties)
+  qrCode: {
+    colors: {
+      background: string;
+      borderColor: string;
+      btnColor: string;
+      presetColor: string;
+    };
+    eyeRadius: Array<{
+      outer: number;
+      inner: number;
+    }>;
+    frame: number;
+    logo: string;
+    name: string;
+    qrStyle: string;
+  };
+
+  @ValidateNested()
   @Type(() => SocialMedia)
   socialMedia: SocialMedia;
+
+  @ValidateNested()
+  template: {
+    btnColor: string;
+    presetColor: string;
+    template: string;
+  };
 }
 
-// Website QR Code
-export class WebsiteQRCodeDto extends BaseQRCodeDto {
+// Website QR Code (logo, name, qrStyle at root level)
+export class WebsiteQRCodeDto {
+  @IsEnum(QRCodeType)
+  type: QRCodeType;
+
+  @IsString()
+  title: string;
+
+  @IsString()
+  bgColor: string;
+
   @IsString()
   @IsNotEmpty()
   url: string;
+
+  @ValidateNested()
+  @Type(() => QRCodeProperties)
+  qrCode: QRCodeProperties;
+
+  @IsString()
+  @IsOptional()
+  logo?: string;
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  qrStyle: string;
 }
 
-// Multi-link QR Code
+// Update Link class
 class Link {
   @IsNumber()
   @IsOptional()
   id?: number;
 
   @IsString()
-  title: string;
+  label: string;  // Changed from title to label
 
   @IsString()
   url: string;
@@ -194,33 +281,95 @@ class Link {
   image?: string;
 }
 
-export class MultiLinkQRCodeDto extends BaseQRCodeDto {
+// Update SocialMedia class for multi-link
+class MultiLinkSocialMedia extends SocialMedia {
+  @IsString()
+  @IsOptional()
+  bitly?: string;
+
+  @IsString()
+  @IsOptional()
+  shtcut?: string;
+}
+
+// Update MultiLinkQRCodeDto
+export class MultiLinkQRCodeDto {
+  @IsEnum(QRCodeType)
+  type: QRCodeType;
+
+  @IsString()
+  title: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  bgColor: string;
+
+  @IsString()
+  @IsOptional()
+  profileImage?: string;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Link)
   links: Link[];
 
   @ValidateNested()
-  @Type(() => SocialMedia)
-  socialMedia: SocialMedia;
+  @Type(() => MultiLinkSocialMedia)
+  socialMedia: MultiLinkSocialMedia;
+
+  @ValidateNested()
+  @Type(() => QRCodeProperties)
+  qrCode: {
+    colors: {
+      background: string;
+      borderColor: string;
+      btnColor: string;
+      presetColor: string;
+    };
+    eyeRadius: Array<{
+      outer: number;
+      inner: number;
+    }>;
+    frame: number;
+    logo: string;
+    qrStyle: string;
+    name: string;
+  };
+
+  @ValidateNested()
+  template: {
+    btnColor: string;
+    presetColor: string;
+    template: string;
+  };
 }
 
-// Then use them in CreateQrCodeDto
+// Main DTO that handles both types
 export class CreateQrCodeDto {
   @IsEnum(QRCodeType)
   type: QRCodeType;
 
   @ValidateNested()
-  @Type(() => BaseQRCodeDto, {
-    discriminator: {
-      property: 'type',
-      subTypes: [
-        { value: PDFQRCodeDto, name: QRCodeType.PDF },
-        { value: VCardQRCodeDto, name: QRCodeType.VCARD },
-        { value: WebsiteQRCodeDto, name: QRCodeType.WEBSITE },
-        { value: MultiLinkQRCodeDto, name: QRCodeType.MULTI_LINK },
-      ],
-    },
-  })
-  data: PDFQRCodeDto | VCardQRCodeDto | WebsiteQRCodeDto | MultiLinkQRCodeDto;
+  data: WebsiteQRCodeDto | PDFQRCodeDto | VCardQRCodeDto | MultiLinkQRCodeDto;
+}
+
+// Consolidate common QR code properties into a shared interface
+interface QRCodeBase {
+  colors: {
+    background: string;
+    borderColor: string;
+    btnColor?: string;
+    presetColor: string;
+  };
+  eyeRadius: Array<{
+    outer: number;
+    inner: number;
+  }>;
+  frame: number;
+  logo?: string;
+  name: string;
+  qrStyle: string;
 }

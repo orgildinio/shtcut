@@ -44,56 +44,55 @@ export class QrCodeService extends MongoBaseService {
 
   public async validateCreate(obj: Dict): Promise<any> {
     try {
-      const { type, data } = obj;
+      const { type } = obj;
 
-      if (!type || !data) {
+      if (!type) {
         return new AppException(400, this.lang.get('qrcodes').validation.typeRequired);
       }
 
       // Common validations for all types
-      if (!data.title) {
+      if (!obj.title) {
         return new AppException(400, this.lang.get('qrcodes').validation.titleRequired);
       }
 
-      if (!data.qrCode) {
+      if (!obj.qrCode) {
         return new AppException(400, 'QR code properties are required');
       }
 
       // Type-specific validations
       switch (type) {
         case QRCodeType.PDF:
-          if (!data.file) {
+          if (!obj.file) {
             return new AppException(400, 'PDF file is required');
           }
           break;
 
+        case QRCodeType.WEBSITE:
+          if (!obj.url) {
+            return new AppException(400, 'URL is required');
+          }
+          break;
+
         case QRCodeType.VCARD:
-          if (!data.company?.name) {
+          if (!obj.company?.name) {
             return new AppException(400, 'Company name is required');
           }
-          if (!data.contacts?.email || !data.contacts?.phone) {
+          if (!obj.contacts?.email || !obj.contacts?.phone) {
             return new AppException(400, 'Email and phone are required');
           }
-          if (!data.address?.street || !data.address?.city || !data.address?.country) {
+          if (!obj.address?.street || !obj.address?.city || !obj.address?.country) {
             return new AppException(400, 'Address details are required');
           }
           break;
 
-        case QRCodeType.WEBSITE:
-          if (!data.url) {
-            return new AppException(400, 'URL is required');
-          }
-          // Optional: Add URL format validation
-          break;
-
         case QRCodeType.MULTI_LINK:
-          if (!data.links || !Array.isArray(data.links) || data.links.length === 0) {
+          if (!obj.links || !Array.isArray(obj.links) || obj.links.length === 0) {
             return new AppException(400, this.lang.get('qrcodes').validation.linksRequired);
           }
           // Validate each link
-          for (const link of data.links) {
-            if (!link.url || !link.title) {
-              return new AppException(400, 'Each link must have a URL and title');
+          for (const link of obj.links) {
+            if (!link.url || !link.label) {
+              return new AppException(400, 'Each link must have a URL and label');
             }
           }
           break;
@@ -111,10 +110,9 @@ export class QrCodeService extends MongoBaseService {
   public async prepareBodyObject(req: Request): Promise<any> {
     const payload = req.body;
 
-    // Just generate the slug from title
-    if (payload.data.title) {
-      payload.title = payload.data.title;  // Move title to root level
-      payload.slug = Utils.slugifyText(payload.data.title);
+    // Check if payload and title exist
+    if (payload && payload.title) {
+      payload.slug = Utils.slugifyText(payload.title);  // Generate slug from root level title
     }
 
     return payload;
@@ -123,35 +121,37 @@ export class QrCodeService extends MongoBaseService {
   public async createNewObject(obj: Dict, session?: ClientSession): Promise<any> {
     try {
       if (obj.type) {
-        const { type, data } = obj as CreateQrCodeDto;
+        const { type } = obj;
         let qrContent: string;
+        let createObj: any = {
+          target: '',
+          properties: obj.qrCode,
+          title: obj.title,
+          type: type,
+          bgColor: obj.bgColor,
+        };
 
         switch (type) {
           case QRCodeType.PDF:
-            qrContent = this.generatePDFQRContent(data as PDFQRCodeDto);
+            qrContent = this.generatePDFQRContent(obj as PDFQRCodeDto);
+            if (obj.description) createObj.description = obj.description;
+            if (obj.profileImage) createObj.profileImage = obj.profileImage;
             break;
           case QRCodeType.VCARD:
-            qrContent = this.generateVCardQRContent(data as VCardQRCodeDto);
+            qrContent = this.generateVCardQRContent(obj as VCardQRCodeDto);
             break;
           case QRCodeType.WEBSITE:
-            qrContent = this.generateWebsiteQRContent(data as WebsiteQRCodeDto);
+            qrContent = this.generateWebsiteQRContent(obj as WebsiteQRCodeDto);
             break;
           case QRCodeType.MULTI_LINK:
-            qrContent = this.generateMultiLinkQRContent(data as MultiLinkQRCodeDto);
+            qrContent = this.generateMultiLinkQRContent(obj as MultiLinkQRCodeDto);
             break;
           default:
             throw new Error('Unsupported QR code type');
         }
 
-        return super.createNewObject({
-          target: qrContent,
-          properties: data.qrCode,
-          title: data.title,
-          description: data.description,
-          type: type,
-          bgColor: data.bgColor,
-          profileImage: data.profileImage,
-        }, session);
+        createObj.target = qrContent;
+        return super.createNewObject(createObj, session);
       }
       return super.createNewObject(obj, session);
     } catch (error) {
