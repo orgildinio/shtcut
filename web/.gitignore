@@ -38,3 +38,6 @@ yarn.lock
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+packages/tw-init/node_modules/.bin/tsc
+packages/tw-init/node_modules/.bin/tsserver
