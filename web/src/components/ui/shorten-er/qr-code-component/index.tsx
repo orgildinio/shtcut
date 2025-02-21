@@ -1,6 +1,6 @@
 import { Button, Modal } from '@shtcut-ui/react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import QrCodeCard from '../../qr-code-components/qr-code-component';
@@ -14,6 +14,7 @@ import DeleteComponent from '@shtcut/components/dashboard/link/link-component/de
 
 const QrCodeComponent = ({ qrState, qrActions }: { qrActions: QrCodeLinkActions; qrState: QrCodeLinkState }) => {
     const { deleteManyLinks } = useLink({});
+    const router = useRouter();
     const pathName = usePathname();
     const [ids, setIds] = useState<string[]>([]);
     const [id, setId] = useState('');
@@ -74,6 +75,10 @@ const QrCodeComponent = ({ qrState, qrActions }: { qrActions: QrCodeLinkActions;
         }
     }, [isSuccess, qrActions.findAllQrCode]);
 
+    const handleNavigate = (id: string) => {
+        router.push(`${pathName}/edit/${id}`);
+    };
+
     return (
         <div className="">
             <div className="flex justify-between  items-center">
@@ -106,6 +111,7 @@ const QrCodeComponent = ({ qrState, qrActions }: { qrActions: QrCodeLinkActions;
                             data={data}
                             onChange={() => handleCheckboxChange(data._id, !ids.includes(data._id))}
                             handleDeleteQrCodeLink={() => handleOpenModal(data._id)}
+                            handleNavigate={() => handleNavigate(data?._id)}
                         />
                     </div>
                 ))

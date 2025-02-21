@@ -1,7 +1,6 @@
 'use client';
-import { Button, Card, Modal } from '@shtcut-ui/react';
+import { Button } from '@shtcut-ui/react';
 import { unsplash } from '@shtcut/_shared/constant';
-import { X } from 'lucide-react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import ManageMedia from './component/manage-media';
@@ -11,6 +10,8 @@ import { FolderFileCard, PhotoCardComponent, VideoCard } from './component';
 import { useSelector } from 'react-redux';
 import { RootState } from '@shtcut/redux/store';
 import EditModal from './component/edit-img';
+import Modal from '@shtcut/components/modal';
+import { useTabNavigation } from '@shtcut/hooks/use-tab-navigation';
 
 const MediaComponent = () => {
     const selectedPhoto = useSelector((state: RootState) => state.img.selectedPhoto);
@@ -22,7 +23,6 @@ const MediaComponent = () => {
     const [loadingPhotos, setLoadingPhotos] = useState<string[]>([]);
     const [isFetching, setIsFetching] = useState(false);
 
-    const [selectedTabIndex, setSelectedTabIndex] = useState(0);
     const tabs = [
         { id: 'all', label: 'All' },
         { id: 'images', label: 'Images' },
@@ -30,10 +30,7 @@ const MediaComponent = () => {
         { id: 'files', label: 'Files' },
         { id: 'folder', label: 'Folders' }
     ];
-
-    const handleTabChange = (index: number) => {
-        setSelectedTabIndex(index);
-    };
+    const { selectedTabIndex, handleTabChange, resetTab } = useTabNavigation(tabs);
     useEffect(() => {
         fetchPhotos();
     }, []);
@@ -64,8 +61,6 @@ const MediaComponent = () => {
         setLoadingPhotos((prevLoading) => prevLoading.filter((loadingId) => loadingId !== id));
     };
 
-    console.log('selectedPhoto', selectedPhoto);
-
     return (
         <div>
             <div className="flex items-center justify-between">
@@ -74,7 +69,6 @@ const MediaComponent = () => {
                     <Button variant={'outline'} className="h-9 border border-[#4D4D4D] bg-white text-xs rounded">
                         Create Folder
                     </Button>
-
                     <ManageMedia />
                 </div>
             </div>
@@ -138,18 +132,15 @@ const MediaComponent = () => {
             )}
 
             <Modal
-                showModel={modal}
-                setShowModal={setModal}
+                isOpen={modal}
+                title="Media"
+                border
                 onClose={() => {
                     setModal(false);
                     setEdit(false);
                 }}
                 className="bg-white relative max-w-[436px] h-fit"
             >
-                <section className="flex items-center border-b py-2 px-4 justify-between">
-                    <h2 className="font-medium">Media</h2>
-                    <X onClick={() => setModal(false)} size={16} className="cursor-pointer" />
-                </section>
                 {edit ? (
                     <section className="p-4">
                         <EditModal />

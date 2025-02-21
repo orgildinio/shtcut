@@ -76,6 +76,9 @@ interface QrCodeInterface {
     handleTabChange?: Dispatch<SetStateAction<string>>;
     switchTab?: string;
     register?: UseFormRegister<any>;
+    getQrCodeData?: QRCodeDataResponse | undefined;
+    editId?: string;
+    isLoadingGetQrCode?: boolean;
 }
 
 export interface PropsColor extends QrCodeInterface {
@@ -355,6 +358,6 @@ interface GeneralState {
     socialLinks: { [key: string]: string };
     contactInfo: ContactInfo;
     company: CompanyInfo;
-    file: File | null;
+    file: any | null;
     url: string;
 }

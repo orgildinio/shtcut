@@ -12,7 +12,8 @@ interface ComponentType {
 
 const PreviewPhone = ({ switchTab, links, selectedTab }: ComponentType) => {
     const { step, bgColor } = useGeneralState();
-
+    console.log('step', step);
+    console.log('selectedTab', selectedTab);
     return (
         <div className="border w-[250px] h-[550px] border-[#A6A6A4] p-[1px] mt-6  mx-auto rounded-[37px]">
             <div
@@ -32,13 +33,17 @@ const PreviewPhone = ({ switchTab, links, selectedTab }: ComponentType) => {
                     )}
 
                     {/* Multi Tab */}
-                    {switchTab === 'multi' && (
+                    {switchTab === 'multi-link' && (
                         <div
                             className={`w-full h-full ${selectedTab && selectedTab > 0 ? ' flex justify-center items-center' : ''} `}
                         >
                             {step === 1 && <GeneralTemplate links={links ?? []} />}
                             {step === 2 && selectedTab === 0 && <GeneralTemplate links={links ?? []} />}
-                            {typeof step === 'number' && step > 1 && selectedTab !== 0 && <FrameComponents />}
+                            {typeof step === 'number' && step > 1 && (
+                                <div className="flex justify-center items-center h-full">
+                                    <FrameComponents />
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -51,13 +56,17 @@ const PreviewPhone = ({ switchTab, links, selectedTab }: ComponentType) => {
                     )}
 
                     {/* VCard Tab */}
-                    {switchTab === 'vCard' && (
+                    {switchTab === 'vcard' && (
                         <div
-                            className={`w-full h-full ${selectedTab && selectedTab > 0 ? ' flex justify-center items-center' : ''} `}
+                            className={`w-full h-full ${selectedTab && selectedTab > 0 ? 'flex justify-center items-center' : ''}`}
                         >
                             {step === 1 && <GeneralTemplate />}
                             {step === 2 && selectedTab === 0 && <GeneralTemplate />}
-                            {typeof step === 'number' && step > 1 && selectedTab !== 0 && <FrameComponents />}
+                            {typeof step === 'number' && step > 1 && (
+                                <div className="flex justify-center items-center h-full">
+                                    <FrameComponents />
+                                </div>
+                            )}
                         </div>
                     )}
 

@@ -9,7 +9,7 @@ import { setDescription, setTitle } from '@shtcut/redux/slices/selects';
 import LinkHeader from '../../../../dashboard/link-header';
 import { useLinksManager } from '@shtcut/hooks/use-links-manager';
 import ContactInfo from '../../../../dashboard/contact-info';
-const PersonalInfoVCard = () => {
+const PersonalInfoVCard = ({ defaultLinks }: { defaultLinks?: Record<string, string> }) => {
     const { title, description, profileImage } = useGeneralState();
     const dispatch = useDispatch();
     const [showSections, setShowSections] = useState({
@@ -46,6 +46,7 @@ const PersonalInfoVCard = () => {
                 logos={logos}
                 showSection={showSections.socialNetworks}
                 toggleSection={() => toggleSection('socialNetworks')}
+                defaultLinks={defaultLinks ?? {}}
             />
         </div>
     );

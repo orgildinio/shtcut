@@ -10,10 +10,12 @@ import { UseLinksManagerActions, UseLinksManagerState } from '@shtcut/types/link
 
 const QrCodeHeadersComponent = ({
     actions,
-    linkState
+    linkState,
+    defaultLinks
 }: {
     actions: UseLinksManagerActions;
     linkState: UseLinksManagerState;
+    defaultLinks?: Record<string, string>;
 }) => {
     const { title, description, profileImage } = useGeneralState();
     const dispatch = useDispatch();
@@ -33,7 +35,7 @@ const QrCodeHeadersComponent = ({
             [section]: !prev[section]
         }));
     };
-
+    console.log('linkss::', linkState?.links);
     return (
         <div>
             {/* Header Section */}
@@ -62,12 +64,14 @@ const QrCodeHeadersComponent = ({
                     onUpdateLink={(field, value) => actions?.updateLink(link.id, field, value)}
                     onRemove={() => actions?.removeLink(link.id)}
                     addLinkSection={actions?.addLink}
+                    link={link}
                 />
             ))}
 
             <SocialNetworksCard
                 logos={logos}
                 showSection={show.socialNetworks}
+                defaultLinks={defaultLinks ?? {}}
                 toggleSection={() => toggleSection('socialNetworks')}
             />
         </div>

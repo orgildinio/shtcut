@@ -1,7 +1,8 @@
 'use client';
 
-import { Button, Card, Modal } from '@shtcut-ui/react';
+import { Button, Card } from '@shtcut-ui/react';
 import { connectChannel } from '@shtcut/_shared/data';
+import Modal from '@shtcut/components/modal';
 import { Check } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react';
@@ -16,10 +17,10 @@ const SocialDashboardComponent = () => {
     return (
         <div>
             <Modal
-                showModel={showModal}
-                setShowModal={setShowModal}
+                isOpen={showModal}
                 onClose={() => setShowModal(true)}
-                className="relative max-w-lg h-fit px-8  py-6"
+                className="relative max-w-md  px-8  py-6"
+                closeIcon={false}
             >
                 <h1 className="text-2xl font-medium text-center">Connect channel</h1>
                 <p className="text-sm text-center leading-[21px] mt-2 w-[400px] mx-auto">

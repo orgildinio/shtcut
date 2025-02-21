@@ -9,7 +9,7 @@ import {
     SocialPost
 } from '@shtcut/types/types';
 import dayjs from 'dayjs';
-import { Activity, Command, PieChart } from 'lucide-react';
+import { Images, MonitorPlay, File, Activity, Command, PieChart } from 'lucide-react';
 
 export const IMPACT: GeneralType[] = [
     {
@@ -352,49 +352,50 @@ export const logos = [
     {
         id: '1',
         name: 'whatsapp',
-        logoUrl: '/logos/logos_whatsapp-icon.png'
+        logoUrl: 'https://imgur.com/I4YvECD.png'
     },
     {
         id: '2',
         name: 'shtcut',
-        logoUrl: '/logos/shtcut.png'
+        logoUrl: 'https://imgur.com/6RP5ONt.png'
     },
     {
         id: '3',
         name: 'instagram',
-        logoUrl: '/logos/skill-icons_instagram.png'
+        logoUrl: 'https://imgur.com/J6gm9d7.png'
     },
     {
         id: '4',
         name: 'facebook',
-        logoUrl: '/logos/facebook.png'
+        logoUrl: 'https://imgur.com/ys542yT.png'
     },
     {
         id: '5',
         name: 'youtube',
-        logoUrl: '/logos/logos_youtube-icon.png'
+        logoUrl: 'https://imgur.com/PA2I0PQ.png'
     },
     {
         id: '6',
         name: 'bitly',
-        logoUrl: '/logos/bitl.png'
+        logoUrl: 'https://i.imgur.com/fSMwB8G.png'
     },
     {
         id: '7',
         name: 'twitter',
-        logoUrl: '/logos/prime_twitter.png'
+        logoUrl: 'https://imgur.com/jG7Sccm.png'
     },
     {
         id: '8',
         name: 'cloud',
-        logoUrl: '/logos/simple-icons_icloud.png'
+        logoUrl: 'https://imgur.com/bmcAPyF.png'
     },
     {
         id: '8',
         name: 'scan',
-        logoUrl: '/logos/Scan.png'
+        logoUrl: 'https://imgur.com/kI4CXoa.png'
     }
 ];
+
 export const postData_2 = [
     {
         title: 'Migrating to Shtcut',
@@ -1236,4 +1237,42 @@ export const linksTab = [
     { id: 'shape', label: 'Shape' },
     { id: 'logo', label: 'Logo' },
     { id: 'colors', label: 'Colors' }
+];
+export const chatFileData = [
+    {
+        id: 'images',
+        label: 'Images',
+        icon: Images,
+        content: [
+            faker.image.avatar(),
+            faker.image.avatar(),
+            faker.image.avatar(),
+            faker.image.avatar(),
+            faker.image.avatar()
+        ]
+    },
+    {
+        id: 'videos',
+        label: 'Videos',
+        icon: MonitorPlay,
+        content: [
+            'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            'https://www.youtube.com/embed/3JZ_D3ELwOQ',
+            'https://www.youtube.com/embed/LXb3EKWsInQ',
+            'https://www.youtube.com/embed/tgbNymZ7vqY'
+        ]
+    },
+    {
+        id: 'documents',
+        label: 'Documents',
+        icon: File,
+        files: [
+            { id: 1, type: 'xls', name: 'report.xls' },
+            { id: 2, type: 'pdf', name: 'invoice.pdf' },
+            { id: 3, type: 'xls', name: 'data.xls' },
+            { id: 4, type: 'pdf', name: 'manual.pdf' },
+            { id: 5, type: 'xls', name: 'budget.xls' },
+            { id: 6, type: 'pdf', name: 'presentation.pdf' }
+        ]
+    }
 ];
