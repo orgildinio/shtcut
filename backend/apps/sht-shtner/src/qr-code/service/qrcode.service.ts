@@ -47,63 +47,63 @@ export class QrCodeService extends MongoBaseService {
       const { type } = obj;
 
       if (!type) {
-        return new AppException(400, this.lang.get('qrcodes').validation.typeRequired);
+        throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.typeRequired);
       }
 
       // Common validations for all types
       if (!obj.title) {
-        return new AppException(400, this.lang.get('qrcodes').validation.titleRequired);
+        throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.titleRequired);
       }
 
       if (!obj.qrCode) {
-        return new AppException(400, 'QR code properties are required');
+        throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.qrCodeRequired);
       }
 
       // Type-specific validations
       switch (type) {
         case QRCodeType.PDF:
           if (!obj.file) {
-            return new AppException(400, 'PDF file is required');
+            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.pdfRequired);
           }
           break;
 
         case QRCodeType.WEBSITE:
           if (!obj.url) {
-            return new AppException(400, 'URL is required');
+            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.urlRequired);
           }
           break;
 
         case QRCodeType.VCARD:
           if (!obj.company?.name) {
-            return new AppException(400, 'Company name is required');
+            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.companyRequired);
           }
           if (!obj.contacts?.email || !obj.contacts?.phone) {
-            return new AppException(400, 'Email and phone are required');
+            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.contactsRequired);
           }
           if (!obj.address?.street || !obj.address?.city || !obj.address?.country) {
-            return new AppException(400, 'Address details are required');
+            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.addressRequired);
           }
           break;
 
         case QRCodeType.MULTI_LINK:
           if (!obj.links || !Array.isArray(obj.links) || obj.links.length === 0) {
-            return new AppException(400, this.lang.get('qrcodes').validation.linksRequired);
+            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.linksRequired);
           }
           // Validate each link
           for (const link of obj.links) {
             if (!link.url || !link.label) {
-              return new AppException(400, 'Each link must have a URL and label');
+              throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.linkDetailsRequired);
             }
           }
           break;
 
         default:
-          return new AppException(400, 'Invalid QR code type');
+          throw AppException.BAD_REQUEST(this.lang.get('qrcodes').invalidType);
       }
 
-      return null; // All validations passed
+      return null;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 
@@ -147,7 +147,7 @@ export class QrCodeService extends MongoBaseService {
             qrContent = this.generateMultiLinkQRContent(obj as MultiLinkQRCodeDto);
             break;
           default:
-            throw new Error('Unsupported QR code type');
+            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').invalidType);
         }
 
         createObj.target = qrContent;
@@ -256,43 +256,45 @@ export class QrCodeService extends MongoBaseService {
       session = await this.model.startSession();
       session.startTransaction();
 
+      if (!ids?.length) {
+        throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.idsRequired);
+      }
+
+      const qrCodes = await this.model.find({
+        ...Utils.conditionWithDelete({ _id: { $in: ids } }),
+        deleted: false
+      });
+
+      if (!qrCodes.length) {
+        throw AppException.NOT_FOUND(this.lang.get('qrcodes').notFound);
+      }
+
       const deleted = [];
-      if (ids?.length) {
-        const qrCodes = await this.model.find({
-          ...Utils.conditionWithDelete({ _id: { $in: ids } }),
-          deleted: false
+      for (let qrCode of qrCodes) {
+        _.extend(qrCode, {
+          deleted: true,
+          deletedAt: new Date()
         });
+        await qrCode.save({ session });
 
-        if (!qrCodes.length) {
-          throw AppException.NOT_FOUND(this.lang.get('qrcodes').notFound);
-        }
+        // Delete associated link
+        await this.linkModel.updateOne(
+          { ...Utils.conditionWithDelete({ qrCode: qrCode._id }) },
+          { deleted: true, deletedAt: new Date() },
+          { session }
+        );
 
-        for (let qrCode of qrCodes) {
-          _.extend(qrCode, {
-            deleted: true,
-            deletedAt: new Date()
-          });
-          await qrCode.save({ session });
+        deleted.push(qrCode._id);
 
-          // Delete associated link
-          await this.linkModel.updateOne(
-            { ...Utils.conditionWithDelete({ qrCode: qrCode._id }) },
-            { deleted: true, deletedAt: new Date() },
-            { session }
-          );
-
-          deleted.push(qrCode._id);
-
-          // Clear cache
-          if (this.cacheService) {
-            await this.cacheService.remove(this.modelName + ':' + qrCode._id.toString());
-          }
-        }
-
-        // Clear list cache
+        // Clear cache
         if (this.cacheService) {
-          await this.cacheService.remove(this.modelName + ':list');
+          await this.cacheService.remove(this.modelName + ':' + qrCode._id.toString());
         }
+      }
+
+      // Clear list cache
+      if (this.cacheService) {
+        await this.cacheService.remove(this.modelName + ':list');
       }
 
       await session.commitTransaction();

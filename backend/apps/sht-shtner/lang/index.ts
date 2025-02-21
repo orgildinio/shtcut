@@ -34,7 +34,8 @@ const lang = {
       companyRequired: 'Company name is required',
       contactsRequired: 'Email and phone are required',
       addressRequired: 'Address details are required',
-      linksRequired: 'At least one link is required'
+      linksRequired: 'At least one link is required',
+      idsRequired: 'Please provide valid QR code IDs'
     }
   },
 };
