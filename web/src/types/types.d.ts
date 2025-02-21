@@ -361,3 +361,20 @@ interface GeneralState {
     file: any | null;
     url: string;
 }
+
+interface Task {
+    id: string;
+    content: string;
+    description: string;
+    time: string;
+    comments: number;
+}
+
+export interface Column {
+    title: string;
+    items: Task[];
+}
+
+interface Columns {
+    [key: string]: Column;
+}
