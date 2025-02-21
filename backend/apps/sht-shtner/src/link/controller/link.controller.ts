@@ -1,10 +1,9 @@
-import { Body, Controller, Get, HttpCode, Next, Param, Patch, Post, Put, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
-import { AppController, CreateLinkDto, JwtAuthGuard, NOT_FOUND, OK, QueryParser, UpdateLinkDto } from 'shtcut/core';
+import { Body, Controller, Get, HttpCode, Next, Param, Patch, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { AppController, CreateLinkDto, JwtAuthGuard, NOT_FOUND, OK, QueryParser, UpdateLinkDto, LinkBulkDto } from 'shtcut/core';
 import { LinkService } from '../service/link.service';
 import { ConfigService } from '@nestjs/config';
 import { NextFunction, Request, Response } from 'express';
 import * as _ from 'lodash';
-import { LinkBulkDto } from 'shtcut/core';
 
 @Controller('links')
 export class LinkController extends AppController {
@@ -25,7 +24,6 @@ export class LinkController extends AppController {
     @Next() next: NextFunction,
   ) {
     try {
-      console.log("Starting....")
       const link = await this.service.visit(req, domain, alias);
       let response = null;
       if (!link) {
@@ -162,7 +160,7 @@ export class LinkController extends AppController {
   @Post('/delete/many')
   @HttpCode(OK)
   public async deleteLink(
-    @Body(ValidationPipe) payload: LinkBulkDto,
+    @Body() payload: LinkBulkDto,
     @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,
@@ -179,12 +177,11 @@ export class LinkController extends AppController {
     }
   }
 
-
   @UseGuards(JwtAuthGuard)
   @Post('/toggle-archive/many')
   @HttpCode(OK)
   public async toggleArchive(
-    @Body(ValidationPipe) payload: LinkBulkDto,
+    @Body() payload: LinkBulkDto,
     @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,

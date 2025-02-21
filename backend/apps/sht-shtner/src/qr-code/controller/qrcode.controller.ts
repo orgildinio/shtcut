@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Next, Param, Patch, Post, Put, Req, Res, UseGuards, Delete, BadRequestException, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Next, Param, Patch, Post, Put, Req, Res, UseGuards, Delete } from '@nestjs/common';
 import { AppController, CreateLinkDto, JwtAuthGuard, NOT_FOUND, OK, UpdateLinkDto, QrCodeDeleteDto, CreateQrCodeDto } from 'shtcut/core';
 import { QrCodeService } from '../service/qrcode.service';
 import { ConfigService } from '@nestjs/config';
@@ -76,7 +76,7 @@ export class QrCodeController extends AppController {
   @Delete('/bulk')
   @HttpCode(OK)
   public async bulkDelete(
-    @Body(ValidationPipe) payload: QrCodeDeleteDto,
+    @Body() payload: QrCodeDeleteDto,
     @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,

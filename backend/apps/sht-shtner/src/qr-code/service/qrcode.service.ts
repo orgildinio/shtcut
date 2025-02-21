@@ -251,33 +251,57 @@ export class QrCodeService extends MongoBaseService {
   }
 
   public async bulkDelete(ids: string[]) {
+    let session: ClientSession;
     try {
-      // Input validation
-      if (!ids || !Array.isArray(ids) || ids.length === 0) {
-        throw new BadRequestException('Please provide valid QR code IDs');
+      session = await this.model.startSession();
+      session.startTransaction();
+
+      const deleted = [];
+      if (ids?.length) {
+        const qrCodes = await this.model.find({
+          ...Utils.conditionWithDelete({ _id: { $in: ids } }),
+          deleted: false
+        });
+
+        if (!qrCodes.length) {
+          throw AppException.NOT_FOUND(this.lang.get('qrcodes').notFound);
+        }
+
+        for (let qrCode of qrCodes) {
+          _.extend(qrCode, {
+            deleted: true,
+            deletedAt: new Date()
+          });
+          await qrCode.save({ session });
+
+          // Delete associated link
+          await this.linkModel.updateOne(
+            { ...Utils.conditionWithDelete({ qrCode: qrCode._id }) },
+            { deleted: true, deletedAt: new Date() },
+            { session }
+          );
+
+          deleted.push(qrCode._id);
+
+          // Clear cache
+          if (this.cacheService) {
+            await this.cacheService.remove(this.modelName + ':' + qrCode._id.toString());
+          }
+        }
+
+        // Clear list cache
+        if (this.cacheService) {
+          await this.cacheService.remove(this.modelName + ':list');
+        }
       }
 
-      // Verify all QR codes exist and are accessible
-      const existingQrCodes = await this.model.find({
-        _id: { $in: ids },
-        ...Utils.conditionWithDelete({})
-      });
-
-      if (existingQrCodes.length !== ids.length) {
-        throw new BadRequestException('Some QR codes were not found or are already deleted');
-      }
-
-      // Delete QR codes only
-      const deletedQrCodes = await this.model.deleteMany(
-        { ...Utils.conditionWithDelete({ _id: { $in: ids } }) }
-      );
-
-      return {
-        deletedCount: deletedQrCodes.deletedCount,
-        message: `Successfully deleted ${deletedQrCodes.deletedCount} QR codes`
-      };
-    } catch (e) {
-      throw e;
+      await session.commitTransaction();
+      return deleted;
+    } catch (error) {
+      await session?.abortTransaction();
+      throw error;
+    } finally {
+      await session?.endSession();
     }
   }
 
