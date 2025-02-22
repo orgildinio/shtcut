@@ -5,7 +5,13 @@ import Image from 'next/image';
 import DownloadBtn from './download-btn';
 import { Link, List } from 'lucide-react';
 import { PiCopySimple, PiFilePdfDuotone, PiIdentificationCard } from 'react-icons/pi';
-import { resetState } from '@shtcut/redux/slices/qr-code';
+import {
+    resetState,
+    selectQrCodeStyle,
+    setEyeRadius,
+    setQrTitle,
+    setSelectedFrame
+} from '@shtcut/redux/slices/qr-code';
 import MultiLinksComponent from '../multi-link-components';
 import PdfQrCodeComponent from '../pdf-qr-code';
 import VCardComponent from '../vcard-component';
@@ -16,7 +22,17 @@ import PreviewPhone from '../../../dashboard/preview-phone';
 import { useForm } from 'react-hook-form';
 import useGeneralState from '@shtcut/hooks/general-state';
 import useQrCodeState from '@shtcut/hooks/qrcode/index.';
-import { resetGeneralState, setUrl } from '@shtcut/redux/slices/selects';
+import {
+    resetGeneralState,
+    setBgColor,
+    setBorderColor,
+    setBtnColor,
+    setDescription,
+    setPresetColor,
+    setSelectedTemplate,
+    setTitle,
+    setUrl
+} from '@shtcut/redux/slices/selects';
 import { useLinksManager } from '@shtcut/hooks/use-links-manager';
 import { useAppDispatch } from '@shtcut/redux/store';
 import BackButton from '@shtcut/components/back-btn';
@@ -25,8 +41,15 @@ import { handleError, handleSuccess } from '@shtcut/_shared';
 import { LoadingButton } from '@shtcut/components/_shared/loading-button';
 import useCopyToClipboard from '@shtcut/hooks/useCopyToClipboard';
 
-const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => {
+const QRCodeCreateComponent = ({
+    saveModal,
+    setSaveModal,
+    editId,
+    getQrCodeData,
+    isLoadingGetQrCode
+}: QrCodeInterface) => {
     const params = useParams();
+
     const dispatch = useAppDispatch();
     const {
         step,
@@ -47,7 +70,8 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
         fileInfo,
         urlScan
     } = useGeneralState();
-    const { state: linkState, actions } = useLinksManager();
+
+    const { state: linkState, actions } = useLinksManager(getQrCodeData?.links);
     const { state } = useQrCodeState();
     const router = useRouter();
     const getParams = useSearchParams();
@@ -56,13 +80,14 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     const [switchTab, setSwitchTab] = useState<string>(initialTab);
     const qrCodeRef = useRef(null);
     const { qrActions, qrState } = useQrCode({ call: true });
-    const { workspace } = params;
-    const { register, handleSubmit, watch } = useForm({
+    const { workspace, module } = params;
+    const { register, handleSubmit, watch, setValue } = useForm({
         mode: 'onChange',
         defaultValues: {
             url: ''
         }
     });
+
     const { handleCopy } = useCopyToClipboard();
     const generalReset = () => {
         dispatch(resetState());
@@ -71,7 +96,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
     const urlValue = watch('url');
     const handleTabChange = (tabs: string) => {
         setSwitchTab(tabs);
-        generalReset();
+        // generalReset();
     };
     const handleClose = () => {
         setSaveModal(false);
@@ -151,23 +176,22 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
             qrCode: commonQrCodeData
         };
         let payload;
-
-        // Dynamically select the payload based on the switchTab value
+        console.log('pdf::', fileInfo);
+        console.log('payload:::', payload);
         switch (switchTab) {
             case 'website':
                 payload = webPayload;
                 break;
-            case 'multi':
+            case 'multi-link':
                 payload = multiLinkPayload;
                 break;
-            case 'vCard':
+            case 'vcard':
                 payload = vCardPayload;
                 break;
             case 'pdf':
                 payload = pdfPayload;
                 break;
             default:
-                console.error('Invalid tab selected');
                 return;
         }
         if (step === 1) {
@@ -187,7 +211,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                 });
             }
 
-            if (switchTab === 'multi') {
+            if (switchTab === 'multi-link') {
                 const hasValidLink = linkState?.links?.every(
                     (link) => link.label.trim() !== '' && link.url.trim() !== ''
                 );
@@ -201,6 +225,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
             }
 
             if (switchTab === 'pdf' && !fileInfo) {
+                console.log('stephe1::,f', fileInfo);
                 return toast({
                     variant: 'destructive',
                     title: 'No File',
@@ -211,10 +236,11 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
             return;
         }
         if (step === 2) {
+            console.log('stephe2::,f', fileInfo);
+
             handleNextStep();
             return;
         }
-
         if (step === 3) {
             if (!state?.title)
                 return toast({
@@ -222,22 +248,31 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                     title: 'Missing Title',
                     description: 'Please provide a Qr code title before proceeding.'
                 });
-            qrActions.setLoadingState('creating', true);
-            try {
-                const res = await qrActions.createqrCode(payload);
-                handleSuccess({
-                    response: res
-                });
-                const newUrl = switchTab === 'website' ? urlValue : `http://localhost:3000/qr-code/${res?.data?.slug}`;
-                dispatch(setUrl(newUrl));
-                setSaveModal(true);
-            } catch (error) {
-                handleError({ error });
-            } finally {
-                qrActions.setLoadingState('creating', false);
-            }
+            console.log('payload:::', payload);
+            // qrActions.setLoadingState('creating', true);
+
+            // try {
+            //     let res;
+            //     if (editId) {
+            //         res = await qrActions.updateQrCode({ payload, id: editId });
+            //     } else {
+            //         res = await qrActions.createqrCode(payload);
+            //     }
+            //     handleSuccess({
+            //         response: res
+            //     });
+            //     const newUrl = switchTab === 'website' ? urlValue : `http://localhost:3000/qr-code/${res?.data?.slug}`;
+            //     dispatch(setUrl(newUrl));
+            //     // setSaveModal(true);
+            // } catch (error) {
+            //     handleError({ error });
+            // } finally {
+            //     qrActions.setLoadingState('creating', false);
+            // }
         }
     };
+
+    console.log('fileInfo pdf', fileInfo);
 
     const tabData = [
         {
@@ -246,7 +281,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
             icon: <Link size={16} />
         },
         {
-            value: 'multi',
+            value: 'multi-link',
             label: 'Multi links',
             icon: <List size={18} />
         },
@@ -256,11 +291,19 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
             icon: <PiFilePdfDuotone size={18} />
         },
         {
-            value: 'vCard',
+            value: 'vcard',
             label: 'vCard ',
             icon: <PiIdentificationCard size={18} />
         }
     ];
+
+    useEffect(() => {
+        if (editId && getQrCodeData) {
+            const newTab = getQrCodeData?.type;
+            setSwitchTab(newTab);
+            handleTabChange(newTab);
+        }
+    }, [editId, getQrCodeData?.type]);
 
     useEffect(() => {
         if (switchTab) {
@@ -270,15 +313,37 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
         }
     }, [switchTab]);
 
+    const urlWebsite = getQrCodeData?.url;
+
+    useEffect(() => {
+        if (editId && getQrCodeData) {
+            dispatch(setQrTitle(getQrCodeData?.qrCode?.name || getQrCodeData?.title));
+            dispatch(setTitle(getQrCodeData?.title));
+            dispatch(setBgColor(getQrCodeData?.bgColor));
+            dispatch(setBorderColor(getQrCodeData?.borderColor || getQrCodeData?.qrCode?.colors?.borderColor));
+            dispatch(setDescription(getQrCodeData?.description));
+            dispatch(setBtnColor(getQrCodeData?.template?.btnColor));
+            dispatch(
+                setPresetColor(getQrCodeData?.qrCode?.colors?.presetColor || getQrCodeData?.template?.presetColor)
+            );
+            dispatch(setSelectedTemplate(getQrCodeData?.template?.template));
+            dispatch(setEyeRadius(getQrCodeData?.qrCode?.eyeRadius));
+            dispatch(setSelectedFrame(getQrCodeData?.qrCode?.frame));
+            dispatch(selectQrCodeStyle(getQrCodeData?.qrCode?.qrStyle));
+            setValue('url', urlWebsite);
+        }
+    }, [editId, getQrCodeData, dispatch, setValue, urlWebsite]);
+
     const onSubmit = (data: { url: string }) => {
         console.log('Title:', data.url);
     };
+    if (isLoadingGetQrCode) return <div className="flex justify-center items-center h-screen">loading...</div>;
 
     return (
         <div className=" ">
-            <BackButton />
+            <BackButton navigation={`/url/${workspace}/qr-codes`} />
             <div className="flex pt-6 justify-between  items-center">
-                <h1 className="font-semibold text-[#2B2829] text-xl">Create QR Codes</h1>
+                <h1 className="font-semibold text-[#2B2829] text-xl">Create QR </h1>
                 <div className="flex items-center gap-x-3">
                     {Number(step) > 1 && (
                         <Button
@@ -309,7 +374,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                                 className="w-full"
                                 onValueChange={(value) => {
                                     setSwitchTab(value);
-                                    generalReset();
+                                    // generalReset();
                                 }}
                             >
                                 <TabsList className="block border-none bg-transparent gap-0 m-0 p-0">
@@ -322,6 +387,7 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                                                     className="border shadow-none text-black/60 h-9 w-32 data-[state=active]:text-primary-0 data-[state=active]:border-primary-0 text-xs flex items-center justify-center gap-x-2 data-[state=active]:shadow-none"
                                                     value={tab.value}
                                                     onClick={() => handleTabChange(tab.value)}
+                                                    disabled={editId ? tab.value !== getQrCodeData?.type : undefined}
                                                 >
                                                     {tab.icon}
                                                     {tab.label}
@@ -338,25 +404,26 @@ const QRCodeCreateComponent = ({ saveModal, setSaveModal }: QrCodeInterface) => 
                                             register={register}
                                         />
                                     </TabsContent>
-                                    <TabsContent value="multi">
+                                    <TabsContent value="multi-link">
                                         <MultiLinksComponent
                                             step={step as number}
                                             actions={actions}
                                             linkState={linkState}
+                                            defaultLinks={getQrCodeData?.socialMedia}
                                         />
                                     </TabsContent>
                                     <TabsContent value="pdf">
                                         <PdfQrCodeComponent step={Number(step)} actions={actions} />
                                     </TabsContent>
-                                    <TabsContent value="vCard">
-                                        <VCardComponent step={step} />
+                                    <TabsContent value="vcard">
+                                        <VCardComponent step={Number(step)} defaultLinks={getQrCodeData?.socialMedia} />
                                     </TabsContent>
                                 </form>
                             </Tabs>
                         </div>
                     </div>
                 </div>
-                <div className="bg-white w-1/2 sticky top-0 shadow-sm border border-gray-100 rounded-[10px] h-[640px] p-[23px]">
+                <div className="bg-white w-1/2 sticky top-40 shadow-sm border border-gray-100 rounded-[10px] h-[640px] p-[23px]">
                     <h2 className=" font-semibold ">Preview</h2>
                     <PreviewPhone switchTab={switchTab} links={linkState?.links} selectedTab={Number(selectedTab)} />
                 </div>

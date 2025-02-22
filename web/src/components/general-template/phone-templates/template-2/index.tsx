@@ -63,6 +63,7 @@ const PhoneTemplate_2 = ({
                                     }
                                     name={bio.label || 'Untitled'}
                                     btnColor={btnColor}
+                                    href={bio?.url}
                                 />
                             ) : null
                         )}

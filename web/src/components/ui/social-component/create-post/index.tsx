@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Modal } from '@shtcut-ui/react';
+import { Button, Card } from '@shtcut-ui/react';
 import React, { useState } from 'react';
 import { Check, ChevronUp, ChevronDown, Info } from 'lucide-react';
 import { social_media } from '@shtcut/_shared/data';
@@ -24,6 +24,7 @@ import TiktokPreview from '../component/tiktok-preview';
 
 import { SocialMedia } from '@shtcut/types/types';
 import ManagePostAction from './manage-post-action';
+import Modal from '@shtcut/components/modal';
 
 const CreatePostComponent = () => {
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -153,10 +154,10 @@ const CreatePostComponent = () => {
             </Card>
 
             <Modal
-                setShowModal={setShowModal}
-                showModel={showModal}
+                isOpen={showModal}
                 onClose={() => setShowModal(false)}
-                className={`relative bg-white ${type === 'gallery' ? 'max-w-[35rem]' : type === 'schedule' ? 'max-w-96' : ''}  p-6`}
+                closeIcon={false}
+                className={`relative bg-white ${type === 'gallery' ? 'max-w-[35rem]' : type === 'schedule' ? 'max-w-96' : 'max-w-sm'}  p-6`}
             >
                 <div>
                     {type === 'hash' && <HashTag handleOpen={handleOpen} handleClose={() => handleOpen(false, '')} />}

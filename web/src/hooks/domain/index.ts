@@ -41,7 +41,6 @@ interface UseDomainReturnsType {
 
 export const useDomain = (props: UseDomainProps): UseDomainReturnsType => {
     const { callDomain = false, search, filter, id } = props;
-
     const { pagination } = usePagination();
     const [createDomain, createDomainResponse] = useCreateDomainMutation();
     const [updateDomain, updateDomainResponse] = useUpdateDomainMutation();

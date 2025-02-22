@@ -3,4 +3,12 @@ import SocialDashboardContainer from './social-dashboard';
 import CalandarsContainer from './calanders';
 import MediaContainer from './media-container';
 import MessagesContainer from './messages';
-export { CreatePostContainer, SocialDashboardContainer, CalandarsContainer, MediaContainer, MessagesContainer };
+import TaskContainer from './task';
+export {
+    CreatePostContainer,
+    SocialDashboardContainer,
+    CalandarsContainer,
+    MediaContainer,
+    MessagesContainer,
+    TaskContainer
+};

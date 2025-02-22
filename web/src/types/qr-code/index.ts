@@ -86,7 +86,8 @@ interface PdfPayload extends CommonQrCodeData {
 export type QrCodePayload = WebsitePayload | MultiLinkPayload | VcardPayload | PdfPayload;
 
 export interface QrCodeLinkActions {
-    createqrCode: (payload: any) => Promise<any>;
+    createqrCode: (payload: QrCodePayload) => Promise<any>;
+    updateQrCode: MutationTrigger<any>;
     setLoadingState: (key: 'creating' | 'deleting' | 'updating', value: boolean) => void;
     paginationActions: UsePaginationActions;
     deleteQrCodeLink: MutationTrigger<any>;
@@ -96,11 +97,14 @@ export interface QrCodeLinkActions {
 export interface QrCodeLinkState {
     isLoadingState: boolean;
     createQrCodeResponse: any;
+    updateQrCodeResponse: any;
     findAllQrCodeResponse: ApiResponse<QRCodeDataResponse[]> | undefined;
     isLoading: boolean;
     pagination: UsePaginationState;
     deleteLinkResponse: Dict;
+    getSingleQrCode: QRCodeDataResponse | undefined;
     params: LinkParams;
+    getQrCodeIsLoading: boolean;
 }
 
 type QRCodeType = 'multi-link' | 'website' | 'vcard' | 'pdf';

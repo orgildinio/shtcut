@@ -1,5 +1,5 @@
 import { api } from '@shtcut/_shared/api/app.api';
-import { DELETE, POST, SHTNER } from '@shtcut/_shared/constant';
+import { DELETE, POST, PUT, SHTNER } from '@shtcut/_shared/constant';
 import { qrCode } from '../tags';
 import { QRCodeDataResponse, QrCodePayload } from '@shtcut/types/qr-code';
 import { ApiResponse, QueryArgs } from '@shtcut/_shared/namespace';
@@ -32,7 +32,33 @@ export const qrCodeApi = api.injectEndpoints({
                 method: DELETE
             }),
             invalidatesTags: [qrCode]
+        }),
+        getSingleQrCode: builder.query<ApiResponse<QRCodeDataResponse>, Record<string, any>>({
+            query: (params: Record<string, string>) =>
+                ({
+                    url: `${SHTNER.qrCode}/${params?.id}`,
+                    params
+                }) as unknown as FetchArgs,
+            providesTags: [qrCode]
+        }),
+        updateQrCode: builder.mutation<ApiResponse<any>, { payload?: QrCodePayload; id: string }>({
+            query: ({ payload, id }) => {
+                return {
+                    url: `${SHTNER.qrCode}/${id}`,
+                    method: PUT,
+                    body: payload
+                };
+            },
+            invalidatesTags: [qrCode]
         })
+        // updateQrCode: builder.mutation<any, { id: string; payload: QrCodePayload }>({
+        //     query: ({ id, payload }) => ({
+        //         url: `${SHTNER.qrCode}/${id}`,
+        //         method: PUT,
+        //         body: payload
+        //     }),
+        //     invalidatesTags: [qrCode]
+        // })
     })
 });
 
@@ -40,5 +66,7 @@ export const {
     useCreateQrCodeMutation,
     useLazyFindAllQrCodeQuery,
     useDeleteLinkQrCodeMutation,
-    endpoints: { createQrCode, findAllQrCode, deleteLinkQrCode }
+    useLazyGetSingleQrCodeQuery,
+    useUpdateQrCodeMutation,
+    endpoints: { createQrCode, findAllQrCode, deleteLinkQrCode, getSingleQrCode, updateQrCode }
 } = qrCodeApi;

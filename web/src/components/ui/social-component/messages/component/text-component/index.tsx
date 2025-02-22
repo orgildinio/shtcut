@@ -1,24 +1,34 @@
 import { faker } from '@faker-js/faker';
 import { ChatMessage } from '@shtcut/types/types';
 import React from 'react';
+import ChatScreenActions from '../chat-screen-actions';
 
-const TextComponent = ({ singleChat }: { singleChat: ChatMessage | null }) => {
+const TextComponent = ({
+    singleChat,
+    onClickDelete
+}: {
+    singleChat: ChatMessage | null;
+    onClickDelete: () => void;
+}) => {
     return (
         <section className={`${singleChat?.sender === 'me' ? 'flex justify-end ' : ''} gap-4`}>
-            <section>
+            <section className="w-fit">
                 {singleChat?.sender !== 'me' && (
                     <section className="flex items-center gap-4">
                         <section className="flex items-center gap-2">
-                            <img src={faker.image.avatar()} className=" w-9 h-9 rounded-full " alt="Avatar" />
+                            <img src={faker.image.avatar()} className=" w-8 h-8 rounded-full " alt="Avatar" />
 
-                            <p className="text-sm font-semibold">{singleChat?.senderName}</p>
+                            <p className="text-[13px] font-semibold">{singleChat?.senderName}</p>
                         </section>
                         <p className="text-xs text-[#9F9C9C]">12 mins</p>
                     </section>
                 )}
                 <section className="max-w-md ">
+                    <div className={` mt-3 ml-2 ${singleChat?.sender === 'me' ? 'float-left ' : 'float-right'}`}>
+                        <ChatScreenActions onClickDelete={onClickDelete} />
+                    </div>
                     <div
-                        className={` mt-2 ${
+                        className={` mt-2 text-[13px] ${
                             singleChat?.sender === 'me'
                                 ? 'bg-primary-0 text-white rounded-tl-lg rounded-b-lg '
                                 : 'bg-gray-100 text-black rounded-tr-lg rounded-b-lg '
