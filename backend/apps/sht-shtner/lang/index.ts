@@ -14,31 +14,7 @@ function get(prop) {
   else throw new HttpException(`There's no property defined as ${prop} in your translations`, INTERNAL_SERVER_ERROR);
 }
 
-const lang = {
-  get,
-  app: {
-    success: 'Operation successful',
-  },
-  qrcodes: {
-    created: 'QR code successfully created',
-    updated: 'QR code successfully updated',
-    deleted: 'QR code successfully deleted',
-    retrieved: 'QR codes successfully retrieved',
-    notFound: 'QR code not found',
-    duplicate: 'QR code with this title already exists',
-    invalidType: 'Invalid QR code type',
-    validation: {
-      titleRequired: 'Title is required',
-      pdfRequired: 'PDF file is required',
-      urlRequired: 'URL is required',
-      companyRequired: 'Company name is required',
-      contactsRequired: 'Email and phone are required',
-      addressRequired: 'Address details are required',
-      linksRequired: 'At least one link is required',
-      idsRequired: 'Please provide valid QR code IDs'
-    }
-  },
-};
+const lang = { get };
 
 const obj = require(`./${language}`).default;
 _.each(Object.getOwnPropertyNames(obj), function (property) {

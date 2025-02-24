@@ -44,65 +44,82 @@ export class QrCodeService extends MongoBaseService {
 
   public async validateCreate(obj: Dict): Promise<any> {
     try {
-      const { type } = obj;
+      // Check if type exists, is not empty, and is valid
+      if (!obj.type || obj.type.trim() === '' || !Object.values(QRCodeType).includes(obj.type)) {
+        throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.typeRequired);
+      }
 
-      if (!type) {
-        throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.typeRequired);
+      // Check for duplicate title within user's scope
+      const slug = Utils.slugifyText(obj.title);
+      const existingQrCode = await this.model.findOne({
+        ...Utils.conditionWithDelete({
+          $or: [
+            { title: obj.title },
+            { slug: slug }
+          ],
+          user: obj.user  // Add user check
+        })
+      });
+
+      if (existingQrCode) {
+
+        throw AppException.CONFLICT(lang.get('qrcodes').duplicate);
       }
 
       // Common validations for all types
       if (!obj.title) {
-        throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.titleRequired);
+        throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.titleRequired);
       }
 
       if (!obj.qrCode) {
-        throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.qrCodeRequired);
+        throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.qrCodeRequired);
       }
 
       // Type-specific validations
-      switch (type) {
+      switch (obj.type) {
         case QRCodeType.PDF:
           if (!obj.file) {
-            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.pdfRequired);
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.pdfRequired);
           }
           break;
 
         case QRCodeType.WEBSITE:
           if (!obj.url) {
-            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.urlRequired);
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.urlRequired);
           }
           break;
 
         case QRCodeType.VCARD:
           if (!obj.company?.name) {
-            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.companyRequired);
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.companyRequired);
           }
           if (!obj.contacts?.email || !obj.contacts?.phone) {
-            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.contactsRequired);
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.contactsRequired);
           }
           if (!obj.address?.street || !obj.address?.city || !obj.address?.country) {
-            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.addressRequired);
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.addressRequired);
           }
           break;
 
         case QRCodeType.MULTI_LINK:
           if (!obj.links || !Array.isArray(obj.links) || obj.links.length === 0) {
-            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.linksRequired);
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.linksRequired);
           }
           // Validate each link
           for (const link of obj.links) {
-            if (!link.url || !link.label) {
-              throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.linkDetailsRequired);
+            if (!link.url || !link.label || link.label.trim() === '') {
+              throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.linkDetailsRequired);
             }
           }
           break;
 
         default:
-          throw AppException.BAD_REQUEST(this.lang.get('qrcodes').invalidType);
+          throw AppException.BAD_REQUEST(lang.get('qrcodes').invalidType);
       }
 
       return null;
     } catch (error) {
+      console.log(error)
       throw error;
     }
   }
@@ -147,7 +164,7 @@ export class QrCodeService extends MongoBaseService {
             qrContent = this.generateMultiLinkQRContent(obj as MultiLinkQRCodeDto);
             break;
           default:
-            throw AppException.BAD_REQUEST(this.lang.get('qrcodes').invalidType);
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').invalidType);
         }
 
         createObj.target = qrContent;
@@ -257,7 +274,7 @@ export class QrCodeService extends MongoBaseService {
       session.startTransaction();
 
       if (!ids?.length) {
-        throw AppException.BAD_REQUEST(this.lang.get('qrcodes').validation.idsRequired);
+        throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.idsRequired);
       }
 
       const qrCodes = await this.model.find({
@@ -266,7 +283,7 @@ export class QrCodeService extends MongoBaseService {
       });
 
       if (!qrCodes.length) {
-        throw AppException.NOT_FOUND(this.lang.get('qrcodes').notFound);
+        throw AppException.NOT_FOUND(lang.get('qrcodes').notFound);
       }
 
       const deleted = [];
@@ -346,7 +363,7 @@ export class QrCodeService extends MongoBaseService {
     return {
       code: data.code,
       value: data.value,
-      message: data.message ?? this.lang.get('qrcodes').created
+      message: data.message ?? lang.get('qrcodes').created
     };
   }
 }

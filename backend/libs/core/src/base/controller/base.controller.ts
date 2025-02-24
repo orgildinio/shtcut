@@ -87,8 +87,8 @@ export abstract class BaseController {
       }
 
       const reqObj = await this.service.prepareBodyObject(req);
-
       let value = await this.service.retrieveExistingResource(reqObj);
+
       if (value) {
         const returnIfFound = this.service.entity.config.returnDuplicate;
         if (!returnIfFound) {
