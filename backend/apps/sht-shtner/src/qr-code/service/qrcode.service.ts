@@ -119,7 +119,6 @@ export class QrCodeService extends MongoBaseService {
 
       return null;
     } catch (error) {
-      console.log(error)
       throw error;
     }
   }
