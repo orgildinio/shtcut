@@ -15,6 +15,12 @@ import {
   QrCodeDocument,
   RedisService,
   Utils,
+  QRCodeType,
+  CreateQrCodeDto,
+  PDFQRCodeDto,
+  VCardQRCodeDto,
+  WebsiteQRCodeDto,
+  MultiLinkQRCodeDto
 } from 'shtcut/core';
 
 import { HitService } from '../../hit';
@@ -23,6 +29,8 @@ import { Request } from 'express';
 
 @Injectable()
 export class QrCodeService extends MongoBaseService {
+  protected lang = lang;
+
   constructor(
     @InjectModel(QrCode.name) protected model: Model<QrCodeDocument>,
     @InjectModel(Hit.name) protected hitModel: Model<HitDocument>,
@@ -32,19 +40,139 @@ export class QrCodeService extends MongoBaseService {
     protected redisService: RedisService,
   ) {
     super(model, redisService);
-    this.routes = {
-      create: true,
-      find: true,
-      findOne: true,
-      update: true,
-      patch: true,
-      remove: true,
-    };
   }
 
-  public createNewObject(obj: Dict, session?: ClientSession): Promise<any> {
-    if (obj.slug) obj.isSlugAvailable = true;
-    return super.createNewObject(obj, session);
+  public async validateCreate(obj: Dict): Promise<any> {
+    try {
+      // Check if type exists, is not empty, and is valid
+      if (!obj.type || obj.type.trim() === '' || !Object.values(QRCodeType).includes(obj.type)) {
+        throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.typeRequired);
+      }
+
+      // Check for duplicate title within user's scope
+      const slug = Utils.slugifyText(obj.title);
+      const existingQrCode = await this.model.findOne({
+        ...Utils.conditionWithDelete({
+          $or: [
+            { title: obj.title },
+            { slug: slug }
+          ],
+          user: obj.user  // Add user check
+        })
+      });
+
+      if (existingQrCode) {
+
+        throw AppException.CONFLICT(lang.get('qrcodes').duplicate);
+      }
+
+      // Common validations for all types
+      if (!obj.title) {
+        throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.titleRequired);
+      }
+
+      if (!obj.qrCode) {
+        throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.qrCodeRequired);
+      }
+
+      // Type-specific validations
+      switch (obj.type) {
+        case QRCodeType.PDF:
+          if (!obj.file) {
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.pdfRequired);
+          }
+          break;
+
+        case QRCodeType.WEBSITE:
+          if (!obj.url) {
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.urlRequired);
+          }
+          break;
+
+        case QRCodeType.VCARD:
+          if (!obj.company?.name) {
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.companyRequired);
+          }
+          if (!obj.contacts?.email || !obj.contacts?.phone) {
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.contactsRequired);
+          }
+          if (!obj.address?.street || !obj.address?.city || !obj.address?.country) {
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.addressRequired);
+          }
+          break;
+
+        case QRCodeType.MULTI_LINK:
+          if (!obj.links || !Array.isArray(obj.links) || obj.links.length === 0) {
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.linksRequired);
+          }
+          // Validate each link
+          for (const link of obj.links) {
+            if (!link.url || !link.label || link.label.trim() === '') {
+              throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.linkDetailsRequired);
+            }
+          }
+          break;
+
+        default:
+          throw AppException.BAD_REQUEST(lang.get('qrcodes').invalidType);
+      }
+
+      return null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async prepareBodyObject(req: Request): Promise<any> {
+    const payload = req.body;
+
+    // Check if payload and title exist
+    if (payload && payload.title) {
+      payload.slug = Utils.slugifyText(payload.title);  // Generate slug from root level title
+    }
+
+    return payload;
+  }
+
+  public async createNewObject(obj: Dict, session?: ClientSession): Promise<any> {
+    try {
+      if (obj.type) {
+        const { type } = obj;
+        let qrContent: string;
+        let createObj: any = {
+          target: '',
+          properties: obj.qrCode,
+          title: obj.title,
+          type: type,
+          bgColor: obj.bgColor,
+        };
+
+        switch (type) {
+          case QRCodeType.PDF:
+            qrContent = this.generatePDFQRContent(obj as PDFQRCodeDto);
+            if (obj.description) createObj.description = obj.description;
+            if (obj.profileImage) createObj.profileImage = obj.profileImage;
+            break;
+          case QRCodeType.VCARD:
+            qrContent = this.generateVCardQRContent(obj as VCardQRCodeDto);
+            break;
+          case QRCodeType.WEBSITE:
+            qrContent = this.generateWebsiteQRContent(obj as WebsiteQRCodeDto);
+            break;
+          case QRCodeType.MULTI_LINK:
+            qrContent = this.generateMultiLinkQRContent(obj as MultiLinkQRCodeDto);
+            break;
+          default:
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').invalidType);
+        }
+
+        createObj.target = qrContent;
+        return super.createNewObject(createObj, session);
+      }
+      return super.createNewObject(obj, session);
+    } catch (error) {
+      throw error;
+    }
   }
 
   public updateObject(id: string, obj: Dict, session?: ClientSession) {
@@ -136,5 +264,105 @@ export class QrCodeService extends MongoBaseService {
     } finally {
       await session?.endSession();
     }
+  }
+
+  public async bulkDelete(ids: string[]) {
+    let session: ClientSession;
+    try {
+      session = await this.model.startSession();
+      session.startTransaction();
+
+      if (!ids?.length) {
+        throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.idsRequired);
+      }
+
+      const qrCodes = await this.model.find({
+        ...Utils.conditionWithDelete({ _id: { $in: ids } }),
+        deleted: false
+      });
+
+      if (!qrCodes.length) {
+        throw AppException.NOT_FOUND(lang.get('qrcodes').notFound);
+      }
+
+      const deleted = [];
+      for (let qrCode of qrCodes) {
+        _.extend(qrCode, {
+          deleted: true,
+          deletedAt: new Date()
+        });
+        await qrCode.save({ session });
+
+        // Delete associated link
+        await this.linkModel.updateOne(
+          { ...Utils.conditionWithDelete({ qrCode: qrCode._id }) },
+          { deleted: true, deletedAt: new Date() },
+          { session }
+        );
+
+        deleted.push(qrCode._id);
+
+        // Clear cache
+        if (this.cacheService) {
+          await this.cacheService.remove(this.modelName + ':' + qrCode._id.toString());
+        }
+      }
+
+      // Clear list cache
+      if (this.cacheService) {
+        await this.cacheService.remove(this.modelName + ':list');
+      }
+
+      await session.commitTransaction();
+      return deleted;
+    } catch (error) {
+      await session?.abortTransaction();
+      throw error;
+    } finally {
+      await session?.endSession();
+    }
+  }
+
+  private generatePDFQRContent(data: PDFQRCodeDto): string {
+    // Generate content for PDF QR code
+    return `PDF:${data.file}`;
+  }
+
+  private generateVCardQRContent(data: VCardQRCodeDto): string {
+    // Generate vCard format string
+    const vcard = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `FN:${data.title}`,
+      `ORG:${data.company.name}`,
+      `TITLE:${data.company.department}`,
+      `EMAIL:${data.contacts.email}`,
+      `TEL:${data.contacts.phone}`,
+      `ADR:;;${data.address.street};${data.address.city};${data.address.state};${data.address.zipCode};${data.address.country}`,
+      `URL:${data.contacts.website || ''}`,
+      'END:VCARD'
+    ].join('\n');
+    return vcard;
+  }
+
+  private generateWebsiteQRContent(data: WebsiteQRCodeDto): string {
+    return data.url;
+  }
+
+  private generateMultiLinkQRContent(data: MultiLinkQRCodeDto): string {
+    // Create a JSON structure or formatted string for multiple links
+    const content = {
+      links: data.links,
+      social: data.socialMedia
+    };
+    return JSON.stringify(content);
+  }
+
+  public async postCreate(data: { queryParser: any; value: any; code: number; message?: string }) {
+    return {
+      code: data.code,
+      value: data.value,
+      message: data.message ?? lang.get('qrcodes').created
+    };
   }
 }

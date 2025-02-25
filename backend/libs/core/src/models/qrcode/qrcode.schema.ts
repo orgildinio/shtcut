@@ -28,7 +28,7 @@ export class QrCode {
   @Prop({
     type: String,
   })
-  descriptions: string;
+  description: string;
 
   @Prop({
     type: String,
