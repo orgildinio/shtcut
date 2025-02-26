@@ -49,23 +49,6 @@ export class QrCodeService extends MongoBaseService {
         throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.typeRequired);
       }
 
-      // Check for duplicate title within user's scope
-      const slug = Utils.slugifyText(obj.title);
-      const existingQrCode = await this.model.findOne({
-        ...Utils.conditionWithDelete({
-          $or: [
-            { title: obj.title },
-            { slug: slug }
-          ],
-          user: obj.user  // Add user check
-        })
-      });
-
-      if (existingQrCode) {
-
-        throw AppException.CONFLICT(lang.get('qrcodes').duplicate);
-      }
-
       // Common validations for all types
       if (!obj.title) {
         throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.titleRequired);
@@ -77,18 +60,16 @@ export class QrCodeService extends MongoBaseService {
 
       // Type-specific validations
       switch (obj.type) {
-        case QRCodeType.PDF:
-          if (!obj.file) {
-            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.pdfRequired);
-          }
-          break;
-
         case QRCodeType.WEBSITE:
           if (!obj.url) {
             throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.urlRequired);
           }
           break;
-
+        case QRCodeType.PDF:
+          if (!obj.file) {
+            throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.pdfRequired);
+          }
+          break;
         case QRCodeType.VCARD:
           if (!obj.company?.name) {
             throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.companyRequired);
@@ -100,7 +81,6 @@ export class QrCodeService extends MongoBaseService {
             throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.addressRequired);
           }
           break;
-
         case QRCodeType.MULTI_LINK:
           if (!obj.links || !Array.isArray(obj.links) || obj.links.length === 0) {
             throw AppException.BAD_REQUEST(lang.get('qrcodes').validation.linksRequired);
@@ -112,9 +92,24 @@ export class QrCodeService extends MongoBaseService {
             }
           }
           break;
-
         default:
           throw AppException.BAD_REQUEST(lang.get('qrcodes').invalidType);
+      }
+
+      // Check for duplicate title within user's scope
+      const slug = Utils.slugifyText(obj.title);
+      const existingQrCode = await this.model.findOne({
+        ...Utils.conditionWithDelete({
+          $or: [
+            { title: obj.title },
+            { slug: slug }
+          ],
+          user: obj.user
+        })
+      });
+
+      if (existingQrCode) {
+        throw AppException.CONFLICT(lang.get('qrcodes').duplicate);
       }
 
       return null;
@@ -125,12 +120,9 @@ export class QrCodeService extends MongoBaseService {
 
   public async prepareBodyObject(req: Request): Promise<any> {
     const payload = req.body;
-
-    // Check if payload and title exist
     if (payload && payload.title) {
-      payload.slug = Utils.slugifyText(payload.title);  // Generate slug from root level title
+      payload.slug = Utils.slugifyText(payload.title);
     }
-
     return payload;
   }
 
@@ -139,28 +131,44 @@ export class QrCodeService extends MongoBaseService {
       if (obj.type) {
         const { type } = obj;
         let qrContent: string;
-        let createObj: any = {
+
+        // Common fields for all types
+        const createObj: any = {
           target: '',
-          properties: obj.qrCode,
           title: obj.title,
           type: type,
           bgColor: obj.bgColor,
+          qrCode: obj.qrCode,
+          description: obj.description,
+          profileImage: obj.profileImage,
+          template: obj.template,
+          slug: Utils.slugifyText(obj.title),
+          isSlugAvailable: true,
         };
 
+        // Add type-specific fields
         switch (type) {
+          case QRCodeType.WEBSITE:
+            qrContent = this.generateWebsiteQRContent(obj as WebsiteQRCodeDto);
+            createObj.url = obj.url;
+            break;
           case QRCodeType.PDF:
             qrContent = this.generatePDFQRContent(obj as PDFQRCodeDto);
+            createObj.file = obj.file;
             if (obj.description) createObj.description = obj.description;
             if (obj.profileImage) createObj.profileImage = obj.profileImage;
             break;
           case QRCodeType.VCARD:
             qrContent = this.generateVCardQRContent(obj as VCardQRCodeDto);
-            break;
-          case QRCodeType.WEBSITE:
-            qrContent = this.generateWebsiteQRContent(obj as WebsiteQRCodeDto);
+            createObj.address = obj.address;
+            createObj.company = obj.company;
+            createObj.contacts = obj.contacts;
+            createObj.socialMedia = obj.socialMedia;
             break;
           case QRCodeType.MULTI_LINK:
             qrContent = this.generateMultiLinkQRContent(obj as MultiLinkQRCodeDto);
+            createObj.links = obj.links;
+            createObj.socialMedia = obj.socialMedia;
             break;
           default:
             throw AppException.BAD_REQUEST(lang.get('qrcodes').invalidType);
