@@ -16,8 +16,8 @@ interface ReusableComponentProps {
 
 const LogosQrCode = () => {
     const dispatch = useDispatch();
-    const handleSelectQrCodeLogo = (color: string) => {
-        dispatch(setQrCodeLogo(color));
+    const handleSelectQrCodeLogo = (logo: string) => {
+        dispatch(setQrCodeLogo(logo));
     };
 
     const ReusableComponent = ({ onClick, logoUrl, title, icons }: ReusableComponentProps) => {

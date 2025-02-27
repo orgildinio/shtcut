@@ -13,13 +13,17 @@ interface QrCodeCardProps {
     data: QRCodeDataResponse;
     selectedIds: string[];
     handleDeleteQrCodeLink: () => void;
+    handleNavigate: () => void;
 }
 
-const QrCodeCard = ({ id, data, selectedIds, onChange, handleDeleteQrCodeLink }: QrCodeCardProps) => {
+const QrCodeCard = ({ id, data, selectedIds, onChange, handleDeleteQrCodeLink, handleNavigate }: QrCodeCardProps) => {
     const urlScan = data && data?.type === 'website' ? data?.url : `http://localhost:3000/qr-code/${data?.slug}`;
 
     return (
-        <Card className=" cursor-pointer border border-gray-200 shadow-sm  rounded-[10px] p-4  ">
+        <Card
+            className=" cursor-pointer border border-gray-200 shadow-sm  rounded-[10px] p-4  "
+            onClick={handleNavigate}
+        >
             <div className="flex justify-between items-center">
                 <div className="flex gap-x-3">
                     <div className="relative top-1.5 checkbox-container">

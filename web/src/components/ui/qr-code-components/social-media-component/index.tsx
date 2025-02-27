@@ -15,10 +15,27 @@ type SocialNetworksCardProps = {
     logos: SocialNetwork[];
     showSection: boolean;
     toggleSection: () => void;
+    defaultLinks: Record<string, string>;
 };
 
-const SocialNetworksCard: React.FC<SocialNetworksCardProps> = ({ logos, showSection, toggleSection }) => {
-    const [socialMedia, setSocialMedia] = useState<Record<string, string>>({});
+const SocialNetworksCard: React.FC<SocialNetworksCardProps> = ({ logos, showSection, toggleSection, defaultLinks }) => {
+    const [socialMedia, setSocialMedia] = useState<Record<string, string>>(() => {
+        const formatted = Object.entries(defaultLinks || {})
+            .filter(([, value]) => value)
+            .reduce(
+                (acc, [name, value]) => {
+                    const network = logos.find((logo) => logo.name.toLowerCase() === name.toLowerCase());
+                    if (network) {
+                        acc[network.id] = value;
+                    }
+                    return acc;
+                },
+                {} as Record<string, string>
+            );
+
+        return formatted;
+    });
+
     const [joinedLink, setJoinedLink] = useState<Record<string, string>>({});
     const dispatch = useAppDispatch();
 
@@ -83,8 +100,8 @@ const SocialNetworksCard: React.FC<SocialNetworksCardProps> = ({ logos, showSect
                                 <SocialMediaCard
                                     logoUrl={data.logoUrl}
                                     title={data.name}
-                                    isActive={socialMedia[data.id] !== undefined}
-                                    onClick={() => handleSelect(data.id)}
+                                    isActive={socialMedia[data?.id] !== undefined}
+                                    onClick={() => handleSelect(data?.id)}
                                 />
                             </div>
                         ))}

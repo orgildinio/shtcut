@@ -7,10 +7,9 @@ import CalendarView from '@shtcut/components/calendar-view';
 import { EventParam, SelectedEvent } from '@shtcut/types/types';
 import Container from '@shtcut/components/container';
 import { eventsData } from '@shtcut/_shared/data';
-import { Modal } from '@shtcut-ui/react';
 import { InstagramPreview, TwitterPreviewCard } from '../component';
-import { X } from 'lucide-react';
 import LinkedinPreview from '../component/linkeldln-preview';
+import Modal from '@shtcut/components/modal';
 
 const CalendarsComponent = () => {
     const [events, setEvents] = useState<EventParam[]>(eventsData);
@@ -93,12 +92,18 @@ const CalendarsComponent = () => {
                 eventDrop={onEventChange}
             />
             {selectedEvent && (
-                <Modal onClose={() => setIsModalOpen(false)} showModel={isModalOpen} setShowModal={setIsModalOpen}>
+                <Modal
+                    border
+                    title="Preview"
+                    onClose={() => setIsModalOpen(false)}
+                    isOpen={isModalOpen}
+                    className="max-w-md"
+                >
                     <div className="">
-                        <section className="flex items-center justify-between border-b p-4">
+                        {/* <section className="flex items-center justify-between border-b p-4">
                             <p className="text-sm font-semibold">Preview</p>
                             <X size={18} onClick={() => setIsModalOpen(false)} />
-                        </section>
+                        </section> */}
                         {selectedEvent.type === 'EDIT' && (
                             <>
                                 <section className="p-4 h-[500px] overflow-y-auto flex flex-col gap-4">

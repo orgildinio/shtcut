@@ -339,7 +339,8 @@ export const SHTNER = {
     domains: 'shtner/domains',
     metaKey: 'ShtcutAppKey',
     linksBio: 'shtner/link-bios',
-    qrCode: 'shtner/qrcodes'
+    qrCode: 'shtner/qrcodes',
+    media: 'shtner/worker'
 };
 
 export const AUTH_TOKEN_KEY = process.env.NEXT_PUBLIC_STORAGE_KEY as string;

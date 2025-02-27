@@ -8,7 +8,7 @@ import { ChatConversation } from '@shtcut/types/types';
 const ChatList = ({ handleChatMessage }: { handleChatMessage: (chat: ChatConversation) => void }) => {
     return (
         <div className="p-2 overflow-y-auto h-full">
-            <section className="sticky top-3 z-40">
+            <section className="sticky top-3 z-20">
                 <SearchInput className="w-full" />
             </section>
             <section className="overflow-y-auto h-full">

@@ -15,12 +15,11 @@ import useGeneralState from '@shtcut/hooks/general-state';
 const ActionQrCodeTab = ({ initialTabs }: { switchTab?: string; initialTabs: LinksTab[] }) => {
     const dispatch = useAppDispatch();
     const { selectedTab, tabParams } = useGeneralState();
-
     const [tabs, setTabs] = useState(initialTabs);
 
     useEffect(() => {
-        if (tabParams === 'vCard') {
-            const newTabs = [{ id: 'vCard', label: 'vCard' }, ...initialTabs];
+        if (tabParams === 'vcard') {
+            const newTabs = [{ id: 'vcard', label: 'vcard' }, ...initialTabs];
             setTabs(newTabs);
             dispatch(setSelectedTab(0));
         }
@@ -44,7 +43,7 @@ const ActionQrCodeTab = ({ initialTabs }: { switchTab?: string; initialTabs: Lin
                     activeTextClassName="text-white"
                 />
             </div>
-            {tabParams === 'vCard' && (
+            {tabParams === 'vcard' && (
                 <div className="pt-10">
                     {selectedTab === 0 && <ColorsQrCode />}
                     {selectedTab === 1 && <FramesSelector />}
@@ -62,7 +61,7 @@ const ActionQrCodeTab = ({ initialTabs }: { switchTab?: string; initialTabs: Lin
                 </div>
             )}
 
-            {tabParams === 'multi' && (
+            {tabParams === 'multi-link' && (
                 <div className="pt-10">
                     {selectedTab === 0 && <ColorsQrCode />} {selectedTab === 1 && <FramesSelector />}
                     {selectedTab === 2 && <QrCodeShapes />}

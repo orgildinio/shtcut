@@ -14,7 +14,7 @@ const ImageComponent = ({ singleChat }: { singleChat: ChatMessage | null }) => {
                 <div className={` px-4 py-2  flex flex-col gap-2 `}>
                     <img src={singleChat?.content} alt="" className="w-full h-80  rounded-md" />
 
-                    <p className="">Thanks, Bob. Looks good!</p>
+                    <p className="text-[13px]">Thanks, Bob. Looks good!</p>
                 </div>
             </section>
         </section>

@@ -88,7 +88,7 @@ export const LinkCard = (props: LinkCardProp) => {
                                         <div className="flex justify-between items-start">
                                             <div className="flex flex-wrap gap-2">
                                                 <Link
-                                                    onClick={() => handleCopy(`${slug}/${alias}`)}
+                                                    onClick={() => `${slug}/${alias}`}
                                                     href="#"
                                                     className="group rounded-full bg-gray-100 p-1.5 transition-all duration-75 hover:scale-105 hover:bg-blue-100 active:scale-95"
                                                 >

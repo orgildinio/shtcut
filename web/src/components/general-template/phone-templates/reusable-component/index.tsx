@@ -4,16 +4,19 @@ const ReusableComponent = ({
     icons,
     name,
     title,
-    btnColor
+    btnColor,
+    href
 }: {
     name: string;
     icons: ReactNode;
     title?: string;
     btnColor?: string;
+    href?: string;
 }) => {
     return (
         <a
-            href=""
+            href={href}
+            target="_blank"
             style={{ backgroundColor: btnColor }}
             className="flex  px-2 rounded-md shadow-sm border py-2 gap-2 items-center"
         >

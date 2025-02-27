@@ -84,7 +84,7 @@ export const configuration = () => ({
       apiKey: process.env.IPREGISTRY_API_KEY,
     },
     fileUpload: {
-      default: process.env.GOOGLE_CLOUD_PROJECT_ID || 's3',
+      default: process.env.DEFAULT_STORAGE || 'cloudinary',
       gcs: {
         projectID: process.env.GOOGLE_CLOUD_PROJECT_ID,
         keyFile: process.env.GOOGLE_CLOUD_KEY_FILE,
@@ -107,7 +107,7 @@ export const configuration = () => ({
   },
   worker: {
     fileUpload: {
-      default: process.env.GOOGLE_CLOUD_PROJECT_ID || 's3',
+      default: process.env.DEFAULT_STORAGE || 'cloudinary',
       gcs: {
         projectID: process.env.GOOGLE_CLOUD_PROJECT_ID,
         keyFile: process.env.GOOGLE_CLOUD_KEY_FILE,
@@ -118,6 +118,12 @@ export const configuration = () => ({
         secret: process.env.ASW_SECRET_KEY,
         bucket: process.env.AWS_BUCKET,
         region: process.env.AWS_REGION,
+      },
+      cloudinary: {
+        name: process.env.CLOUDINARY_NAME,
+        apiKey: process.env.CLOUDINARY_API_KEY,
+        apiSecret: process.env.CLOUDINARY_API_SECRET,
+        url: process.env.CLOUDINARY_API_URL,
       },
     },
     email: {

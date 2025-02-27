@@ -10,9 +10,9 @@ module.exports = {
         });
         return config;
     },
-    // images: {
-    //     domains: ['img.youtube.com', 'images.unsplash.com']
-    // },
+    images: {
+        domains: ['img.youtube.com', 'images.unsplash.com', 'example.com', 'i.imgur.com']
+    },
     images: {
         remotePatterns: [
             {

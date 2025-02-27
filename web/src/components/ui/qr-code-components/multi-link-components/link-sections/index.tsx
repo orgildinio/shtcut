@@ -1,4 +1,5 @@
 import { Button, Card, Input, Label } from '@shtcut-ui/react';
+import { LinkBioDataType } from '@shtcut/types/link';
 import { Image as LucideImage, Minus, Plus } from 'lucide-react';
 import React from 'react';
 
@@ -11,6 +12,7 @@ type LinksSectionProps = {
     onRemove?: () => void;
     addLinkSection?: () => void;
     index?: number;
+    link?: LinkBioDataType;
 };
 
 const LinksSection = ({
@@ -21,7 +23,8 @@ const LinksSection = ({
     onRemove,
     onUpdateLink,
     addLinkSection,
-    index
+    index,
+    link
 }: LinksSectionProps) => {
     const imageInputId = `image-upload-link-${index}`;
     return (
@@ -48,11 +51,13 @@ const LinksSection = ({
                         <Input
                             placeholder="Enter Link Title"
                             onChange={(e) => onUpdateLink?.('label', e.target.value)}
+                            value={link?.label}
                         />
                         <Input
                             placeholder="Enter URL"
                             type="url"
                             onChange={(e) => onUpdateLink?.('url', e.target.value)}
+                            value={link?.url}
                         />
                     </section>
                     <section className="flex flex-col gap-2 pt-4">

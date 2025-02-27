@@ -65,7 +65,7 @@ export class MediaService extends MongoBaseService {
       const payload = {
         file: {
           name: uploaded.originalname,
-          url,
+          url: url.url,
           fileType: uploaded.mimetype,
         },
         ...uploaded,
@@ -74,6 +74,7 @@ export class MediaService extends MongoBaseService {
         ...payload,
       });
     } catch (e) {
+      console.log('err::', e);
       throw e;
     }
   }

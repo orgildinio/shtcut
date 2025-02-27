@@ -1,16 +1,30 @@
 import { setImage } from '@shtcut/redux/slices/selects';
 import { useAppDispatch } from '@shtcut/redux/store';
 import { LinkBioDataType } from '@shtcut/types/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export const useLinksManager = () => {
+export const useLinksManager = (defaultLinks: LinkBioDataType[] = []) => {
     const dispatch = useAppDispatch();
+    console.log('default::', defaultLinks);
     const [links, setLinks] = useState<LinkBioDataType[]>([{ id: 1, label: '', url: '', image: null }]);
+    const initialShowSections = defaultLinks.reduce(
+        (acc, link) => {
+            acc[link.id] = true;
+            return acc;
+        },
+        {} as Record<number, boolean>
+    );
+    useEffect(() => {
+        if (defaultLinks.length > 0) {
+            setLinks(defaultLinks);
+        }
+    }, [defaultLinks]);
+
+    console.log('linksdefault', links);
     const [imgError, setImgError] = useState('');
 
-    const [showSections, setShowSections] = useState<Record<number, boolean>>({
-        1: true
-    });
+    const [showSections, setShowSections] = useState<Record<number, boolean>>(initialShowSections);
+
     const addLink = () => {
         const newId = setLinks.length + 1;
         setLinks((prevLinks) => [...prevLinks, { id: newId, label: '', url: '', image: null }]);
@@ -31,6 +45,7 @@ export const useLinksManager = () => {
 
     const handleLinkImageChange = (id: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
+        console.log('file:::url', file);
         if (file) {
             const fileSizeInMB = file.size / (1024 * 1024);
             if (fileSizeInMB > 2) {

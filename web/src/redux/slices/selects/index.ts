@@ -104,6 +104,7 @@ const generalSelectSlice = createSlice({
         },
         setFile: (state, action: PayloadAction<File | null>) => {
             state.file = action.payload;
+            console.log('File in Redux store:', state.file);
         },
         updateCompanyField(state, action: PayloadAction<UpdateFieldPayload>) {
             const { key, value } = action.payload;
