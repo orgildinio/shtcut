@@ -67,6 +67,11 @@ export class QrCode {
   socialMedia: Dict;
 
   @Prop({
+    type: MG.Types.Mixed,
+  })
+  address: Dict;
+
+  @Prop({
     type: Types.ObjectId,
     ref: 'User',
   })
@@ -168,6 +173,11 @@ export class QrCode {
     default: false,
   })
   deleted: boolean;
+
+  @Prop({
+    type: String,
+  })
+  file: string;
 }
 
 const QrCodeSchema = SchemaFactory.createForClass(QrCode);
@@ -190,11 +200,11 @@ QrCodeSchema.statics.config = () => {
       'qrCode',
       'description',
       'company',
+      'address',
+      'contacts',
       'links',
       'socialMedia',
-      'contacts',
       'title',
-      'isSlugAvailable',
       'template',
       'user',
       'bgColor',
@@ -204,7 +214,8 @@ QrCodeSchema.statics.config = () => {
       'properties',
       'enableTracking',
       'archived',
-      'pdf',
+      'isSlugAvailable',
+      'file',
     ],
     updateFillables: [
       'workspace',
@@ -227,7 +238,9 @@ QrCodeSchema.statics.config = () => {
       'user',
       'domain',
       'archived',
-      'pdf',
+      'file',
+      'address',
+
     ],
     hiddenFields: ['deleted'],
   };

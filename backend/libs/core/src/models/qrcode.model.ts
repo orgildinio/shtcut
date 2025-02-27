@@ -22,11 +22,14 @@ export class QrCode extends Document {
     @Prop({ type: String, required: true })
     bgColor: string;
 
+    @Prop({ type: String })
+    url?: string;
+
     @Prop({ type: String, required: true })
     target: string;
 
     @Prop({ type: Object, required: true })
-    properties: {
+    qrCode: {
         colors: {
             background: string;
             borderColor: string;
@@ -38,7 +41,7 @@ export class QrCode extends Document {
             inner: number;
         }>;
         frame: number;
-        logo?: string;
+        logo: string;
         qrStyle: string;
         name: string;
     };
@@ -68,12 +71,32 @@ export class QrCode extends Document {
 export type QrCodeDocument = QrCode & Document;
 export const QrCodeSchema = SchemaFactory.createForClass(QrCode);
 
-// Add schema configuration
-QrCodeSchema.config = {
-    uniques: ['title', 'slug'],
-    fillables: ['title', 'description', 'type', 'bgColor', 'profileImage', 'target', 'properties', 'metadata'],
-    updateFillables: ['title', 'description', 'bgColor', 'profileImage', 'properties', 'metadata'],
-    softDelete: true,
-    returnDuplicate: false,
-    idToken: 'qrc'
+// Update schema configuration
+QrCodeSchema.statics.config = function () {
+    return {
+        uniques: ['title', 'slug'],
+        fillables: [
+            'title',
+            'description',
+            'type',
+            'bgColor',
+            'profileImage',
+            'target',
+            'qrCode',
+            'url',
+            'metadata'
+        ],
+        updateFillables: [
+            'title',
+            'description',
+            'bgColor',
+            'profileImage',
+            'qrCode',
+            'url',
+            'metadata'
+        ],
+        softDelete: true,
+        returnDuplicate: false,
+        idToken: 'qrc'
+    };
 }; 
